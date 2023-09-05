@@ -6,16 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class OmniMode extends LinearOpMode {
+public class Robot extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
 
     @Override
     public void runOpMode() {
-
         telemetry.addData("Status", "Initialized");
 
         waitForStart();

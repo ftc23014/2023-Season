@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.lib.replay;
 
 import org.firstinspires.ftc.lib.replay.log.Log;
-import org.firstinspires.ftc.lib.replay.log.LogDataThread;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -177,7 +176,7 @@ public abstract class Replayable {
                 field = fields[i];
             }
 
-            Log logAnnotation = movedToMethods ? method.getAnnotation(Log.class) : field.getAnnotation(AutoLog.class);
+            Log logAnnotation = movedToMethods ? method.getAnnotation(Log.class) : field.getAnnotation(Log.class);
             Replay replayAnnotation = movedToMethods ? method.getAnnotation(Replay.class) : null;
 
             if (logAnnotation == null) {
@@ -194,10 +193,10 @@ public abstract class Replayable {
                 continue;
             }
 
-            String name = (logAnnotation.name().isEmpty()) ? (movedToMethods ? method.getName() : field.getName()) : autoLog.name();
+            String name = (logAnnotation.name().isEmpty()) ? (movedToMethods ? method.getName() : field.getName()) : logAnnotation.name();
 
             if (name.equals(spef_name) && linkName.isEmpty()) {
-                linkName = logAnnotation.link().isEmpty() ? name : logAnnotation.replaylink();
+                linkName = logAnnotation.link().isEmpty() ? name : logAnnotation.link();
 
                 //restart the loop
                 i = -1;
@@ -205,9 +204,9 @@ public abstract class Replayable {
                 continue;
             }
 
-            boolean fieldLinkFound = linkName.length() != 0 && linkName.equals("field_" + name) && !movedToMethods;
+            boolean fieldLinkFound = linkName.equals(name) && !movedToMethods;
 
-            if ((name.equals(linkName) && linkName.length() != 0) || fieldLinkFound) {
+            if ((name.equals(linkName) && !linkName.isEmpty()) || fieldLinkFound) {
                 if (movedToMethods) {
                     thread.setMethod(method, cycle, this);
                 } else {
@@ -216,7 +215,7 @@ public abstract class Replayable {
             }
         }
 
-        if (linkName.length() == 0) System.out.println("did not find link name! " + spef_name);
+        if (linkName.isEmpty()) System.out.println("did not find link name! " + spef_name);
     }
 
     //Overridable methods

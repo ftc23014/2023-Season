@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.lib.replay.log;
+package org.firstinspires.ftc.lib.replay;
+
+import org.firstinspires.ftc.lib.replay.log.LogType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
