@@ -5,6 +5,7 @@ import org.firstinspires.ftc.lib.replay.log.writers.LogWriter;
 import org.firstinspires.ftc.lib.utils.FileUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -22,7 +23,17 @@ public class ReplayManager {
 
     private static int nameAssignedTo = 0;
 
+    private static Timer logTimer;
+
     private static ReplayManager instance;
+
+    public static void setWriter(LogWriter writer) {
+        ReplayManager.writer = writer;
+    }
+
+    public static LogWriter getWriter() {
+        return writer;
+    }
 
     public static ReplayManager getInstance() {
         if (instance == null) {
@@ -35,10 +46,35 @@ public class ReplayManager {
         getInstance().replayables.add(replayable);
     }
 
+    public static void captureConsoleToLog() {
+        PrintStream original = System.out;
+        System.setOut(new PrintStream(new SysoutMiddleman(original)));
+    }
+
+    public static void init() {
+        if (writer == null) {
+            throw new RuntimeException("No writer set!");
+        }
+
+        writer.initialize();
+
+        logTimer = new Timer();
+
+        TimerTask logFrame = new TimerTask() {
+            @Override
+            public void run() {
+                log();
+            }
+        };
+
+        logTimer.scheduleAtFixedRate(logFrame, logInterval, logInterval);
+    }
+
+
     public static void log() {
         writer.saveInfo("ALC" + cycle++ + (cycle < 3 ? "(s)" : ""));
 
-        if (cycle < 3) return;
+        if (cycle < 3) return; //skip first three cycles, let everything initialize
 
         try {
             for (Replayable klass : getInstance().replayables) {
