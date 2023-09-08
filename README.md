@@ -19,7 +19,7 @@ From there, paste in the following link:
 https://github.com/ftc23014/2023-Season.git
 ```
 
-![Pasted Link](https://raw.githubusercontent.com/ftc23014/2023-Season/main/guide/images/paste_in_link.png?raw=true)
+![Pasted Link](https://github.com/ftc23014/2023-Season/blob/main/guide/images/paste_in_link.png?raw=true)
 Then click "Clone."
 
 ### From Command Line
