@@ -20,21 +20,31 @@ public class SysoutMiddleman extends OutputStream {
         original.write(i);
 
         if (i == '\n') {
-            try {
-                String s = get();
+            String s = getAndClear();
 
-                Calendar cal = Calendar.getInstance();
-                //Set timezone to Amsterdam
-                cal.setTimeZone(java.util.TimeZone.getTimeZone("Europe/Amsterdam"));
-                cal.setTime(new Date());
+            Calendar cal = Calendar.getInstance();
+            //Set timezone to Amsterdam
+            cal.setTimeZone(java.util.TimeZone.getTimeZone("Europe/Amsterdam"));
+            cal.setTime(new Date());
 
-                String time = "[" + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) + "] ";
+            String time = "[" + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) + "] ";
 
-                ReplayManager.getWriter().saveLine(time + s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            //replace the last newline with a space
+            s = s.endsWith("\n") ? s.substring(0, s.length() - 1) + " " : s;
+
+            ReplayManager.getWriter().saveLine(time + s);
         }
+    }
+
+    public String getAndClear() {
+        String s = null;
+        try {
+            s = get();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        buffer.reset();
+        return s;
     }
 
     public String get() throws UnsupportedEncodingException {

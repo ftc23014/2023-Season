@@ -3,15 +3,17 @@ package org.firstinspires.ftc.lib.systems;
 import org.firstinspires.ftc.lib.replay.Replayable;
 
 public class Subsystem extends Replayable {
+
     public Subsystem() {
         super();
+        Subsystems.addSubsystem(this);
     }
 
-    public void onEnable() {
+    public void init() {
         System.out.println("Enabled " + getBaseName() + "! Override onEnable and whileEnable to add functionality!");
     }
 
-    public void whileEnable() {
+    public void periodic() {
 
     }
 
@@ -21,7 +23,7 @@ public class Subsystem extends Replayable {
 
     @Override
     public String getBaseName() {
-        return "Subsystem";
+        return this.getClass().getSuperclass().getName();
     }
 
     @Override

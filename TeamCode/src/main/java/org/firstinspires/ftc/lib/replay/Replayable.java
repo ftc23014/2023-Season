@@ -146,6 +146,10 @@ public abstract class Replayable {
         ReplayManager.register(this);
     }
 
+    protected void updateReplayState(boolean inReplay) {
+        m_inReplay = inReplay;
+    }
+
     public boolean replaying() {
         return m_inReplay;
     }

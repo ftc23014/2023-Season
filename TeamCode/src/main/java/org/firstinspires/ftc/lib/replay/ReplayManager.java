@@ -139,6 +139,10 @@ public class ReplayManager {
                         int assignedTo = nameAssignedToMap.get(name);
                         String assignable = "";
 
+                        boolean methodWasAccessible = movedToMethods ? method.isAccessible() : false;
+
+                        if (movedToMethods) method.setAccessible(true);
+
                         try {
                             switch (logType) {
                                 case STRING:
@@ -190,7 +194,9 @@ public class ReplayManager {
                             e.printStackTrace();
                         }
 
-                        if (assignable.length() > 0) {
+                        if (movedToMethods) method.setAccessible(methodWasAccessible);
+
+                        if (!assignable.isEmpty()) {
                             if (lastAssign.get(assignedTo) != null && lastAssign.get(assignedTo).equals(assignable)) continue;
 
                             writer.saveInfo("d" + assignedTo + "/" + assignable);
@@ -231,6 +237,7 @@ public class ReplayManager {
         ReplayLog replayLog = new ReplayLog(FileUtils.read(file));
 
         for (Replayable replayable : replayables) {
+            replayable.updateReplayState(true);
             replayable.replayInit();
         }
 
@@ -274,6 +281,7 @@ public class ReplayManager {
     public void exitReplay() {
         for (Replayable replayable : replayables) {
             replayable.exitReplay();
+            replayable.updateReplayState(false);
         }
 
         replayTimer.cancel();
