@@ -159,7 +159,7 @@ public abstract class Replayable {
 
         boolean movedToMethods = false;
 
-        Method[] methods = this.getClass().getMethods();
+        Method[] methods = this.getClass().getDeclaredMethods();
         Field[] fields = this.getClass().getDeclaredFields();
 
         String linkName = "";
@@ -184,7 +184,7 @@ public abstract class Replayable {
             Replay replayAnnotation = movedToMethods ? method.getAnnotation(Replay.class) : null;
 
             if (logAnnotation == null) {
-                if (replayAnnotation == null || !movedToMethods) {
+                if (replayAnnotation == null) {
                     continue;
                 }
 
