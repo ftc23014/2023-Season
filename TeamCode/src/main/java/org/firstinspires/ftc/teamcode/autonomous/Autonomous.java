@@ -30,7 +30,7 @@ public class Autonomous extends OpMode {
         return instance;
     }
 
-    protected enum AutonomousMode {
+    public enum AutonomousMode {
         PICKUP_AUTONOMOUS,
         BACKDROP_AUTONOMOUS;
     }
@@ -39,7 +39,7 @@ public class Autonomous extends OpMode {
     private AutonomousMode m_autonomousMode;
     private boolean m_autonomousEnabled;
 
-    protected Autonomous(AutonomousMode autoMode) {
+    public Autonomous(AutonomousMode autoMode) {
         m_autonomousMode = autoMode;
     }
 

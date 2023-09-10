@@ -1,0 +1,35 @@
+
+.driverstation {
+    width: 50%;
+}
+
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+th, td {
+    background-color: #a7a7a7;
+}
+
+tr > td {
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+tr > td:nth-child(1) {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+tr > td:nth-child(2) {
+    color: #d93434;
+}
+
+tr > td:nth-child(3) {
+    color: #7dd52b;
+}
+
+.active-button {
+    background-color: #3d3d3d;
+}

@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <title>Title</title>
-  </head>
-  <body>
-    <div>
-      <button>
-      </button>
-    </div>
-  </body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="public/drivestation-sim/drivestation.css">
+    </head>
+    <body>
+        <table class="driverstation">
+            <tr>
+                <td>TeleOp</td>
+                <td class="active-button">Disabled</td>
+                <td>Enabled</td>
+            </tr>
+            <tr>
+                <td>Autonomous</td>
+                <td>Disabled</td>
+                <td>Enabled</td>
+            </tr>
+        </table>
+        <span id="voltage">12.0v</span>
+
+        <script src="public/drivestation-sim/drivestation.js"></script>
+    </body>
 </html>
