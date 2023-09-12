@@ -16,7 +16,6 @@ public class Server {
         m_server = HTTPServer.getInstance();
 
         m_server.addRoute(new StaticHost("public"));
-
         m_server.addRoute(new FileHost("public/home/index.html") {
             @Override
             public String getRoute() {
@@ -28,6 +27,13 @@ public class Server {
             @Override
             public String getRoute() {
                 return "/drivestation";
+            }
+        });
+
+        m_server.addRoute(new FileHost("public/field/field.html") {
+            @Override
+            public String getRoute() {
+                return "/field";
             }
         });
     }

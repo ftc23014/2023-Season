@@ -45,6 +45,9 @@ public class Simulation {
 
         System.out.println("[Simulation] Started!");
 
+        k_teleop.init();
+        k_autonomous.init();
+
         Thread thread = new Thread(() -> {
             while (true) {
                 if (m_gameMode == GameMode.AUTONOMOUS) {
@@ -54,6 +57,8 @@ public class Simulation {
                 }
             }
         });
+
+        thread.start();
     }
 
     public GameMode getGameMode() {

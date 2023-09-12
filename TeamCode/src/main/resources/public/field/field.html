@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Field</title>
+    <link rel="stylesheet" href="/public/field/field.css">
+    <script src="/public/scripts/unit.js"></script>
+    <script src="/public/scripts/waypoint.js"></script>
 </head>
 <body>
-    <canvas id="field"></canvas>
+    <div class="content">
+        <div class="menu-sidebar">
+            <button>Create a waypoint</button>
+        </div>
+        <div class="canvas-container">
+            <canvas id="field"></canvas>
+        </div>
+        <div class="waypoint-editor">
+            <div class="waypoint-list">
+                <div id="add-waypoint">+ <i>Add New Waypoint</i></div>
+            </div>
+        </div>
+    </div>
+    <script src="/public/field/centerstage.js"></script>
+    <script src="/public/field/field.js"></script>
 </body>
 </html>

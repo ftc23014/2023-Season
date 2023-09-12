@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
+import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
@@ -19,7 +20,7 @@ public class TeleOp extends OpMode {
         //This will make all System.out.println() calls go to the log file as well as the console.
         ReplayManager.captureConsoleToLog();
         // Set the log writer to a new FileWriter, which will write the data to a file.
-        ReplayManager.setWriter(new FileWriter());
+        ReplayManager.setWriter(new NoLog());
         // Initialize the replay manager, which will handle the logging of the data.
         ReplayManager.init();
     }

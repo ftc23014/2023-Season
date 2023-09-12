@@ -3,6 +3,7 @@ package org.firstinspires.ftc.lib.replay;
 import org.firstinspires.ftc.lib.replay.log.*;
 import org.firstinspires.ftc.lib.replay.log.writers.LogWriter;
 import org.firstinspires.ftc.lib.utils.FileUtils;
+import org.firstinspires.ftc.teamcode.BuildConfig;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -72,6 +73,10 @@ public class ReplayManager {
 
 
     public static void log() {
+        if (cycle == 0) {
+            System.out.println("[Info] Running v" + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ") of " + BuildConfig.APPLICATION_ID + " on " + BuildConfig.BUILD_TYPE + " build.");
+        }
+
         writer.saveInfo("ALC" + cycle++ + (cycle < 3 ? "(s)" : ""));
 
         if (cycle < 3) return; //skip first three cycles, let everything initialize
