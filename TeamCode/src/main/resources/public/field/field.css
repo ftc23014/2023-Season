@@ -71,7 +71,7 @@ body {
     color: white;
     margin-top: 50px;
     width: 80%;
-    height: 50%;
+    height: 200px;
     overflow-y: scroll;
     background-color: #384b81;
     border-radius: 10px;
@@ -111,4 +111,32 @@ body {
         margin: 0;
         overflow: hidden;
     }
+}
+
+
+.active-waypoint-list-item {
+    background-color: #375862 !important;
+}
+
+
+.single-waypoint-editor {
+    background-color: #5e8c98;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.single-waypoint-editor > div input[type="text"] {
+    width: 100px;
+    border-radius: 5px;
+    border: none;
+    text-align: right;
+    padding: 0 10px;
+    background-color: #8dc5d7;
+    color: #2a2a2a;
 }

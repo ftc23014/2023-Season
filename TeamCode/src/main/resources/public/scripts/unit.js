@@ -102,6 +102,22 @@ class Unit {
         return new Unit(total, Unit.Type.CENTIMETERS);
     }
 
+    static equals(unit1, unit2) {
+        if (!(unit1 instanceof Unit) || !(unit2 instanceof Unit)) {
+            return false;
+        }
+
+        return unit1.get(Unit.Type.CENTIMETERS) === unit2.get(Unit.Type.CENTIMETERS);
+    }
+
+    static closeEquals(unit1, unit2, epsilon=0.0001) {
+        if (!(unit1 instanceof Unit) || !(unit2 instanceof Unit)) {
+            return false;
+        }
+
+        return Math.abs(unit1.get(Unit.Type.CENTIMETERS) - unit2.get(Unit.Type.CENTIMETERS)) < epsilon;
+    }
+
     static Zero() {
         return new Unit(0, Unit.Type.CENTIMETERS);
     }

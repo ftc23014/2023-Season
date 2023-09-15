@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.lib.systems.Subsystems;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
 @Disabled
@@ -10,7 +11,7 @@ public class Autonomous extends OpMode {
     private static Autonomous instance;
     private static OpMode k_autoReferral;
 
-    protected static Autonomous setAutonomous(AutonomousMode autoMode, OpMode referral) {
+    public static Autonomous setAutonomous(AutonomousMode autoMode, OpMode referral) {
         if (instance != null) {
             throw new RuntimeException("Autonomous was already created but you're changing it?");
         }
@@ -59,11 +60,14 @@ public class Autonomous extends OpMode {
     @Override
     public void loop() {
         //This is called every loop of the autonomous.
+        Subsystems.periodic();
     }
 
     @Override
     public void stop() {
         // -- DISABLE --
         m_autonomousEnabled = false;
+
+        Subsystems.onDisable();
     }
 }

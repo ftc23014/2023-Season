@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
+import org.firstinspires.ftc.lib.systems.Subsystems;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
 public class TeleOp extends OpMode {
     private ElapsedTime m_runtime = new ElapsedTime();
 
@@ -23,6 +27,11 @@ public class TeleOp extends OpMode {
         ReplayManager.setWriter(new NoLog());
         // Initialize the replay manager, which will handle the logging of the data.
         ReplayManager.init();
+
+        Subsystems.onInit();
+
+        telemetry.addLine("TeleOp Enabled!");
+        telemetry.update();
     }
 
     /**
@@ -36,16 +45,24 @@ public class TeleOp extends OpMode {
     public void start() {
         // -- ENABLE --
         m_teleOpEnabled = true;
+
+
     }
+
 
     @Override
     public void loop() {
-
+        Subsystems.periodic();
     }
 
     @Override
     public void stop() {
         // -- DISABLE --
         m_teleOpEnabled = false;
+
+        telemetry.addLine("Autonomous Disabled!");
+        telemetry.update();
+
+        Subsystems.onDisable();
     }
 }

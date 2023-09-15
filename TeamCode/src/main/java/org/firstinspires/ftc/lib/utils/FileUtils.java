@@ -32,7 +32,12 @@ public class FileUtils {
 
     public static void write(Path path, String contents, boolean append) {
 
-        File file = path.toFile();
+        File file = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            file = path.toFile();
+        } else {
+            throw new RuntimeException("This method is only supported on Android Oreo and above!");
+        }
 
         if (!file.exists()) {
             try {
@@ -54,7 +59,12 @@ public class FileUtils {
     }
 
     public static String read(Path path) {
-        File file = path.toFile();
+        File file = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            file = path.toFile();
+        } else {
+            throw new RuntimeException("This method is only supported on Android Oreo and above!");
+        }
 
         if (!file.exists()) {
             try {
@@ -86,7 +96,12 @@ public class FileUtils {
     }
 
     public static void mkdir(Path path) {
-        File file = path.toFile();
+        File file = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            file = path.toFile();
+        } else {
+            throw new RuntimeException("This method is only supported on Android Oreo and above!");
+        }
 
         if (!file.exists()) {
             try {
