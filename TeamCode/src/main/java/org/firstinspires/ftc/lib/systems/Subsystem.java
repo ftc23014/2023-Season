@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.lib.systems;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.replay.Replayable;
+import org.firstinspires.ftc.teamcode.TeleOp;
+import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
 public class Subsystem extends Replayable {
 
@@ -34,5 +37,17 @@ public class Subsystem extends Replayable {
     @Override
     public void exitReplay() {
 
+    }
+
+    protected HardwareMap getHardwareMap() {
+        HardwareMap teleopHardwareMap = TeleOp.getHardwareMap();
+        HardwareMap autonomousHardwareMap = Autonomous.getHardwareMap();
+        if (teleopHardwareMap != null) {
+            return teleopHardwareMap;
+        } else if (autonomousHardwareMap != null) {
+            return autonomousHardwareMap;
+        } else {
+            return null;
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.lib.replay.ReplayManager;
@@ -14,6 +15,12 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
 public class TeleOp extends OpMode {
+    private static TeleOp instance;
+
+    public static HardwareMap getHardwareMap() {
+        return instance.hardwareMap;
+    }
+
     private ElapsedTime m_runtime = new ElapsedTime();
 
     private boolean m_teleOpEnabled = false;
@@ -22,6 +29,8 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
+        instance = this;
+
         /* Initialize the log writer and replay manager first. */
 
         //This will make all System.out.println() calls go to the log file as well as the console.

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
@@ -10,6 +11,10 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 public class Autonomous extends OpMode {
     private static Autonomous instance;
     private static OpMode k_autoReferral;
+
+    public static HardwareMap getHardwareMap() {
+        return k_autoReferral.hardwareMap;
+    }
 
     public static Autonomous setAutonomous(AutonomousMode autoMode, OpMode referral) {
         if (instance != null) {

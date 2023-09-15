@@ -349,6 +349,13 @@ class Path {
             i++;
         }
     }
+    getTypedWaypointIndex(waypoint, type=WaypointType.Hard) {
+        for (let i = 0; i < this.getWaypoints(type).length; i++) {
+            if (waypoint.equals(this.getWaypoints(type)[i])) {
+                return i;
+            }
+        }
+    }
     addHardWaypoint(waypoint) {
         if (this.waypoints.length > 0) {
             this.waypoints.push(
@@ -459,10 +466,25 @@ class Path {
             }
             return;
         } else {
+            let waypointIndex;
+            if (this.ui.selectedWaypoint != null && this.ui.selectedWaypoint.type === WaypointType.Hard) {
+                waypointIndex = this.getTypedWaypointIndex(this.ui.selectedWaypoint, WaypointType.Hard);
+            } else if (this.ui.lastSelectedWaypoint != null) {
+                waypointIndex = this.getTypedWaypointIndex(this.ui.lastSelectedWaypoint, WaypointType.Hard);
+            } else {
+                return;
+            }
+
             const waypointEditors = document.getElementsByClassName("single-waypoint-editor");
-            for (let e of waypointEditors) {
-                e.style.display = "flex";
+            for (let i = 0; i < waypointEditors.length; i++) {
+                waypointEditors[i].style.display = "flex";
+
+                if (i === 2 && (waypointIndex === 0 || waypointIndex === this.getWaypoints(WaypointType.Hard).length - 1)) {
+                    waypointEditors[i].style.display = "none";
+                }
             }
         }
+
+
     }
 }
