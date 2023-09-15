@@ -10,12 +10,15 @@ import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
 public class TeleOp extends OpMode {
     private ElapsedTime m_runtime = new ElapsedTime();
 
     private boolean m_teleOpEnabled = false;
+
+    private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
 
     @Override
     public void init() {
