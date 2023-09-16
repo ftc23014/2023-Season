@@ -12,6 +12,10 @@ public class Autonomous extends OpMode {
     private static Autonomous instance;
     private static OpMode k_autoReferral;
 
+    public static boolean hasInstance() {
+        return instance != null;
+    }
+
     public static HardwareMap getHardwareMap() {
         return k_autoReferral.hardwareMap;
     }

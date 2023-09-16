@@ -17,6 +17,10 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 public class TeleOp extends OpMode {
     private static TeleOp instance;
 
+    public static boolean hasInstance() {
+        return instance != null;
+    }
+
     public static HardwareMap getHardwareMap() {
         return instance.hardwareMap;
     }
