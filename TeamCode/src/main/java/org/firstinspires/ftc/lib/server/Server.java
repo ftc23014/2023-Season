@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.lib.server;
 
+import org.firstinspires.ftc.lib.server.api.ApiHandler;
+import org.firstinspires.ftc.lib.server.api.PathApi;
 import org.firstinspires.ftc.lib.server.util.FileHost;
 import org.firstinspires.ftc.lib.server.util.HTTPServer;
 import org.firstinspires.ftc.lib.server.util.Route;
@@ -36,5 +38,8 @@ public class Server {
                 return "/field";
             }
         });
+
+        m_server.addRoute(new ApiHandler());
+        m_server.addRoute(new PathApi());
     }
 }

@@ -1,4 +1,4 @@
-const INCHES_PER_PIXEL = 3.5;
+const INCHES_PER_PIXEL = 4;
 
 const CENTER_STAGE_STANDARDS = {
     tile: new Unit(23 + (1/8), Unit.Type.INCHES),
@@ -16,7 +16,11 @@ const CENTER_STAGE_STANDARDS = {
     },
     half_height() {
         return this.half_width();
-    }
+    },
+    BLUE: "#1c46a1",
+    RED: "#941b1b",
+    YELLOW: "#e5e500",
+    BACKGROUND: "#1b1b1f"
 }
 
 const CENTER_STAGE = {
@@ -365,7 +369,7 @@ const CENTER_STAGE = {
     },
     game_elements: {
         backdrop_blue(ctx=new CanvasRenderingContext2D()) {
-            ctx.fillStyle = "#252525";
+            ctx.fillStyle = "#3d3d3d";
 
             ctx.fillRect(
                 new Unit(22 + (1/2), Unit.Type.INCHES).getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
@@ -375,7 +379,7 @@ const CENTER_STAGE = {
             );
         },
         backdrop_red(ctx=new CanvasRenderingContext2D()) {
-            ctx.fillStyle = "#252525";
+            ctx.fillStyle = "#3d3d3d";
 
             ctx.fillRect(
                 Unit.add(CENTER_STAGE_STANDARDS.width(), new Unit(-(22 + (1/2)), Unit.Type.INCHES), new Unit(-(25 + (5/8)), Unit.Type.INCHES)).getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
@@ -390,7 +394,7 @@ const CENTER_STAGE = {
 
             const truss_y = new Unit(CENTER_STAGE_STANDARDS.tile.get(Unit.Type.INCHES) * 3.5, Unit.Type.INCHES).getcu(INCHES_PER_PIXEL, Unit.Type.INCHES);
 
-            ctx.fillStyle = "#0000ff";
+            ctx.fillStyle = CENTER_STAGE_STANDARDS.BLUE;
             ctx.fillRect(
                 truss_support.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
                 truss_y,
@@ -405,7 +409,7 @@ const CENTER_STAGE = {
                 truss_width.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
             )
 
-            ctx.fillStyle = "#ffff00"
+            ctx.fillStyle = CENTER_STAGE_STANDARDS.YELLOW;
 
             ctx.fillRect(
                 Unit.add(truss_support, new Unit(21 + 22 + 1, Unit.Type.INCHES), truss_support, truss_support).getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
@@ -414,7 +418,7 @@ const CENTER_STAGE = {
                 truss_width.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
             )
 
-            ctx.fillStyle = "#ff0000"
+            ctx.fillStyle = CENTER_STAGE_STANDARDS.RED;
             ctx.fillRect(
                 Unit.add(truss_support, new Unit(21 + 22 + 46 + 1 + 1/4, Unit.Type.INCHES), truss_support, truss_support, truss_support).getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
                 truss_y,
@@ -464,13 +468,13 @@ function centerStageInit() {
 function drawCenterStage(ctx=new CanvasRenderingContext2D()) {
     ctx.clearRect(0, 0, CENTER_STAGE.width.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES), CENTER_STAGE.height.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES));
 
-    ctx.fillStyle = "#5C8374"; //"#afafaf";
+    ctx.fillStyle = CENTER_STAGE_STANDARDS.BACKGROUND; //"#afafaf";
     ctx.fillRect(0, 0, CENTER_STAGE.width.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES), CENTER_STAGE.height.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES));
 
     ctx.lineWidth = 1;
     for (let x = 0; x < 6; x++) {
         for (let y = 0; y < 6; y++) {
-            ctx.strokeStyle = "#000000"
+            ctx.strokeStyle = "#7a7a7a"
             ctx.rect(
                 CENTER_STAGE.tile.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) * x,
                 CENTER_STAGE.tile.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) * y,
@@ -492,9 +496,9 @@ function drawCenterStage(ctx=new CanvasRenderingContext2D()) {
         ctx.beginPath();
 
         if (line_name.includes("blue")) {
-            ctx.strokeStyle = "#0000FF";
+            ctx.strokeStyle = CENTER_STAGE_STANDARDS.BLUE;
         } else if (line_name.includes("red")) {
-            ctx.strokeStyle = "#FF0000";
+            ctx.strokeStyle = CENTER_STAGE_STANDARDS.RED;
         } else {
             ctx.strokeStyle = "#000000";
         }

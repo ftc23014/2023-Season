@@ -82,3 +82,5 @@ lint/tmp/
 
 # IDEA (IntelliJ)
 .idea/workspace.xml
+
+Testing.java

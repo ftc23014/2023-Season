@@ -7,6 +7,8 @@
     <script src="/public/scripts/unit.js"></script>
     <script src="/public/scripts/positions.js"></script>
     <script src="/public/field/waypoint.js"></script>
+    <script src="/public/field/optimized_pathing.js"></script>
+    <script src="/public/field/bezier_pathing.js"></script>
 </head>
 <body>
     <div class="content">
@@ -16,7 +18,7 @@
                 <div>
                     <label for="x-coord">X: </label>
                     <input type="text" id="x-coord" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -26,7 +28,7 @@
                 <div>
                     <label for="y-coord">Y: </label>
                     <input type="text" id="y-coord" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -36,8 +38,7 @@
                 <div>
                     <label for="heading">°&nbsp; </label>
                     <input type="text" id="heading" value="0" step=".01">
-                    <select>
-                        <option value="radians">radians</option>
+                    <select class="select-unit-angle">
                         <option value="degrees">degrees</option>
                     </select>
                 </div>
@@ -47,7 +48,7 @@
                 <div>
                     <label for="x-coord-soft-1">X: </label>
                     <input type="text" id="x-coord-soft-1" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -57,7 +58,7 @@
                 <div>
                     <label for="y-coord-soft-1">Y: </label>
                     <input type="text" id="y-coord-soft-1" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -70,7 +71,7 @@
                 <div>
                     <label for="x-coord-soft-2">X: </label>
                     <input type="text" id="x-coord-soft-2" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -80,7 +81,7 @@
                 <div>
                     <label for="y-coord-soft-2">Y: </label>
                     <input type="text" id="y-coord-soft-2" value="0" step=".01">
-                    <select>
+                    <select class="select-unit">
                         <option value="inches">in</option>
                         <option value="feet">ft</option>
                         <option value="meters">cm</option>
@@ -91,6 +92,7 @@
         </div>
         <div class="canvas-container">
             <canvas id="field"></canvas>
+            <button onclick="sendCurrentPathToAPI()">Send Trajectory to Robot</button>
         </div>
         <div class="waypoint-editor">
             <div class="waypoint-list">

@@ -2,10 +2,15 @@
 const fieldCanvasDOM = document.getElementById("field");
 const fieldCanvas = fieldCanvasDOM.getContext("2d");
 
-let currentPath = new Path();
+let currentPath = new ConstructedBezierPath();
 
 const CURRENT_FIELD = CENTER_STAGE;
 const CURRENT_FIELD_STANDARDS = CENTER_STAGE_STANDARDS;
+
+let ROBOT_SIZE = {
+    w: new Unit(18, Unit.Type.INCHES),
+    h: new Unit(18, Unit.Type.INCHES)
+};
 
 let mousePos = {
     x: 0,
@@ -20,6 +25,7 @@ function draw() {
 
     currentPath.displayCurves(ctx);
     currentPath.displayWaypoints(ctx, mousePos);
+    currentPath.displayRobotStates(ctx);
 
     requestAnimationFrame(draw);
 }
