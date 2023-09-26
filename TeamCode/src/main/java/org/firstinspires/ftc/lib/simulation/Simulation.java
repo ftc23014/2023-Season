@@ -12,6 +12,10 @@ public class Simulation {
 
     private static Simulation instance;
 
+    public static boolean inSimulation() {
+        return instance != null;
+    }
+
     public static Simulation getInstance() {
         if (instance == null) {
             throw new RuntimeException("Simulation wasn't started!");

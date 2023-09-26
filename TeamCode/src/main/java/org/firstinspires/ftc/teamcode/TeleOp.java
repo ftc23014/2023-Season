@@ -12,6 +12,7 @@ import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
@@ -35,6 +36,7 @@ public class TeleOp extends OpMode {
     private boolean m_teleOpEnabled = false;
 
     private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
+    private MotorTestSubsystem m_motorTestSubsystem = new MotorTestSubsystem();
 
     @Override
     public void init() {

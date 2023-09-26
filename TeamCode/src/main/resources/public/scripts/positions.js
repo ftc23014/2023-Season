@@ -39,3 +39,16 @@ class Translation2dUnit extends Translation2d {
         return new Unit(this.y, Unit.Type.CENTIMETERS);
     }
 }
+
+class Cartesian2d {
+    constructor(r=0, theta=new Angle(0, Angle.Type.DEGREES)) {
+        this.r = r;
+        this.theta = theta;
+    }
+    asTranslation2d(translation=new Translation2d(0,0), useClockwisePositive=true) {
+        return new Translation2d(
+            translation.x + this.r * Math.cos((useClockwisePositive ? 1 : -1) * this.theta.get(Angle.Type.RADIANS)),
+            translation.y + this.r * Math.sin((useClockwisePositive ? 1 : -1) * this.theta.get(Angle.Type.RADIANS))
+        )
+    }
+}

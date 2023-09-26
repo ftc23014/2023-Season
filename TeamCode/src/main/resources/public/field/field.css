@@ -52,16 +52,21 @@ body {
     padding-top: 40px;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: #183D3D;
+    background-color: #16161a;
 }
 
 .canvas-container canvas {
     border-radius: 10px;
 }
 
+.canvas-container button {
+    margin-top: 10px;
+    width: 100px;
+}
+
 .waypoint-editor {
     display: flex;
-    width: 38.5%;
+    width: 34.5%;
     height: 100vh;
     align-content: center;
     justify-content: center;
@@ -88,7 +93,7 @@ body {
 
 @media (max-width: 825px) {
     .canvas-container {
-        width: calc(100% - 300px);
+        width: calc(100% - 200px);
         height: 100vh;
     }
 
@@ -120,7 +125,7 @@ body {
 
 
 .single-waypoint-editor {
-    background-color: #5e8c98;
+    background-color: #3d4565;
     color: white;
     display: flex;
     flex-direction: column;
@@ -137,6 +142,6 @@ body {
     border: none;
     text-align: right;
     padding: 0 10px;
-    background-color: #8dc5d7;
+    background-color: #f9f9f9;
     color: #2a2a2a;
 }
