@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.lib.server.api;
 
+import android.util.JsonReader;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import fi.iki.elonen.NanoHTTPD;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
@@ -43,7 +46,13 @@ public class PathApi extends Route {
             }
 
             if (path.equalsIgnoreCase("/send")) {
-                int count = Integer.parseInt(files.get("waypoint_count"));
+                String json = files.get("postData");
+
+                Gson gson = new Gson();
+
+                JsonObject object = gson.fromJson(json, JsonObject.class);
+
+                int count = object.get("waypoint_count").getAsInt();
 
                 /**
                  * {
@@ -62,7 +71,7 @@ public class PathApi extends Route {
                 ArrayList<Waypoint> waypoint_list = new ArrayList<>();
 
                 for (int i = 0; i < count; i++) {
-                    String waypointInfo = files.get("waypoint_" + i);
+                    String waypointInfo = object.get("waypoint_" + i).getAsString();
 
                     String[] split_info = waypointInfo.split(",");
 

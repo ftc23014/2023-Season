@@ -11,7 +11,7 @@ public class PIDController {
 
     private double m_setpoint;
 
-    private double m_lastError;
+    private double m_lastSetpoint;
 
     public PIDController(double kP, double kI, double kD) {
         m_kP = kP;
@@ -19,7 +19,7 @@ public class PIDController {
         m_kD = kD;
 
         m_integral = 0;
-        m_lastError = 0;
+        m_lastSetpoint = 0;
     }
 
     public void reset() {
@@ -40,22 +40,21 @@ public class PIDController {
         return m_setpoint;
     }
 
-    public double calculate(double goal) {
+    public double calculate(double setpoint, double goal) {
         if (!initialized()) {
             return 0;
         }
 
-        double error = goal - m_setpoint;
+        double error = goal - setpoint;
 
         m_integral += error;
 
-        double derivative = error - m_lastError;
-
-        m_lastError = error;
+        double derivative = setpoint - m_lastSetpoint;
 
         double output = m_kP * error + m_kI * m_integral + m_kD * derivative;
 
         m_setpoint += output;
+        m_lastSetpoint = setpoint;
 
         return output;
     }

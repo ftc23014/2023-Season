@@ -4,8 +4,7 @@ import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import static java.lang.Math.pow;
 
@@ -24,7 +23,7 @@ public class FourPointBezier {
      * @param control1 the first control point
      * @param control2 the second control point
      */
-    public FourPointBezier(Waypoint start, Waypoint end, Waypoint control1, Waypoint control2) {
+    public FourPointBezier(Waypoint start, Waypoint control1, Waypoint control2, Waypoint end) {
         m_start = start;
         m_end = end;
         m_control1 = control1;
@@ -38,7 +37,7 @@ public class FourPointBezier {
      * @return the waypoints of the Bézier curve
      */
     public Waypoint[] getWaypoints() {
-        return new Waypoint[] {m_start, m_end, m_control1, m_control2};
+        return new Waypoint[] {m_start, m_control1, m_control2, m_end};
     }
 
     /**
@@ -59,8 +58,14 @@ public class FourPointBezier {
      * @return the x-coordinate of the Bézier curve at t
      */
     private double b_x(double t) {
-        //p1(-t^3 + 3t^2 - 3t + 1) + 3p2(t^3 - 2t^2 + t) + 3p3(-t^3 + t^2) + p4(t^3)
-        return m_start.getX() * (-pow(t, 3) + 3*pow(t, 2) - 3*t + 1) + 3*m_control1.getX()*(pow(t, 3) - 2*pow(t, 2) + t) + 3* m_control2.getX()*(-pow(t, 3) + pow(t, 2)) + m_end.getX()*(pow(t, 3));
+        //p1(-t^3 + 3t^2 - 3t + 1)
+        // + 3p2(t^3 - 2t^2 + t)
+        // + 3p3(-t^3 + t^2)
+        // + p4(t^3)
+        return (m_start.getX() * (-pow(t, 3) + (3*pow(t, 2)) - (3*t) + 1))
+                + (3 * m_control1.getX() * (pow(t, 3) - (2 * pow(t, 2)) + t))
+                + (3 * m_control2.getX() * (-pow(t, 3) + pow(t, 2)))
+                + (m_end.getX() * (pow(t, 3)));
     }
 
     /**
@@ -70,7 +75,10 @@ public class FourPointBezier {
      */
     private double b_y(double t) {
         //p1(-t^3 + 3t^2 - 3t + 1) + 3p2(t^3 - 2t^2 + t) + 3p3(-t^3 + t^2) + p4(t^3)
-        return m_start.getY() * (-pow(t, 3) + 3*pow(t, 2) - 3*t + 1) + 3*m_control1.getY()*(pow(t, 3) - 2*pow(t, 2) + t) + 3* m_control2.getY()*(-pow(t, 3) + pow(t, 2)) + m_end.getY()*(pow(t, 3));
+        return (m_start.getY() * (-pow(t, 3) + (3*pow(t, 2)) - (3*t) + 1))
+                + (3 * m_control1.getY() * (pow(t, 3) - (2*pow(t, 2)) + t))
+                + (3 * m_control2.getY() * (-pow(t, 3) + pow(t, 2)))
+                + (m_end.getY() * (pow(t, 3)));
     }
 
     /**
@@ -192,14 +200,18 @@ public class FourPointBezier {
         HashMap<Double, Translation2d> lookupTable = new HashMap<>();
 
         double distance = 0;
+        Translation2d lastPoint = new Translation2d(b_x(0), b_y(0));
         for (double t = 0; t <= 1; t += t_step) {
             Translation2d point = new Translation2d(b_x(t), b_y(t));
 
             point.addAttribute("t", t);
 
+            distance += point.distance(lastPoint);
+
+            point.addAttribute("distance", distance);
             lookupTable.put(distance, point);
 
-            distance += point.distance(lookupTable.get(distance));
+            lastPoint = point;
         }
 
         return lookupTable;
@@ -214,6 +226,8 @@ public class FourPointBezier {
 
         return lookupTable.keySet().stream().max(Double::compareTo).get();
     }
+
+    private final boolean verbose = true;
 
     /***
      * Generates the Bézier curve to be evenly spaced
@@ -230,26 +244,28 @@ public class FourPointBezier {
         double lastDistance = 0;
 
         for (double d = 0; d <= maxDistance; d += stepSize) {
+            Translation2d lastPoint = lookupTable.get(lookupTable.keySet().toArray(new Double[0])[0]);
+
             for (int i = 0; i < lookupTable.keySet().size(); i++) {
                 double p_dist = lookupTable.keySet().toArray(new Double[0])[i];
 
                 if (p_dist > d) {
                     Translation2d point = lookupTable.get(p_dist);
                     if (i > 0) {
-                        Translation2d lastPoint = lookupTable.get(lastDistance);
-
                         double dx = point.getX() - lastPoint.getX();
                         double dy = point.getY() - lastPoint.getY();
 
                         double weight = (d - lastDistance) / (p_dist - lastDistance);
 
-                        m_points.add(new Translation2d(lastPoint.getX() + dx * weight, lastPoint.getY() + dy * weight));
+                        m_points.add(new Translation2d(lastPoint.getX() + (dx * weight), lastPoint.getY() + (dy * weight)));
                     } else {
                         m_points.add(point);
                     }
 
                     break;
                 }
+
+                lastPoint = lookupTable.get(p_dist);
             }
 
             lastDistance = d;
@@ -278,6 +294,9 @@ public class FourPointBezier {
     public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double total_distance) {
         if (!controller.initialized()) {
             controller.setSetpoint(0);
+            if (verbose) {
+                System.out.println("PID controller not initialized, setting setpoint to 0.");
+            }
         }
 
         //Adding support so the curve can be generated with multiple curves.
@@ -285,33 +304,50 @@ public class FourPointBezier {
 
         HashMap<Double, Translation2d> lookupTable = generateLookupTable(t_step);
 
-        double maxDistance = total_distance == 0 ? length() : total_distance;
+        double maxDistance = total_distance < 1 ? length() : total_distance;
 
         m_points.clear();
 
+        if (verbose) {
+            System.out.println("generated lookup table, length: " + maxDistance + " cm");
+        }
+
+        Double[] rawDistances = lookupTable.keySet().toArray(new Double[0]);
+
+        List<Double> sortedDistances = Arrays.asList(rawDistances);
+
+        Collections.sort(sortedDistances);
+
+        for (int i = 0; i < sortedDistances.size(); i++) {
+            System.out.println("Lookup table dist: " + sortedDistances.get(i));
+        }
+
         double lastDistance = 0;
+        Translation2d lastPoint = new Translation2d(b_x(0), b_y(0));
 
         double d = beginningDistance;
 
         while (d < maxDistance) {
-            double newCalc = controller.calculate(maxDistance);
+            double newCalc = controller.calculate(d, maxDistance);
 
-            if (newCalc > max_distance) {
+            if (newCalc / AutonomousConstants.getDeltaTime() > max_distance) {
                 newCalc = max_distance;
-            } else if (newCalc < min_distance) {
+                System.out.println("PID too high, setting to max velocity");
+            } else if (newCalc / AutonomousConstants.getDeltaTime() < min_distance) {
                 newCalc = min_distance;
+                System.out.println("PID too low, setting to min velocity");
             }
 
             d += newCalc;
 
-            for (int i = 0; i < lookupTable.keySet().size(); i++) {
-                double p_dist = lookupTable.keySet().toArray(new Double[0])[i];
+            System.out.println("Moving " + newCalc + "cm, currently at: " + d);
+
+            for (int i = 0; i < sortedDistances.size(); i++) {
+                double p_dist = sortedDistances.get(i);
 
                 if (p_dist > d) {
                     Translation2d point = lookupTable.get(p_dist);
                     if (i > 0) {
-                        Translation2d lastPoint = lookupTable.get(lastDistance);
-
                         double dx = point.getX() - lastPoint.getX();
                         double dy = point.getY() - lastPoint.getY();
 
@@ -323,8 +359,10 @@ public class FourPointBezier {
                         newPoint.addAttribute("last-t", lastPoint.getAttribute("t"));
 
                         m_points.add(newPoint);
+                        lastPoint = newPoint;
                     } else {
                         m_points.add(point);
+                        lastPoint = point;
                     }
 
                     break;

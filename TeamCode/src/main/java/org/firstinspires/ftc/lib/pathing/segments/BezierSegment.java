@@ -14,6 +14,10 @@ public class BezierSegment extends Segment {
     private PIDController m_controller;
     private AutonomousConstants m_constants;
 
+    public BezierSegment(FourPointBezier bezier) {
+        m_bezier = bezier;
+    }
+
     public BezierSegment(FourPointBezier bezier, PIDController controller) {
         m_bezier = bezier;
 
@@ -37,7 +41,7 @@ public class BezierSegment extends Segment {
 
     @Override
     public void generate() {
-        m_bezier.generateByPID(0.01, m_controller, 0.01, 0.5);
+        m_bezier.generateByPID(0.001, m_controller, 0.01, 0.05);
     }
 
     @Override

@@ -523,7 +523,7 @@ async function sendCurrentPathToAPI() {
             type: waypoint.type === WaypointType.Hard ? 0 : 1
         }
 
-        waypoint["waypoint_" + i] = `${info.x},${info.y},${info.heading},${info.type}`
+        body["waypoint_" + i] = `${info.x},${info.y},${info.heading},${info.type}`;
 
         i++;
     }
