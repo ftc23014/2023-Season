@@ -2,6 +2,7 @@ package org.firstinspires.ftc.lib.pathing.segments;
 
 import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.AutonomousConstants;
 import org.firstinspires.ftc.lib.pathing.FourPointBezier;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
@@ -41,7 +42,7 @@ public class BezierSegment extends Segment {
 
     @Override
     public void generate() {
-        m_bezier.generateByPID(0.001, m_controller, 0.01, 0.05);
+        m_bezier.generateByPID(0.001, m_controller, 0.01, m_constants.getMaxSpeed().get(Unit.Type.Centimeters), m_constants.getMaxAcceleration().get(Unit.Type.Centimeters));
     }
 
     @Override

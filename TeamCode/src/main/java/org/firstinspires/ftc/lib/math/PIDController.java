@@ -47,14 +47,16 @@ public class PIDController {
 
         double error = goal - setpoint;
 
-        m_integral += error;
+        double integral = m_integral + error;
 
         double derivative = setpoint - m_lastSetpoint;
 
-        double output = m_kP * error + m_kI * m_integral + m_kD * derivative;
+        double output = (m_kP * error) + (m_kI * integral) - (m_kD * derivative);
 
         m_setpoint += output;
         m_lastSetpoint = setpoint;
+
+        m_integral = integral;
 
         return output;
     }

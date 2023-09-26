@@ -227,7 +227,7 @@ public class FourPointBezier {
         return lookupTable.keySet().stream().max(Double::compareTo).get();
     }
 
-    private final boolean verbose = true;
+    private final boolean verbose = false;
 
     /***
      * Generates the Bézier curve to be evenly spaced
@@ -279,8 +279,8 @@ public class FourPointBezier {
      * @param min_distance the minimum distance between each point
      * @param max_distance the maximum distance between each point
      */
-    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance) {
-        generateByPID(t_step, controller, min_distance, max_distance, 0);
+    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration) {
+        generateByPID(t_step, controller, min_distance, max_distance, max_acceleration, 0);
     }
 
     /**
@@ -291,7 +291,7 @@ public class FourPointBezier {
      * @param max_distance the maximum distance between each point
      * @param total_distance the total distance of the curve. If 0, it will use the length of this Bézier curve alone.
      * */
-    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double total_distance) {
+    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration, double total_distance) {
         if (!controller.initialized()) {
             controller.setSetpoint(0);
             if (verbose) {
@@ -299,48 +299,66 @@ public class FourPointBezier {
             }
         }
 
-        //Adding support so the curve can be generated with multiple curves.
+        //Adding support so the curve can be generated with multiple curves
         double beginningDistance = controller.getSetpoint();
 
+        //generate the lookup table
         HashMap<Double, Translation2d> lookupTable = generateLookupTable(t_step);
 
-        double maxDistance = total_distance < 1 ? length() : total_distance;
+        //get the max distance of the curve which is the length of the curve, unless total distance is defined, then use the
+        double maxDistance = total_distance == 0 ? length() : total_distance;
 
+        //clear the current list of points
         m_points.clear();
 
         if (verbose) {
             System.out.println("generated lookup table, length: " + maxDistance + " cm");
         }
 
+        //get the raw distances of the points from the lookup table.
         Double[] rawDistances = lookupTable.keySet().toArray(new Double[0]);
 
+        //convert the raw distances to a list
         List<Double> sortedDistances = Arrays.asList(rawDistances);
 
+        //sort distances since the double[] is not sorted
         Collections.sort(sortedDistances);
 
-        for (int i = 0; i < sortedDistances.size(); i++) {
-            System.out.println("Lookup table dist: " + sortedDistances.get(i));
-        }
-
+        //set the last distance to 0, used for calculating the distance between points
         double lastDistance = 0;
+
+        //set the last velocity to 0, used for calculating if acceleration is too high
+        double lastVelocity = 0;
+
+        //last point, set it to the first point in the curve.
         Translation2d lastPoint = new Translation2d(b_x(0), b_y(0));
 
         double d = beginningDistance;
 
-        while (d < maxDistance) {
+        do {
             double newCalc = controller.calculate(d, maxDistance);
 
-            if (newCalc / AutonomousConstants.getDeltaTime() > max_distance) {
+            if (verbose) System.out.println("Calculated PID: " + newCalc + " cm for " + d + " to " + maxDistance);
+
+            if (newCalc > max_distance) {
                 newCalc = max_distance;
-                System.out.println("PID too high, setting to max velocity");
-            } else if (newCalc / AutonomousConstants.getDeltaTime() < min_distance) {
+                if (newCalc + d > maxDistance) {
+                    newCalc = maxDistance - d;
+                }
+                if (verbose) System.out.println("PID too high, setting to max velocity");
+            } else if (newCalc < min_distance) {
                 newCalc = min_distance;
-                System.out.println("PID too low, setting to min velocity");
+                if (verbose) System.out.println("PID too low, setting to min velocity");
+            }
+
+            if (Math.abs(newCalc - lastVelocity) > max_acceleration) {
+                newCalc = lastVelocity + (Math.signum(newCalc - lastVelocity) * max_acceleration);
             }
 
             d += newCalc;
+            lastVelocity = newCalc;
 
-            System.out.println("Moving " + newCalc + "cm, currently at: " + d);
+            if (verbose) System.out.println("Moving " + newCalc + "cm, currently at: " + d);
 
             for (int i = 0; i < sortedDistances.size(); i++) {
                 double p_dist = sortedDistances.get(i);
@@ -370,7 +388,7 @@ public class FourPointBezier {
             }
 
             lastDistance = d;
-        }
+        } while (d < maxDistance);
     }
 
 }
