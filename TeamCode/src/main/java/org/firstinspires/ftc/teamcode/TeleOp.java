@@ -11,6 +11,7 @@ import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
@@ -23,6 +24,10 @@ public class TeleOp extends OpMode {
 
     public static HardwareMap getHardwareMap() {
         return instance.hardwareMap;
+    }
+
+    public static Telemetry getTelemetry() {
+        return instance.telemetry;
     }
 
     private ElapsedTime m_runtime = new ElapsedTime();

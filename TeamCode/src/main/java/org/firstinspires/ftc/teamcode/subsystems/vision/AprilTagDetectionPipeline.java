@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 class AprilTagDetectionPipeline extends OpenCvPipeline
 {
+
+    Pose pose;
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
@@ -46,6 +48,11 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
+
+    public String getDistance() {
+        return pose.tvec.dump();
+
+    }
 
     public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
     {
