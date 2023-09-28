@@ -195,7 +195,7 @@ class ConstructedBezierPath {
 
         for (let waypoint of this.getWaypoints(WaypointType.Hard)) {
             ctx.fillStyle = this.ui.selectedWaypoint === waypoint ? "#d3d3d3" : "#ffffff";
-            if (this.ui.lastSelectedWaypoint === waypoint && this.ui.selectedWaypoint != this) {
+            if (this.ui.lastSelectedWaypoint === waypoint && this.ui.selectedWaypoint !== waypoint) {
                 ctx.fillStyle = "#9a6cbd";
             }
             ctx.beginPath();
@@ -208,7 +208,7 @@ class ConstructedBezierPath {
             );
             ctx.fill();
 
-            if (mouseInfo.down && !this.ui.rotating && this.ui.selectedWaypoint === null && waypoint.AsTranslation2dUnit().toTranslation2d(INCHES_PER_PIXEL).distance(new Translation2d(mouseInfo.x, mouseInfo.y)) < r) {
+            if (mouseInfo.down && !this.ui.rotating && this.ui.selectedWaypoint === null && waypoint.AsTranslation2dUnit().toTranslation2d(INCHES_PER_PIXEL).distance(new Translation2d(mouseInfo.x, mouseInfo.y)) < r * 2) {
                 this.ui.selectedWaypoint = waypoint;
                 this.ui.lastSelectedWaypoint = null;
                 this.updateDOMMenu();
@@ -264,7 +264,9 @@ class ConstructedBezierPath {
                     );
                     ctx.stroke();
 
-                    if (this.ui.selectedWaypoint === null && !this.ui.rotating && mouseInfo.down && softWaypoint.AsTranslation2dUnit().toTranslation2d(INCHES_PER_PIXEL).distance(new Translation2d(mouseInfo.x, mouseInfo.y)) < r) {
+                    const distToMouse = softWaypoint.AsTranslation2dUnit().toTranslation2d(INCHES_PER_PIXEL).distance(new Translation2d(mouseInfo.x, mouseInfo.y));
+
+                    if (this.ui.selectedWaypoint === null && !this.ui.rotating && mouseInfo.down && distToMouse < r * 2) {
                         this.ui.selectedWaypoint = softWaypoint;
                         this.ui.lastSelectedWaypoint = waypoint;
                         this.updateDOMMenu();

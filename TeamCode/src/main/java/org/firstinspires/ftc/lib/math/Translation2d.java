@@ -63,7 +63,7 @@ public class Translation2d {
 
     @Override
     public String toString() {
-        return "(" + m_x + ", " + m_y + ") [" + attributes.toString() + "]";
+        return "(" + m_x + "," + m_y + ")" + (!attributes.keySet().isEmpty() ? " [" + attributes.toString() + "]" : "");
     }
 
 }

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.lib.pathing;
 
-import org.firstinspires.ftc.lib.math.PIDController;
-import org.firstinspires.ftc.lib.math.Translation2d;
-import org.firstinspires.ftc.lib.math.Unit;
+import org.firstinspires.ftc.lib.math.*;
 
 import java.util.*;
 
@@ -88,7 +86,10 @@ public class FourPointBezier {
      */
     private double b_dx(double t) {
         //p(-3t^2 + 6t - 3) + 3p(3t^2 - 4t + 1) + 3p(-3t^2 + 2t) + p(3t^2)
-        return m_start.getX()*(-3*pow(t, 2) + 6*t - 3) + 3* m_control1.getX()*(3*pow(t, 2) - 4*t + 1) + 3* m_control2.getX()*(-3*pow(t, 2) + 2*t) + m_end.getX()*(3*pow(t, 2));
+        return  m_start.getX()*(-(3*pow(t, 2)) + (6*t) - 3)
+                + 3* m_control1.getX()*((3*pow(t, 2)) - (4*t) + 1)
+                + 3* m_control2.getX()*(-(3*pow(t, 2)) + (2*t))
+                + m_end.getX()*(3*pow(t, 2));
     }
 
     /**
@@ -97,7 +98,10 @@ public class FourPointBezier {
      * @return the first derivative of the Bézier curve's y-points at t
      */
     private double b_dy(double t) {
-        return m_start.getY()*(-3*pow(t, 2) + 6*t - 3) + 3* m_control1.getY()*(3*pow(t, 2) - 4*t + 1) + 3* m_control2.getY()*(-3*pow(t, 2) + 2*t) + m_end.getY()*(3*pow(t, 2));
+        return m_start.getY()*(-(3*pow(t, 2)) + (6*t) - 3)
+                + 3* m_control1.getY()*((3*pow(t, 2)) - (4*t) + 1)
+                + 3* m_control2.getY()*(-(3*pow(t, 2)) + (2*t))
+                + m_end.getY()*(3*pow(t, 2));
     }
 
     /**
@@ -107,7 +111,10 @@ public class FourPointBezier {
      */
     private double b_dx2(double t) {
         //p(-6t + 6) + 3p(6t - 4) + 3p(-6t + 2) + p(6t)
-        return m_start.getX()*(-6*t + 6) + 3*m_control1.getX()*(6*t - 4) + 3* m_control2.getX()*(-6*t + 2) + m_end.getX()*(6*t);
+        return m_start.getX()*(-(6*t) + 6)
+                + 3*m_control1.getX()*((6*t) - 4)
+                + 3* m_control2.getX()*(-(6*t) + 2)
+                + m_end.getX()*(6*t);
     }
 
     /**
@@ -116,7 +123,10 @@ public class FourPointBezier {
      * @return the second derivative of the Bézier curve's y-points at t
      */
     private double b_d2y(double t) {
-        return m_start.getY()*(-6*t + 6) + 3*m_control1.getY()*(6*t - 4) + 3* m_control2.getY()*(-6*t + 2) + m_end.getY()*(6*t);
+        return m_start.getY()*(-(6*t) + 6)
+                + 3*m_control1.getY()*((6*t) - 4)
+                + 3* m_control2.getY()*(-(6*t) + 2)
+                + m_end.getY()*(6*t);
     }
 
     /**

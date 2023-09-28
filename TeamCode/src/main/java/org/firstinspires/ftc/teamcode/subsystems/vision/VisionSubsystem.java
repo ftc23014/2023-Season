@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
 
+import org.firstinspires.ftc.lib.simulation.Simulation;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.TeleOp;
@@ -20,11 +21,22 @@ public class VisionSubsystem extends Subsystem {
     double cy = 826.4908289614423;
     double tagsize = 0.0865;
 
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-    AprilTagDetectionPipeline AprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    public VisionSubsystem() {
+        super();
+
+        if (Simulation.inSimulation()) return;
+
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    }
 
     @Override
     public void init() {
+        if (Simulation.inSimulation()) {
+            System.out.println("Not initializing vision subsystem in simulation!");
+            return;
+        }
 
         // UNITS ARE METERS
 
@@ -33,7 +45,7 @@ public class VisionSubsystem extends Subsystem {
 
         int cameraMonitorViewId = getHardwareMap().appContext.getResources().getIdentifier("cameraMonitorViewId", "id", getHardwareMap().appContext.getPackageName());
         simple = OpenCvCameraFactory.getInstance().createWebcam(getHardwareMap().get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        simple.setPipeline(AprilTagDetectionPipeline);
+        simple.setPipeline(aprilTagDetectionPipeline);
 
         simple.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -68,7 +80,7 @@ public class VisionSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-        ArrayList<AprilTagDetection> detections = AprilTagDetectionPipeline.getDetectionsUpdate();
+        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
         if (detections != null) {
             if (detections.size() == 0) {
                 TeleOp.getTelemetry().addLine("No AprilTags detected!");

@@ -35,12 +35,14 @@ public class TeleOp extends OpMode {
 
     private boolean m_teleOpEnabled = false;
 
-    private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
+    private VisionSubsystem m_visionSubsystem;
     private MotorTestSubsystem m_motorTestSubsystem = new MotorTestSubsystem();
 
     @Override
     public void init() {
         instance = this;
+
+        m_visionSubsystem =  new VisionSubsystem();
 
         /* Initialize the log writer and replay manager first. */
 
