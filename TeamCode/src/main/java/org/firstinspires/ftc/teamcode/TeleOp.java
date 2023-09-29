@@ -7,11 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
@@ -36,7 +38,8 @@ public class TeleOp extends OpMode {
     private boolean m_teleOpEnabled = false;
 
     private VisionSubsystem m_visionSubsystem;
-    private MotorTestSubsystem m_motorTestSubsystem = new MotorTestSubsystem();
+    private MotorTestSubsystem m_motorTestSubsystem; //= new MotorTestSubsystem();
+    private LEDSubsystem m_ledSubsystem = new LEDSubsystem();
 
     @Override
     public void init() {
@@ -44,14 +47,7 @@ public class TeleOp extends OpMode {
 
         m_visionSubsystem =  new VisionSubsystem();
 
-        /* Initialize the log writer and replay manager first. */
-
-        //This will make all System.out.println() calls go to the log file as well as the console.
-        ReplayManager.captureConsoleToLog();
-        // Set the log writer to a new FileWriter, which will write the data to a file.
-        ReplayManager.setWriter(new NoLog());
-        // Initialize the replay manager, which will handle the logging of the data.
-        ReplayManager.init();
+        Robot.init();
 
         Subsystems.onInit();
 
@@ -70,7 +66,6 @@ public class TeleOp extends OpMode {
     public void start() {
         // -- ENABLE --
         m_teleOpEnabled = true;
-
 
     }
 

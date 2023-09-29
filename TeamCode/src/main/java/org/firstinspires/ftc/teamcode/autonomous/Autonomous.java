@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
 @Disabled
@@ -55,7 +56,7 @@ public class Autonomous extends OpMode {
 
     @Override
     public void init() {
-
+        Robot.init();
     }
 
     @Override
