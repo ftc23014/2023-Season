@@ -4,8 +4,12 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.lib.pathing.Trajectory;
+import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.teamcode.Robot;
+
+import java.io.File;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
 @Disabled
@@ -46,6 +50,17 @@ public class Autonomous extends OpMode {
         BACKDROP_AUTONOMOUS;
     }
 
+    public enum PathSelectionFlags {
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE_A,
+        FIVE_B,
+        FIVE_C,
+        SIX
+    }
+
 
     private AutonomousMode m_autonomousMode;
     private boolean m_autonomousEnabled;
@@ -57,6 +72,8 @@ public class Autonomous extends OpMode {
     @Override
     public void init() {
         Robot.init();
+
+        BezierSegment[] one = BezierSegment.loadFromFile(new File(""));
     }
 
     @Override

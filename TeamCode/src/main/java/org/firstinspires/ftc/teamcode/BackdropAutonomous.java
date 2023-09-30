@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="backdrop-side-auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="backdrop side auto")
 public class BackdropAutonomous extends OpMode {
 
     /**

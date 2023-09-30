@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="pickup-autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="pickup autonomous")
 public class PickupAutonomous extends OpMode  {
     @Override
     public void init() {

@@ -31,4 +31,23 @@ public class Waypoint {
     public double getY() {
         return m_position.getY();
     }
+
+    public Rotation2d getHeading() {
+        return m_rotation;
+    }
+
+    public Type getType() {
+        return m_type;
+    }
+
+    public boolean equals(Waypoint other) {
+        if (other.getType() != m_type) return false;
+
+        if (other.getPosition().getX() != m_position.getX()) return false;
+        if (other.getPosition().getY() != m_position.getY()) return false;
+
+        if (other.getHeading().getDegrees() != m_rotation.getDegrees()) return false;
+
+        return true;
+    }
 }
