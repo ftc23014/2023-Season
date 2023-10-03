@@ -1,20 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.lib.field.Field;
-import org.firstinspires.ftc.lib.replay.ReplayManager;
-import org.firstinspires.ftc.lib.replay.log.writers.FileWriter;
-import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
+
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.vision.OLD_VisionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")

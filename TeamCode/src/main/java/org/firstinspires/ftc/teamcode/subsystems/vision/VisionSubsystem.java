@@ -1,106 +1,102 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
-
-import org.firstinspires.ftc.lib.simulation.Simulation;
 import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.TeleOp;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class VisionSubsystem extends Subsystem {
-    OpenCvWebcam simple;
-    double fx = 3298.7389543652603;
-    double fy = 3265.0187042219723;
-    double cx = 1165.7536942923;
-    double cy = 826.4908289614423;
-    double tagsize = 0.0865;
 
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    private AprilTagProcessor aprilTag;
 
-    public VisionSubsystem() {
-        super();
+    /**
+     * The variable to store our instance of the TensorFlow Object Detection processor.
+     */
+    private TfodProcessor tfod;
 
-        if (Simulation.inSimulation()) return;
-
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-    }
-
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal myVisionPortal;
     @Override
     public void init() {
-        if (Simulation.inSimulation()) {
-            System.out.println("Not initializing vision subsystem in simulation!");
-            return;
-        }
+        aprilTag = new AprilTagProcessor.Builder()
+                .build();
 
-        // UNITS ARE METERS
+        // -----------------------------------------------------------------------------------------
+        // TFOD Configuration
+        // -----------------------------------------------------------------------------------------
 
+        tfod = new TfodProcessor.Builder()
+                .build();
 
-        // UNITS ARE METERS
+        // -----------------------------------------------------------------------------------------
+        // Camera Configuration
+        // -----------------------------------------------------------------------------------------
 
-        int cameraMonitorViewId = getHardwareMap().appContext.getResources().getIdentifier("cameraMonitorViewId", "id", getHardwareMap().appContext.getPackageName());
-        simple = OpenCvCameraFactory.getInstance().createWebcam(getHardwareMap().get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        simple.setPipeline(aprilTagDetectionPipeline);
+        
+        myVisionPortal = new VisionPortal.Builder()
+                .setCamera(getHardwareMap().get(WebcamName.class, "Webcam 1"))
+                .addProcessors(tfod, aprilTag)
+                .build();
 
-        simple.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                /*
-                 * Tell the camera to start streaming images to us! Note that you must make sure
-                 * the resolution you specify is supported by the camera. If it is not, an exception
-                 * will be thrown.
-                 *
-                 * Also, we specify the rotation that the camera is used in. This is so that the image
-                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
-                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
-                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
-                 * away from the user.
-                 */
-                simple.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-                TeleOp.getTelemetry().addData("Camera Error", "Could not open camera. ErrorCode: " + errorCode);
-                TeleOp.getTelemetry().update();
-            }
-        });
     }
 
     @Override
     public void periodic() {
-        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
-        if (detections != null) {
-            if (detections.size() == 0) {
-                TeleOp.getTelemetry().addLine("No AprilTags detected!");
-            } else {
-                for (AprilTagDetection detection : detections) {
-                    TeleOp.getTelemetry().addLine(String.format("Translation X: %.2f", detection.pose.x));
-                    TeleOp.getTelemetry().addLine(String.format("Translation Y: %.2f", detection.pose.y));
-                    TeleOp.getTelemetry().addLine(String.format("Translation Z: %.2f", detection.pose.z));
-                }
-            }
-        }
-
-        TeleOp.getTelemetry().update();
-
+        telemetryAprilTag();
+        telemetryTfod();
     }
 
     @Override
     public void onDisable() {
 
     }
+
+    private void telemetryAprilTag() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        TeleOp.getTelemetry().addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                TeleOp.getTelemetry().addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                TeleOp.getTelemetry().addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                TeleOp.getTelemetry().addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                TeleOp.getTelemetry().addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            } else {
+                TeleOp.getTelemetry().addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                TeleOp.getTelemetry().addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }   // end for() loop
+
+    }   // end method TeleOp.getTelemetry()AprilTag()
+
+    /**
+     * Add TeleOp.getTelemetry() about TensorFlow Object Detection (TFOD) recognitions.
+     */
+    private void telemetryTfod() {
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        TeleOp.getTelemetry().addData("# Objects Detected", currentRecognitions.size());
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            TeleOp.getTelemetry().addData(""," ");
+            TeleOp.getTelemetry().addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            TeleOp.getTelemetry().addData("- Position", "%.0f / %.0f", x, y);
+            TeleOp.getTelemetry().addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }   // end for() loop
+
+    }   // end method TeleOp.getTelemetry()Tfod()
+    
 }
-
-
