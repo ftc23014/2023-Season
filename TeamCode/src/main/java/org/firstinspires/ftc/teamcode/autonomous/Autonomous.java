@@ -4,9 +4,17 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.lib.auto.AutonomousConstants;
+import org.firstinspires.ftc.lib.auto.PlannedAuto;
+import org.firstinspires.ftc.lib.math.PIDController;
+import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.Trajectory;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
+import org.firstinspires.ftc.lib.systems.commands.ParallelCommand;
+import org.firstinspires.ftc.lib.systems.commands.SequentialCommand;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 
 import java.io.File;
@@ -69,11 +77,45 @@ public class Autonomous extends OpMode {
         m_autonomousMode = autoMode;
     }
 
+    private PlannedAuto auto;
+
     @Override
     public void init() {
         Robot.init();
 
         BezierSegment[] one = BezierSegment.loadFromFile(new File(""));
+
+        generateAuto();
+    }
+
+    public void generateAuto() {
+        AutonomousConstants constants = new AutonomousConstants(
+                new Unit(1, Unit.Type.Meters),
+                new Unit(0.5, Unit.Type.Meters),
+                12,
+                new PIDController(0.1, 0.001, 0.05)
+        );
+
+        auto = new PlannedAuto(
+            constants,
+            new InstantCommand(() -> {
+                telemetry().addLine("Autonomous Loaded!");
+            }),
+            new ParallelCommand(
+                new InstantCommand(() -> {
+                    telemetry().addLine("Autonomous Sequential 1!");
+                }),
+                new InstantCommand(() -> {
+                    telemetry().addLine("Autonomous Sequential 2!");
+                })
+            ),
+            new InstantCommand(() -> {
+                telemetry().update();
+            })
+        );
+
+        telemetry().addLine("Autonomous Generated!");
+        telemetry().update();
     }
 
     @Override
@@ -82,12 +124,16 @@ public class Autonomous extends OpMode {
 
         // -- ENABLE --
         m_autonomousEnabled = true;
+
+        auto.start();
     }
 
     @Override
     public void loop() {
         //This is called every loop of the autonomous.
         Subsystems.periodic();
+
+        auto.loop();
     }
 
     @Override
@@ -96,5 +142,9 @@ public class Autonomous extends OpMode {
         m_autonomousEnabled = false;
 
         Subsystems.onDisable();
+    }
+
+    private Telemetry telemetry() {
+        return k_autoReferral.telemetry;
     }
 }

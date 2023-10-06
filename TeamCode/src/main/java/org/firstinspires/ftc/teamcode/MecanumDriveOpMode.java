@@ -11,7 +11,7 @@ public class MecanumDriveOpMode extends OpMode {
 
     @Override
     public void init() {
-        mecanumDriveSubsystem = new MecanumDriveSubsystem(hardwareMap);
+        mecanumDriveSubsystem = new MecanumDriveSubsystem();
     }
 
     @Override
@@ -22,6 +22,6 @@ public class MecanumDriveOpMode extends OpMode {
         double rotate = gamepad1.right_stick_x;
 
         // Drive the robot using the gamepad inputs
-        mecanumDriveSubsystem.driveMotors(drive, strafe, rotate);
+        //mecanumDriveSubsystem.driveMotors(drive, strafe, rotate);
     }
 }

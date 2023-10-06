@@ -20,6 +20,8 @@ public class SequentialCommand extends Command {
 
     @Override
     public void execute() {
+        if (currentCommand > commands.size()) return;
+
         commands.get(currentCommand).execute();
 
         if (commands.get(currentCommand).hasFinished()) {

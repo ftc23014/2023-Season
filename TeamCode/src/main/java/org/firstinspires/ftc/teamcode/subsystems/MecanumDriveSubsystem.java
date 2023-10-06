@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.lib.systems.commands.Command;
+import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 
 public class MecanumDriveSubsystem extends Subsystem {
@@ -15,21 +18,32 @@ public class MecanumDriveSubsystem extends Subsystem {
 
     @Override
     public void init() {
-
-    }
-
-    public MecanumDriveSubsystem(HardwareMap hardwareMap) {
         // init dc motors
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
+        frontLeft = getHardwareMap().dcMotor.get("frontLeft");
+        frontRight = getHardwareMap().dcMotor.get("frontRight");
+        backLeft = getHardwareMap().dcMotor.get("backLeft");
+        backRight = getHardwareMap().dcMotor.get("backRight");
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void driveMotors(double drive, double strafe, double rotate) {
+    public Command drive(Translation2d power, double rotate) {
+        return new InstantCommand(() -> {
+            driveMotors(power, rotate);
+        });
+    }
+
+    public Command stop() {
+        return new InstantCommand(() -> {
+            stop();
+        });
+    }
+
+    public void driveMotors(Translation2d power, double rotate) {
+        double drive = power.getY();
+        double strafe = power.getX();
+
         double frontLeftPower = drive + strafe + rotate;
         double frontRightPower = drive - strafe - rotate;
         double backLeftPower = drive - strafe + rotate;
@@ -46,7 +60,7 @@ public class MecanumDriveSubsystem extends Subsystem {
         stop(); // stop all motors
     }
 
-    public void stop() {
+    public void stop_motors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);

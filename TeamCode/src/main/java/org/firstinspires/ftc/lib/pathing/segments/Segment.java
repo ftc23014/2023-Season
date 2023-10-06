@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.lib.pathing.segments;
 
 import org.firstinspires.ftc.lib.math.Translation2d;
-import org.firstinspires.ftc.lib.pathing.AutonomousConstants;
+import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
 
 import java.util.ArrayList;

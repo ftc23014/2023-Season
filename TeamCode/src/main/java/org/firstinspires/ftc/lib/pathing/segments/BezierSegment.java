@@ -8,9 +8,8 @@ import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
-import org.firstinspires.ftc.lib.pathing.AutonomousConstants;
+import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.pathing.FourPointBezier;
-import org.firstinspires.ftc.lib.pathing.Trajectory;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
 
 import java.io.File;
@@ -157,7 +156,7 @@ public class BezierSegment extends Segment {
     }
 
 
-    private FourPointBezier m_bezier;
+    private final FourPointBezier m_bezier;
     private PIDController m_controller;
     private AutonomousConstants m_constants;
 

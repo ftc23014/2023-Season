@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.lib.pathing;
+package org.firstinspires.ftc.lib.auto;
 
 import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Unit;
