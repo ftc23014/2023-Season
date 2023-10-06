@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.auto.PlannedAuto;
 import org.firstinspires.ftc.lib.math.PIDController;
+import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.Trajectory;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
@@ -14,8 +15,10 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.lib.systems.commands.ParallelCommand;
 import org.firstinspires.ftc.lib.systems.commands.SequentialCommand;
+import org.firstinspires.ftc.lib.systems.commands.WaitCommand;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 
 import java.io.File;
 
@@ -69,6 +72,7 @@ public class Autonomous extends OpMode {
         SIX
     }
 
+    private MecanumDriveSubsystem m_driveSubsystem;
 
     private AutonomousMode m_autonomousMode;
     private boolean m_autonomousEnabled;
@@ -81,9 +85,12 @@ public class Autonomous extends OpMode {
 
     @Override
     public void init() {
-        Robot.init();
+        //BezierSegment[] one = BezierSegment.loadFromFile(new File(""));
 
-        BezierSegment[] one = BezierSegment.loadFromFile(new File(""));
+        m_driveSubsystem = new MecanumDriveSubsystem();
+
+        Robot.init();
+        Subsystems.onInit();
 
         generateAuto();
     }
@@ -111,7 +118,11 @@ public class Autonomous extends OpMode {
             ),
             new InstantCommand(() -> {
                 telemetry().update();
-            })
+            }),
+            new WaitCommand(5),
+            m_driveSubsystem.drive(new Translation2d(0, 0.5), 0),
+            new WaitCommand(3),
+            m_driveSubsystem.stop()
         );
 
         telemetry().addLine("Autonomous Generated!");

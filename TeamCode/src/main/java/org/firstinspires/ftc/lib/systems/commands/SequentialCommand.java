@@ -15,12 +15,14 @@ public class SequentialCommand extends Command {
 
     @Override
     public void init() {
-        commands.get(currentCommand).init();
+        if (currentCommand < commands.size()) {
+            commands.get(currentCommand).init();
+        }
     }
 
     @Override
     public void execute() {
-        if (currentCommand > commands.size()) return;
+        if (currentCommand >= commands.size()) return;
 
         commands.get(currentCommand).execute();
 
