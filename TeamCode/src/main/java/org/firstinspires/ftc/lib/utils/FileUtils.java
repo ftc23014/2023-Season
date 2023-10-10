@@ -31,13 +31,17 @@ public class FileUtils {
     }
 
     public static void write(Path path, String contents, boolean append) {
-
         File file = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             file = path.toFile();
         } else {
             throw new RuntimeException("This method is only supported on Android Oreo and above!");
         }
+
+        write(file, contents, append);
+    }
+
+    public static void write(File file, String contents, boolean append) {
 
         if (!file.exists()) {
             try {

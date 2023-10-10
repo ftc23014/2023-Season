@@ -1,0 +1,58 @@
+
+@font-face {
+    font-family: "system-ui";
+    font-style: normal;
+    font-weight: 300;
+    src: local("Menlo-Regular");
+}
+
+body {
+    background-color: rgb(30,30,30);
+    color: rgb(241, 241, 241);
+    font-family: "system-ui";
+}
+
+.input {
+    /* move to bottom of page */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+/* make it look nice */
+    background-color: rgb(30,30,30);
+    color: rgb(241, 241, 241);
+    font-family: "system-ui";
+    font-size: 1.5em;
+    border: none;
+    outline: none;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
+
+.inp-cont {
+    display: flex;
+}
+
+.inp-cont input {
+    background-color: rgb(30,30,30);
+    color: rgb(241, 241, 241);
+    font-family: "system-ui";
+    font-size: 1em;
+    border: none;
+    outline: none;
+    padding: 0.5em;
+    box-sizing: border-box;
+
+    width: 100%;
+}
+
+label {
+    vertical-align: baseline;
+    font-size: 1em;
+    padding-top: 12px;
+}
+
+.output {
+    height: 90vh;
+    overflow-y: scroll;
+}

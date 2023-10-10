@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.lib.server;
 
 import org.firstinspires.ftc.lib.server.api.ApiHandler;
+import org.firstinspires.ftc.lib.server.api.CmdHandler;
 import org.firstinspires.ftc.lib.server.api.PathApi;
 import org.firstinspires.ftc.lib.server.util.FileHost;
 import org.firstinspires.ftc.lib.server.util.HTTPServer;
@@ -39,7 +40,15 @@ public class Server {
             }
         });
 
+        m_server.addRoute(new FileHost("public/cmd/cmd.html") {
+            @Override
+            public String getRoute() {
+                return "/cmd";
+            }
+        });
+
         m_server.addRoute(new ApiHandler());
         m_server.addRoute(new PathApi());
+        m_server.addRoute(new CmdHandler());
     }
 }

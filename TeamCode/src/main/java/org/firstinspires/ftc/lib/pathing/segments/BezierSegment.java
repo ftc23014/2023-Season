@@ -11,6 +11,7 @@ import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.pathing.FourPointBezier;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
+import org.firstinspires.ftc.lib.utils.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -122,18 +123,11 @@ public class BezierSegment extends Segment {
             lastSeg = seg;
         }
 
+        System.out.println(waypoints.size());
+
         obj.add("waypoints", waypointsToJSONList(waypoints.toArray(new Waypoint[0])));
 
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Files.write(file.toPath(), gson.toJson(obj).getBytes());
-            } else {
-                throw new RuntimeException("Unsupported Android version");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to write to file " + file.getName());
-        }
+        FileUtils.write(file, gson.toJson(obj), false);
     }
 
     public static JsonArray waypointsToJSONList(Waypoint ...points) {
@@ -162,6 +156,10 @@ public class BezierSegment extends Segment {
 
     public BezierSegment(FourPointBezier bezier) {
         m_bezier = bezier;
+    }
+
+    public BezierSegment(Waypoint start, Waypoint control1, Waypoint control2, Waypoint end) {
+        this(new FourPointBezier(start, control1, control2, end));
     }
 
     public BezierSegment(FourPointBezier bezier, PIDController controller) {

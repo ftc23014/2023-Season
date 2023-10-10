@@ -43,6 +43,10 @@ public class Simulation {
     private Simulation() {
         m_gameMode = GameMode.DISABLED;
 
+        if (instance == null) {
+            instance = this;
+        }
+
         new Server();
 
         Server.addRoute(new SimulationAPI());
