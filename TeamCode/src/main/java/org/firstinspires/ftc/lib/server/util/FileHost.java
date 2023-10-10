@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.lib.server.util;
 
 import fi.iki.elonen.NanoHTTPD;
+import org.firstinspires.ftc.lib.simulation.Simulation;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,6 +37,10 @@ public class FileHost extends Route {
     public String[] getFileData(String readFile) {
         //get file in class
         String fileContent = "";
+
+        if (!Simulation.inSimulation()) {
+            return new String[] { "404", "text/plain" };
+        }
 
         InputStream stream;
 

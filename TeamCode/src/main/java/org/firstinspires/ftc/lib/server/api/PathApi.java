@@ -6,13 +6,18 @@ import com.google.gson.JsonObject;
 import fi.iki.elonen.NanoHTTPD;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.pathing.FourPointBezier;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
+import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
+import org.firstinspires.ftc.lib.pathing.segments.Segment;
 import org.firstinspires.ftc.lib.server.util.Route;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,6 +95,35 @@ public class PathApi extends Route {
                 }
 
                 System.out.println("[::/api/paths/send] new path received with " + waypoint_list.size() + " waypoints");
+
+                ArrayList<BezierSegment> seg = new ArrayList<>();
+
+                for (int i = 0; i < waypoint_list.size(); i += 4) {
+                    if (i + 3 >= waypoint_list.size()) {
+                        break;
+                    }
+
+                    seg.add(new BezierSegment(
+                            waypoint_list.get(i),
+                            waypoint_list.get(i + 1),
+                            waypoint_list.get(i + 2),
+                            waypoint_list.get(i + 3)
+                    ));
+                }
+
+                String fileName = "new_traj_" + new Date().getTime() + ".json";
+
+                File file = new File(
+                        "TeamCode/src/main/res/raw/" + fileName
+                );
+
+                System.out.println(file.getAbsolutePath());
+
+                BezierSegment.saveSegmentsToFile(
+                        file, seg.toArray(new BezierSegment[0])
+                );
+
+                System.out.println("[::/api/paths/send] new path saved to " + fileName + " under the raw res folder.");
 
                 return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "text/plain", "200 OK");
             }

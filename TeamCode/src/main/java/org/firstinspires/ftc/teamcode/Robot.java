@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.replay.log.writers.NoLog;
+import org.firstinspires.ftc.lib.server.Server;
+import org.firstinspires.ftc.lib.simulation.Simulation;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 
 public class Robot {
@@ -15,6 +17,10 @@ public class Robot {
         hasInit = true;
 
         Field.init();
+
+        if (!Simulation.inSimulation()) {
+            new Server();
+        }
 
         /* Initialize the log writer and replay manager first. */
 

@@ -18,6 +18,7 @@ public class HTTPServer extends NanoHTTPD {
                 e.printStackTrace();
             }
         }
+
         return instance;
     }
 
@@ -25,9 +26,9 @@ public class HTTPServer extends NanoHTTPD {
     private ArrayList<Route> m_routes = new ArrayList<>();
 
     public HTTPServer() throws IOException {
-        super(8080);
+        super(8000);
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-        System.out.println("Web server running at http://localhost:8080/!");
+        System.out.println("Web server running at http://localhost:8000/!");
     }
 
     public void addRoute(Route route) {
@@ -39,11 +40,36 @@ public class HTTPServer extends NanoHTTPD {
         //get the URI requested by the client
         String uri = session.getUri().toLowerCase();
 
+        //check if preflight request
+        if (session.getMethod() == Method.OPTIONS) {
+            Response resp = NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", "{ \"OK\": \"OK\" }");
+            resp.addHeader("Access-Control-Allow-Origin", "*");
+            resp.addHeader("Access-Control-Allow-Headers", "*");
+            resp.addHeader("Access-Control-Allow-Methods", "*");
+            resp.addHeader("Access-Control-Allow-Credentials", "true");
+            resp.addHeader("Access-Control-Max-Age", "86400");
+            resp.addHeader("Access-Control-Expose-Headers", "*");
+            //set status to 200
+            return resp;
+        }
+
         HashMap<Double, Route> bestMatch = new HashMap<>();
 
         for (Route route : m_routes) {
             if (route.getRoute().equals(uri) && route.exactMatch()) {
-                return route.getResponse(session);
+                NanoHTTPD.Response resp = route.getResponse(session);
+                // Allow CORS
+
+                resp.addHeader("Access-Control-Allow-Origin", "*");
+                resp.addHeader("Access-Control-Allow-Headers", "*");
+                resp.addHeader("Access-Control-Allow-Methods", "*");
+                resp.addHeader("Access-Control-Allow-Credentials", "true");
+                resp.addHeader("Access-Control-Max-Age", "86400");
+                resp.addHeader("Access-Control-Expose-Headers", "*");
+
+                resp.setChunkedTransfer(true);
+
+                return resp;
             } else if (!route.exactMatch() && uri.startsWith(route.getRoute())) {
                 bestMatch.put(((double) route.getRoute().length()) / uri.length(), route);
             }
