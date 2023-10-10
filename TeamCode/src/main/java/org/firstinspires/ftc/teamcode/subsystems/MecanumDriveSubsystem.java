@@ -26,6 +26,8 @@ public class MecanumDriveSubsystem extends Subsystem {
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+
+        if (frontLeft == null) throw new RuntimeException("Issues,,");
     }
 
     public Command drive(Translation2d power, double rotate) {
@@ -54,6 +56,7 @@ public class MecanumDriveSubsystem extends Subsystem {
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
+
     }
     @Override
     public void onDisable() {

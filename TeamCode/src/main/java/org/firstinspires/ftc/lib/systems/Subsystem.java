@@ -40,6 +40,9 @@ public class Subsystem extends Replayable {
     }
 
     public static HardwareMap getHardwareMap() {
+        if (Subsystems.alternateHardwareMap != null)
+             return Subsystems.alternateHardwareMap;
+
         if (TeleOp.hasInstance() && TeleOp.getHardwareMap() != null) {
             return TeleOp.getHardwareMap();
         } else if (Autonomous.hasInstance() && Autonomous.getHardwareMap() != null) {
