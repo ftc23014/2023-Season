@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.lib.systems;
 
+import android.content.Context;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.replay.Replayable;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOp;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
@@ -47,6 +49,20 @@ public class Subsystem extends Replayable {
             return TeleOp.getHardwareMap();
         } else if (Autonomous.hasInstance() && Autonomous.getHardwareMap() != null) {
             return Autonomous.getHardwareMap();
+        } else {
+            return null;
+        }
+    }
+
+    public static Context getAppContext() {
+        return getHardwareMap().appContext;
+    }
+
+    public static Telemetry telemetry() {
+        if (TeleOp.hasInstance() && TeleOp.getTelemetry() != null) {
+            return TeleOp.getTelemetry();
+        } else if (Autonomous.hasInstance() && Autonomous.getTelemetry() != null) {
+            return Autonomous.getTelemetry();
         } else {
             return null;
         }

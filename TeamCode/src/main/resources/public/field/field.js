@@ -18,6 +18,11 @@ let mousePos = {
     down: false
 }
 
+let show = {
+    robot_positions: true,
+    control_points: true,
+}
+
 function draw() {
     const ctx = fieldCanvas;
 
@@ -46,6 +51,14 @@ document.addEventListener("mouseup", (e) => {
 
 fieldCanvasDOM.addEventListener("mouseleave", (e) => {
     mousePos.down = false;
+});
+
+document.addEventListener("keyup", (e) => {
+    if (e.key == "f") {
+        show.robot_positions = !show.robot_positions;
+    } else if (e.key == "g") {
+        show.control_points = !show.control_points;
+    }
 });
 
 currentPath.updateList();

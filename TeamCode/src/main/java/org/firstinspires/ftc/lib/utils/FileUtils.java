@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.lib.utils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,22 @@ public class FileUtils {
                 sb.append((char) i);
             }
             fr.close();
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static String read(InputStream stream) {
+        //Read string from file
+        try {
+            StringBuilder sb = new StringBuilder();
+            int i;
+            while ((i = stream.read()) != -1) {
+                sb.append((char) i);
+            }
+            stream.close();
             return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();

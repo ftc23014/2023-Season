@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.TeleOp;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
@@ -21,6 +22,8 @@ public class VisionSubsystem extends Subsystem {
      */
     private TfodProcessor tfod;
 
+    private BackboardDetectionPipeline backboardDetectionPipeline;
+
     /**
      * The variable to store our instance of the vision portal.
      */
@@ -28,25 +31,22 @@ public class VisionSubsystem extends Subsystem {
     @Override
     public void init() {
         aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagOutline(true)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setLensIntrinsics(3298.7389543652603, 3265.0187042219723, 1165.7536942923, 826.4908289614423)
                 .build();
-
-        // -----------------------------------------------------------------------------------------
-        // TFOD Configuration
-        // -----------------------------------------------------------------------------------------
 
         tfod = new TfodProcessor.Builder()
                 .build();
 
-        // -----------------------------------------------------------------------------------------
-        // Camera Configuration
-        // -----------------------------------------------------------------------------------------
-
+        backboardDetectionPipeline = new BackboardDetectionPipeline(BackboardDetectionPipeline.Strategy.Tower_Of_Babel);
         
         myVisionPortal = new VisionPortal.Builder()
                 .setCamera(getHardwareMap().get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod, aprilTag)
+                .addProcessors(tfod, aprilTag, backboardDetectionPipeline)
                 .build();
-
     }
 
     @Override

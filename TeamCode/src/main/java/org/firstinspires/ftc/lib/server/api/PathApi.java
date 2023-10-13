@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.lib.server.api;
 
+import android.content.res.AssetManager;
 import android.util.JsonReader;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import fi.iki.elonen.NanoHTTPD;
 import org.firstinspires.ftc.lib.math.Rotation2d;
@@ -11,11 +13,16 @@ import org.firstinspires.ftc.lib.pathing.Waypoint;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.pathing.segments.Segment;
 import org.firstinspires.ftc.lib.server.util.Route;
+import org.firstinspires.ftc.lib.simulation.Simulation;
+import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.lib.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,17 +105,26 @@ public class PathApi extends Route {
 
                 ArrayList<BezierSegment> seg = new ArrayList<>();
 
-                for (int i = 0; i < waypoint_list.size(); i += 4) {
-                    if (i + 3 >= waypoint_list.size()) {
-                        break;
-                    }
+                Waypoint[] construction = new Waypoint[4];
+                int constructionIndex = 0;
 
-                    seg.add(new BezierSegment(
-                            waypoint_list.get(i),
-                            waypoint_list.get(i + 1),
-                            waypoint_list.get(i + 2),
-                            waypoint_list.get(i + 3)
-                    ));
+                for (int i = 0; i < waypoint_list.size(); i++) {
+                    construction[constructionIndex] = waypoint_list.get(i);
+
+                    constructionIndex++;
+
+                    if (constructionIndex == 4) {
+                        seg.add(new BezierSegment(new FourPointBezier(
+                                construction[0],
+                                construction[1],
+                                construction[2],
+                                construction[3]
+                        )));
+
+                        constructionIndex = 1;
+                        construction = new Waypoint[4];
+                        construction[0] = waypoint_list.get(i);
+                    }
                 }
 
                 String fileName = "new_traj_" + new Date().getTime() + ".json";
@@ -117,7 +133,7 @@ public class PathApi extends Route {
                         "TeamCode/src/main/res/raw/" + fileName
                 );
 
-                System.out.println(file.getAbsolutePath());
+                System.out.println(file.getAbsolutePath() + " - " + seg.size());
 
                 BezierSegment.saveSegmentsToFile(
                         file, seg.toArray(new BezierSegment[0])
@@ -126,6 +142,92 @@ public class PathApi extends Route {
                 System.out.println("[::/api/paths/send] new path saved to " + fileName + " under the raw res folder.");
 
                 return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "text/plain", "200 OK");
+            }
+        } else if (session.getMethod() == NanoHTTPD.Method.GET) {
+            if (path.equalsIgnoreCase("/get")) {
+                if (Simulation.inSimulation()) {
+                    //readdir the raw res folder
+                    File file = new File(
+                            "TeamCode/src/main/res/raw/"
+                    );
+
+                    File[] files = file.listFiles();
+
+                    Gson gson = new Gson();
+
+                    JsonArray array = new JsonArray();
+
+                    for (File f : files) {
+                        if (f.getName().endsWith(".json")) {
+                            JsonObject object = new JsonObject();
+
+                            object.addProperty("name", f.getName());
+                            object.addProperty("path", f.getName().replace(".json", ""));
+
+                            array.add(object);
+                        }
+                    }
+
+                    return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", gson.toJson(array));
+                } else {
+                    AssetManager assets = Subsystem.getAppContext().getResources().getAssets();
+
+                    try {
+                        String[] files = assets.list("raw");
+
+                        Gson gson = new Gson();
+
+                        JsonArray array = new JsonArray();
+
+                        for (String f : files) {
+                            if (f.endsWith(".json")) {
+                                JsonObject object = new JsonObject();
+
+                                object.addProperty("name", f);
+                                object.addProperty("path", f.replace(".json", ""));
+
+                                array.add(object);
+                            }
+                        }
+
+                        return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", gson.toJson(array));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (path.startsWith("/get/")) {
+                String filename = path.substring("/get/".length());
+                //file is located in the raw res folder
+                if (Simulation.inSimulation()) {
+                    //can just read the file from the raw res folder
+                    File file = new File(
+                            "TeamCode/src/main/res/raw/" + filename + ".json"
+                    );
+
+                    if (file.exists()) {
+                        try {
+                            String content = FileUtils.read(file);
+
+                            return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", content);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, "text/plain", "404 NOT FOUND");
+                    }
+                } else {
+                    AssetManager assets = Subsystem.getAppContext().getResources().getAssets();
+
+                    try {
+                        InputStream stream = assets.open("raw/" + filename + ".json");
+
+                        String content = FileUtils.read(stream);
+
+                        return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", content);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 

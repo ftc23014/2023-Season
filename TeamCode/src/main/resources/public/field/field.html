@@ -92,7 +92,12 @@
         </div>
         <div class="canvas-container">
             <canvas id="field"></canvas>
-            <button onclick="sendCurrentPathToAPI()">Send Trajectory to Robot</button>
+            <div class="traj-buttons">
+                <button onclick="sendCurrentPathToAPI()">Send Trajectory to Robot</button>
+                <button onclick="savePathToLocalStorage()">Save Path</button>
+                <button onclick="loadLocalStoragePath()">Load Path (Locally)</button>
+                <button onclick="loadPathFromRobot()">Load Path (Robot)</button>
+            </div>
         </div>
         <div class="waypoint-editor">
             <div class="waypoint-list">

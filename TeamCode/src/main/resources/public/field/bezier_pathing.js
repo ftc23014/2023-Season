@@ -29,26 +29,29 @@ class ConstructedBezierPath {
 
             ctx.rotate(-angle);
 
-            ctx.rect(
-                -(ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2),
-                -(ROBOT_SIZE.h.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2),
-                ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
-                ROBOT_SIZE.h.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES)
-            );
-            ctx.stroke();
+            if (show.robot_positions) {
 
-            //counterclockwise, with facing the right being 0°
-            ctx.beginPath();
-            ctx.arc(
-                ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2,
-                0,
-                5,
-                0,
-                2 * Math.PI
-            );
+                ctx.rect(
+                    -(ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2),
+                    -(ROBOT_SIZE.h.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2),
+                    ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES),
+                    ROBOT_SIZE.h.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES)
+                );
+                ctx.stroke();
 
-            ctx.fillStyle = "#ffffff";
-            ctx.fill();
+                //counterclockwise, with facing the right being 0°
+                ctx.beginPath();
+                ctx.arc(
+                    ROBOT_SIZE.w.getcu(INCHES_PER_PIXEL, Unit.Type.INCHES) / 2,
+                    0,
+                    5,
+                    0,
+                    2 * Math.PI
+                );
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fill();
+            }
 
             ctx.restore();
 
@@ -235,7 +238,7 @@ class ConstructedBezierPath {
             }
 
             //((this.ui.selectedWaypoint === waypoint && mouseInfo.down) || this.ui.lastSelectedWaypoint === waypoint)
-            if (this.curves.length > 0) {
+            if (this.curves.length > 0 && show.control_points) {
                 const correspondingSoftWaypoints = this.getCorrespondingSoftWaypoints(ctx, i);
 
                 ctx.fillStyle = "white";
@@ -548,6 +551,112 @@ async function sendCurrentPathToAPI() {
         alert("Failed to send path to robot!");
         console.error(res.error);
     }
+}
+
+async function savePathToLocalStorage() {
+    let waypoints = [];
+
+    let i = 0;
+    for (let waypoint of currentPath.waypoints) {
+        const info = {
+            x: waypoint.x.get(Unit.Type.CENTIMETERS),
+            y: waypoint.y.get(Unit.Type.CENTIMETERS),
+            heading: waypoint.heading.get(Angle.Type.DEGREES),
+            type: waypoint.type === WaypointType.Hard ? 0 : 1
+        }
+
+        waypoints.push(info);
+
+        i++;
+    }
+
+    if (localStorage.getItem("paths")) {
+        const paths = JSON.parse(localStorage.getItem("paths"));
+
+        const name = prompt("What would you like to name this path?");
+
+        paths[name] = waypoints;
+
+        localStorage.setItem("paths", JSON.stringify(paths));
+    } else {
+        const name = prompt("What would you like to name this path?");
+
+        localStorage.setItem("paths", JSON.stringify({
+            [name]: waypoints
+        }));
+    }
+}
+
+function loadPathByWaypointList(waypoints) {
+    currentPath = new ConstructedBezierPath();
+
+    for (let waypoint of waypoints) {
+        currentPath.waypoints.push(new Waypoint(
+            new Unit(waypoint.x, Unit.Type.CENTIMETERS),
+            new Unit(waypoint.y, Unit.Type.CENTIMETERS),
+            waypoint.type
+        ));
+
+        currentPath.waypoints[currentPath.waypoints.length - 1].heading = new Angle(waypoint.heading, Angle.Type.DEGREES);
+    }
+    let last = [];
+    for (let i = 0; i < currentPath.waypoints.length; i++) {
+        last.push(currentPath.waypoints[i]);
+
+        if (last.length === 4) {
+            currentPath.curves.push(new BezierPath(...last));
+
+            last = [currentPath.waypoints[i]];
+        }
+    }
+
+    currentPath.updateList();
+}
+
+function loadLocalStoragePath() {
+    if (localStorage.getItem("paths")) {
+        const name = prompt("What path would you like to load?");
+
+        const paths = JSON.parse(localStorage.getItem("paths"));
+
+        if (paths[name]) {
+            loadPathByWaypointList(paths[name]);
+        }
+    } else {
+        alert("No paths saved!");
+    }
+}
+
+async function loadPathFromRobot() {
+
+    const req = await fetch("/api/paths/get", {
+        method: "GET"
+    });
+
+    const res = await req.json();
+
+    let paths = [];
+
+    for (let path_ of res) {
+        paths.push(path_.path);
+    }
+
+    let path = prompt("What path would you like to load?\n\n" + paths.join("\n"));
+
+    if (!paths.includes(path)) {
+        alert("Invalid path!");
+        return;
+    }
+
+    const req2 = await fetch("/api/paths/get/" + path, {
+        method: "GET",
+    });
+
+    const res2 = await req2.json();
+
+    const waypoints = res2.waypoints;
+
+    loadPathByWaypointList(waypoints);
 }
 
 

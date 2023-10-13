@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
+import android.content.Context;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,6 +35,10 @@ public class Autonomous extends OpMode {
 
     public static HardwareMap getHardwareMap() {
         return k_autoReferral.hardwareMap;
+    }
+
+    public static Telemetry getTelemetry() {
+        return k_autoReferral.telemetry;
     }
 
     public static Autonomous setAutonomous(AutonomousMode autoMode, OpMode referral) {

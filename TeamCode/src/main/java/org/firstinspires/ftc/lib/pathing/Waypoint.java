@@ -43,11 +43,15 @@ public class Waypoint {
     public boolean equals(Waypoint other) {
         if (other.getType() != m_type) return false;
 
-        if (other.getPosition().getX() != m_position.getX()) return false;
-        if (other.getPosition().getY() != m_position.getY()) return false;
-
-        if (other.getHeading().getDegrees() != m_rotation.getDegrees()) return false;
+        //close approximation, doesn't need to be exact, but pretty much equal. avoids double errors
+        if (Math.abs(other.getPosition().getX() - m_position.getX()) > 0.00001) return false;
+        if (Math.abs(other.getPosition().getY() - m_position.getY()) > 0.00001) return false;
+        if (Math.abs(other.getHeading().getDegrees() - m_rotation.getDegrees()) > 0.00001) return false;
 
         return true;
+    }
+
+    public String toString() {
+        return "Waypoint(" + m_position.getX() + ", " + m_position.getY() + ", " + m_rotation.getDegrees() + ", " + m_type + ")";
     }
 }

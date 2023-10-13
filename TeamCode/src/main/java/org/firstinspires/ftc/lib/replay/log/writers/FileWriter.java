@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.lib.replay.log.writers;
 
+import org.firstinspires.ftc.lib.simulation.Simulation;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,10 +11,11 @@ public class FileWriter extends LogWriter {
     private String[] args;
 
     public FileWriter() {
-        this.args = new String[] { "default" };
+        this.args = new String[] { "default", "Europe/Amsterdam" };
     }
 
     public FileWriter(String ...args) {
+        if (args.length != 2) throw new RuntimeException("Invalid arguments for FileWriter! [directory-name, timezone]");
         this.args = args;
     }
 
@@ -31,7 +34,7 @@ public class FileWriter extends LogWriter {
         filePath = args[0];
 
         if (args[0].equals("default")) {
-            String homeFolderPath = System.getProperty("user.home") + "/ftc-logs";
+            String homeFolderPath = System.getProperty("user.home") + (!Simulation.inSimulation() ? "/sdcard" : "") + "/ftcteamlogs";
             File homeFolder = new File(homeFolderPath);
 
             if (!homeFolder.exists()) {
@@ -40,7 +43,7 @@ public class FileWriter extends LogWriter {
 
             Calendar cal = Calendar.getInstance();
             //Set timezone to Amsterdam
-            cal.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
+            cal.setTimeZone(TimeZone.getTimeZone(args[1]));
             cal.setTime(new Date());
 
             filePath = homeFolderPath + "/" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.HOUR) + "-" + cal.get(Calendar.SECOND) + "." + extension;

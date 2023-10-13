@@ -102,7 +102,7 @@ public class BezierSegment extends Segment {
         int seg_index = 0;
         for (BezierSegment seg : segments) {
             if (lastSeg != null) {
-                if (lastSeg.connectedTo(seg)) {
+                if (!lastSeg.connectedTo(seg)) {
                     throw new RuntimeException("Segments are not connected!");
                 }
             }
@@ -122,8 +122,6 @@ public class BezierSegment extends Segment {
             seg_index++;
             lastSeg = seg;
         }
-
-        System.out.println(waypoints.size());
 
         obj.add("waypoints", waypointsToJSONList(waypoints.toArray(new Waypoint[0])));
 
@@ -189,7 +187,7 @@ public class BezierSegment extends Segment {
     }
 
     public boolean connectedTo(Segment seg) {
-        return seg.getWaypoints()[0].equals(getWaypoints()[getWaypoints().length - 1]);
+        return seg.getWaypoints()[0].equals(getWaypoints()[getWaypoints().length - 1]) || seg.getWaypoints()[seg.getWaypoints().length - 1].equals(getWaypoints()[0]);
     }
 
     @Override
@@ -215,8 +213,6 @@ public class BezierSegment extends Segment {
 
         JsonObject obj = new JsonObject();
 
-        JsonArray json_waypoints = new JsonArray();
-
         Waypoint[] waypoints = m_bezier.getWaypoints();
 
         obj.add("waypoints", waypointsToJSONList(waypoints));
@@ -229,7 +225,6 @@ public class BezierSegment extends Segment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to write to file " + file.getName());
         }
     }
 }
