@@ -4,6 +4,7 @@ import android.os.Build;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.sun.tools.javac.util.Pair;
 import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
@@ -11,13 +12,33 @@ import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.pathing.FourPointBezier;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
+import org.firstinspires.ftc.lib.simulation.Simulation;
+import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.utils.FileUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class BezierSegment extends Segment {
+    public static BezierSegment[] loadFromResources(int resource) {
+        String fileContents = "";
+
+        try {
+            InputStream stream = Subsystem.getAppContext().getResources().openRawResource(resource);
+
+            fileContents = FileUtils.read(stream);
+
+            return parseFromContents(fileContents);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to read file " + resource);
+        }
+
+        return new BezierSegment[0];
+    }
+
     public static BezierSegment[] loadFromFile(File file) {
         String fileContents = "";
 
@@ -28,6 +49,17 @@ public class BezierSegment extends Segment {
                 throw new RuntimeException("Unsupported Android version");
             }
 
+            return parseFromContents(fileContents);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to read file " + file.getName());
+        }
+
+        return new BezierSegment[0];
+    }
+
+    private static BezierSegment[] parseFromContents(String fileContents) {
+        try {
             Gson gson = new Gson();
 
             JsonObject obj = gson.fromJson(fileContents, JsonObject.class);
@@ -69,7 +101,7 @@ public class BezierSegment extends Segment {
             return segments.toArray(new BezierSegment[0]);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to read file " + file.getName());
+            System.out.println("Failed to read file!");
         }
 
         return new BezierSegment[0];
@@ -152,6 +184,7 @@ public class BezierSegment extends Segment {
     private PIDController m_controller;
     private AutonomousConstants m_constants;
 
+
     public BezierSegment(FourPointBezier bezier) {
         m_bezier = bezier;
     }
@@ -183,7 +216,22 @@ public class BezierSegment extends Segment {
 
     @Override
     public void generate() {
-        m_bezier.generateByPID(0.001, m_controller, 0.01, m_constants.getMaxSpeed().get(Unit.Type.Centimeters), m_constants.getMaxAcceleration().get(Unit.Type.Centimeters));
+        m_bezier.generateByPID(
+                0.001,
+                m_controller,
+                0.01,
+                m_constants.getMaxSpeed().get(Unit.Type.Centimeters),
+                m_constants.getMaxAcceleration().get(Unit.Type.Centimeters),
+                m_constants.getDeltaTime()
+        );
+    }
+
+    @Override
+    public Pair<Rotation2d, Rotation2d> angles() {
+        return new Pair(
+                this.m_bezier.getWaypoints()[0].getHeading(),
+                this.m_bezier.getWaypoints()[2].getHeading()
+        );
     }
 
     public boolean connectedTo(Segment seg) {

@@ -61,4 +61,24 @@ public class PIDController {
         return output;
     }
 
+    public double calculateWithDelta(double setpoint, double goal, double delta) {
+        if (!initialized()) {
+            return 0;
+        }
+
+        double error = goal - setpoint;
+
+        double integral = m_integral + (error * delta);
+
+        double derivative = setpoint - m_lastSetpoint;
+
+        double output = (m_kP * error) + (m_kI * integral) - (m_kD * derivative);
+
+        m_setpoint += output;
+        m_lastSetpoint = setpoint;
+
+        m_integral = integral;
+
+        return output;
+    }
 }

@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.odometry.motion.ExpectedRelativeMotion;
+import org.firstinspires.ftc.lib.replay.Replay;
+import org.firstinspires.ftc.lib.replay.log.Log;
+import org.firstinspires.ftc.lib.systems.DriveSubsystem;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,15 +14,23 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 
-public class MecanumDriveSubsystem extends Subsystem {
+public class MecanumDriveSubsystem extends DriveSubsystem {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
 
+    //[gyroscope declaration]
+
+    @Log(link="expected_motion_replay")
+    private ExpectedRelativeMotion motionProfile;
+
     @Override
     public void init() {
+        //init expected motion profile, used for debugging.
+        motionProfile = new ExpectedRelativeMotion(this, 4);
+
         // init dc motors
         frontLeft = getHardwareMap().dcMotor.get("frontLeft");
         frontRight = getHardwareMap().dcMotor.get("frontRight");
@@ -26,11 +39,13 @@ public class MecanumDriveSubsystem extends Subsystem {
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-
-        if (frontLeft == null) throw new RuntimeException("Issues,,");
     }
 
-    public Command drive(Translation2d power, double rotate) {
+    public void drive(Translation2d translation, Rotation2d rotationSpeed, boolean fieldRelative, boolean openLoop) {
+        motionProfile.setExpectedMotion(translation, rotationSpeed);
+    }
+
+    public Command driveCommand(Translation2d power, double rotate) {
         return new InstantCommand(() -> {
             driveMotors(power, rotate);
         });
@@ -68,5 +83,11 @@ public class MecanumDriveSubsystem extends Subsystem {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    @Replay(name="expected_motion_replay")
+    private void expectedMotionReplay(String json) {
+        //todo: fill in
+        return;
     }
 }

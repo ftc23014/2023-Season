@@ -7,4 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Log {
     String name() default "";
     String link() default "";
+
+    public static String NOLINK = "no_link";
 }

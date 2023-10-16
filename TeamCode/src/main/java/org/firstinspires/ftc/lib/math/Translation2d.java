@@ -8,6 +8,10 @@ public class Translation2d {
 
     private HashMap<String, Double> attributes = new HashMap<>();
 
+    public static Translation2d zero() {
+        return new Translation2d(0,0);
+    }
+
     public Translation2d(double x, double y) {
         this.m_x = x;
         this.m_y = y;
@@ -51,6 +55,13 @@ public class Translation2d {
 
     public double dot(Translation2d other) {
         return m_x * other.getX() + m_y * other.getY();
+    }
+
+    public Translation2d scalar(double scale) {
+        return new Translation2d(
+                m_x * scale,
+                m_y * scale
+        );
     }
 
     public void addAttribute(String name, double value) {

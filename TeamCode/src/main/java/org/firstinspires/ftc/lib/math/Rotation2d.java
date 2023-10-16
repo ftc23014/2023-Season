@@ -9,6 +9,10 @@ public class Rotation2d {
         return new Rotation2d(radians);
     }
 
+    public static Rotation2d zero() {
+        return Rotation2d.fromRadians(0);
+    }
+
     private double m_radians;
     public Rotation2d(double radians) {
         this.m_radians = radians;

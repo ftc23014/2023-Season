@@ -18,6 +18,7 @@ import org.firstinspires.ftc.lib.systems.commands.ParallelCommand;
 import org.firstinspires.ftc.lib.systems.commands.SequentialCommand;
 import org.firstinspires.ftc.lib.systems.commands.WaitCommand;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 
@@ -105,7 +106,8 @@ public class Autonomous extends OpMode {
                 new Unit(1, Unit.Type.Meters),
                 new Unit(0.5, Unit.Type.Meters),
                 12,
-                new PIDController(0.1, 0.001, 0.05)
+                new PIDController(0.2, 0.00, 0.00),
+                1d/32d
         );
 
         auto = new PlannedAuto(
@@ -124,10 +126,14 @@ public class Autonomous extends OpMode {
             new InstantCommand(() -> {
                 telemetry().update();
             }),
-            new WaitCommand(5),
-            m_driveSubsystem.drive(new Translation2d(0, 0.5), 0),
-            new WaitCommand(3),
-            m_driveSubsystem.stop()
+            new WaitCommand(2),
+            m_driveSubsystem.driveCommand(new Translation2d(0, 0.5), 0),
+            new WaitCommand(2),
+            m_driveSubsystem.stop(),
+            new Trajectory(
+                    m_driveSubsystem,
+                    BezierSegment.loadFromResources(R.raw.example)
+            )
         );
 
         telemetry().addLine("Autonomous Generated!");

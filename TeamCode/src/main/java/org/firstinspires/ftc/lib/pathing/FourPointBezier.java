@@ -289,8 +289,8 @@ public class FourPointBezier {
      * @param min_distance the minimum distance between each point
      * @param max_distance the maximum distance between each point
      */
-    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration) {
-        generateByPID(t_step, controller, min_distance, max_distance, max_acceleration, 0);
+    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration, double delta_time) {
+        generateByPID(t_step, controller, min_distance, max_distance, max_acceleration, 0, delta_time);
     }
 
     /**
@@ -301,7 +301,7 @@ public class FourPointBezier {
      * @param max_distance the maximum distance between each point
      * @param total_distance the total distance of the curve. If 0, it will use the length of this Bézier curve alone.
      * */
-    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration, double total_distance) {
+    public void generateByPID(double t_step, PIDController controller, double min_distance, double max_distance, double max_acceleration, double total_distance, double delta_time) {
         if (!controller.initialized()) {
             controller.setSetpoint(0);
             if (verbose) {
@@ -350,19 +350,21 @@ public class FourPointBezier {
 
             if (verbose) System.out.println("Calculated PID: " + newCalc + " cm for " + d + " to " + maxDistance);
 
-            if (newCalc > max_distance) {
-                newCalc = max_distance;
+            //include delta time
+
+            if (newCalc / delta_time > max_distance) {
+                newCalc = max_distance * delta_time;
                 if (newCalc + d > maxDistance) {
-                    newCalc = maxDistance - d;
+                    newCalc = (maxDistance - d);
                 }
                 if (verbose) System.out.println("PID too high, setting to max velocity");
-            } else if (newCalc < min_distance) {
-                newCalc = min_distance;
+            } else if (newCalc / delta_time < min_distance) {
+                newCalc = min_distance * delta_time;
                 if (verbose) System.out.println("PID too low, setting to min velocity");
             }
 
-            if (Math.abs(newCalc - lastVelocity) > max_acceleration) {
-                newCalc = lastVelocity + (Math.signum(newCalc - lastVelocity) * max_acceleration);
+            if (Math.abs(newCalc - lastVelocity) > max_acceleration * delta_time) {
+                newCalc = (lastVelocity + (Math.signum(newCalc - lastVelocity) * max_acceleration)) * delta_time;
             }
 
             d += newCalc;
