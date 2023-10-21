@@ -5,6 +5,13 @@ public class Cartesian2d {
     private double m_r;
 
     /**
+     * Returns an empty Cartesian coordinate (zeroed values).
+     */
+    public static Cartesian2d zero() {
+        return new Cartesian2d(new Rotation2d(0), 0);
+    }
+
+    /**
      * Creates a new Cartesian coordinate using (x,y) coordinates, relative to (0,0).
      * @param x The x coordinate.
      * @param y The y coordinate.

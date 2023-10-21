@@ -23,7 +23,12 @@ public class ExpectedRelativeMotion {
         m_numberOfWheels = numberOfWheels;
         m_wheelMotion = new Cartesian2d[m_numberOfWheels];
 
+        for (int i = 0; i < m_numberOfWheels; i++) m_wheelMotion[i] = Cartesian2d.zero();
+
         name = subsystem.getClass().getSuperclass().getName();
+
+        m_expectedVelocities = Translation2d.zero();
+        m_expectedRotation = Rotation2d.zero();
 
         MotionAPI.expectedRelativeMotions.add(this);
     }

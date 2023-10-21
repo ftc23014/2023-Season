@@ -193,7 +193,12 @@ public class ReplayManager {
                                     assignable = byteString;
                                     break;
                                 case UNKNOWN:
-                                    throw new Exception("Unknown log type! Please only use String, int, double, boolean, String[], double[], or byte[], or encode your information into a String!");
+                                    try {
+                                        assignable = movedToMethods ? (String) method.invoke(klass).toString() : (String) field.get(klass).toString();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        throw new Exception("Unknown log type! Please only use String, int, double, boolean, String[], double[], or byte[], or encode your information into a String!");
+                                    }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
