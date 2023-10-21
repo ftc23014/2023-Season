@@ -4,9 +4,14 @@ import android.graphics.Canvas;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.tensorflow.lite.TensorFlowLite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BackboardDetectionPipeline implements VisionProcessor {
 
@@ -56,13 +61,24 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat input, long captureTimeNanos) {
-        //convert to hsv
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
-
         //convert to grayscale
         Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2GRAY);
 
-        //find contours
+        Mat thresh = new Mat();
+
+        double ret = Imgproc.threshold(input, thresh,230, 240, 240);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+
+        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        Imgproc.drawContours(input, contours, -1, new Scalar(255,255,0), 5);
+
+        //sort contours
+        List<MatOfPoint> sorted = new ArrayList<>();
+
+        
 
         return input;
     }
