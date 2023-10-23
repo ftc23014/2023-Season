@@ -2,15 +2,23 @@ package org.firstinspires.ftc.lib.pathing;
 
 import com.sun.tools.javac.util.Pair;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
-import org.firstinspires.ftc.lib.math.Rotation2d;
-import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.math.*;
+import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.pathing.segments.Segment;
 import org.firstinspires.ftc.lib.systems.DriveSubsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 
 public class Trajectory extends Command {
 
-    enum DriveMode {
+    /**
+     * General TODO:
+     * - Implement Drive Mode
+     * - Implement Flipping the path depending on the side of the field
+     * - Rotate direction that the robot should take depending on the initial rotation of the robot
+     * - Test the pathing system
+     * */
+
+    enum DriveMode { //todo: implement these, where instant change is when the robot instantly changes velocity, and smooth is a gradual change.
         SmoothChange,
         InstantChange;
     }
@@ -26,6 +34,8 @@ public class Trajectory extends Command {
     private double m_startTime = 0;
 
     private boolean hasBeenExecuted = false;
+
+    private boolean m_usePhysicsCalculations = true;
 
     public Trajectory(DriveSubsystem driveSubsystem, Segment... segments) {
         super();
@@ -74,7 +84,7 @@ public class Trajectory extends Command {
         Translation2d velocities = new Translation2d(
                 nextVelocity.getX() - velocity.getX(),
                 nextVelocity.getY() - velocity.getY()
-        ).scalar(timeSincePathStarted % m_constants.getDeltaTime()).translateBy(velocity);
+        ).scalar(1 / (timeSincePathStarted % m_constants.getDeltaTime())); //uhh idk what i was doing here, might be wrong. todo: look at this.
 
         Pair<Rotation2d, Rotation2d> rotations = m_segments[m_onSegment].angles();
 
@@ -82,8 +92,43 @@ public class Trajectory extends Command {
                 (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
         );
 
+        if (!m_usePhysicsCalculations) {
+            m_driveSubsystem.drive(
+                    velocities,
+                    rotation_speed,
+                    true,
+                    m_constants.getOpenLoop()
+            );
+            return;
+        }
+
+        double currentPathTValue = velocity.getAttribute("t");
+
+        //making an assumption that it's a four point bezier. it's the only path that exists rn so we don't have to do that much complexities.
+
+        FourPointBezier pathObject = (FourPointBezier) m_segments[m_onSegment].getPathObject();
+
+        //TODO: Use odometry to calculate the real velocity.
+        Unit currentRealVelocity = new Unit(0, Unit.Type.Meters);
+
+        double centripetalForce = pathObject.centripetalForce(
+                currentPathTValue,
+                m_constants.getMass(),
+                currentRealVelocity
+        );
+
+        Cartesian2d newMotionDirection = Physics.calculateRobotMotion(
+                centripetalForce,
+                currentRealVelocity.get(Unit.Type.Meters), //m/s
+                new Cartesian2d(velocities).getRotation(),
+                m_constants.getMass(), //kg
+                m_constants.getDeltaTime()
+        );
+
+        Translation2d motionValues = newMotionDirection.toTranslation2d();
+
         m_driveSubsystem.drive(
-                velocities,
+                motionValues,
                 rotation_speed,
                 true,
                 m_constants.getOpenLoop()

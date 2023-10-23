@@ -244,6 +244,11 @@ public class BezierSegment extends Segment {
         m_constants = constants;
     }
 
+    @Override
+    public FourPointBezier getPathObject() {
+        return this.m_bezier;
+    }
+
     public void saveToFile(File file, boolean overrideFile) {
         if (file.exists()) {
             if (!overrideFile) {

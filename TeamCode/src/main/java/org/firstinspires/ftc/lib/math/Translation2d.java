@@ -64,6 +64,11 @@ public class Translation2d {
         );
     }
 
+    public Translation2d withAttribute(String name, double value) {
+        addAttribute(name, value);
+        return this;
+    }
+
     public void addAttribute(String name, double value) {
         attributes.put(name, value);
     }

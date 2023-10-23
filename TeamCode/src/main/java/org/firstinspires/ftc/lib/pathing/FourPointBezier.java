@@ -161,7 +161,7 @@ public class FourPointBezier {
      * @param t the value of t
      * @return the curvature of the Bézier curve at t
      */
-    private double kappa(double t) {
+    public double kappa(double t) {
         return Math.abs(b_dx(t) * b_d2y(t) - b_dy(t) * b_dx2(t)) / pow(pow(b_dx(t), 2) + pow(b_dy(t), 2), 1.5);
     }
 
@@ -170,22 +170,21 @@ public class FourPointBezier {
      * @param t the value of t
      * @return the direction of the curvature of the Bézier curve at t
      */
-    private double curvatureDirection(double t) {
+    public double curvatureDirection(double t) {
         return Math.signum(b_d1(t)) * Math.signum(b_d2(t));
     }
 
     /**
      * Returns the centripetal force of the Bézier curve at t
      * @param t the value of t
-     * @param mass The mass of the robot
+     * @param mass_in_kg The mass of the robot in kg
      * @param velocity_at_t The velocity of the robot at t
-     * @param basedOnKiloUnits True to assume path is in meters, so use the units of kg and m/s^2. False to assume path is in centimeters, so use the units of g and cm/s^2.
-     * @return The centripetal force of the Bézier curve at t
+     * @return The centripetal force of the Bézier curve at t in kg/m (N)
      */
-    private double centripetalForce(double t, Unit mass, Unit velocity_at_t, boolean basedOnKiloUnits) {
+    public double centripetalForce(double t, double mass_in_kg, Unit velocity_at_t) {
         double r = 1/kappa(t);
 
-        return mass.get(basedOnKiloUnits ? Unit.Type.Meters : Unit.Type.Centimeters) * (pow(velocity_at_t.get(basedOnKiloUnits ? Unit.Type.Meters : Unit.Type.Centimeters), 2) / r);
+        return mass_in_kg * (pow(velocity_at_t.get(Unit.Type.Meters), 2) / r);
     }
 
     /***
@@ -195,10 +194,10 @@ public class FourPointBezier {
         m_points.clear();
 
         for (double t = 0; t <= 1; t += 0.01) {
-            m_points.add(new Translation2d(b_x(t), b_y(t)));
+            m_points.add(new Translation2d(b_x(t), b_y(t)).withAttribute("t", t));
         }
 
-        m_points.add(new Translation2d(b_x(1), b_y(1)));
+        m_points.add(new Translation2d(b_x(1), b_y(1)).withAttribute("t", 1));
     }
 
     /**
