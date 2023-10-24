@@ -44,6 +44,8 @@ public class TeleOp extends OpMode {
     public void init() {
         instance = this;
 
+        StartupManager.printChecks(telemetry);
+
         m_visionSubsystem =  new VisionSubsystem();
 
         Robot.init();
@@ -51,6 +53,11 @@ public class TeleOp extends OpMode {
         Subsystems.onInit();
 
         telemetry.addLine("TeleOp Enabled!");
+        telemetry.update();
+    }
+
+    @Override
+    public void init_loop() {
         telemetry.update();
     }
 

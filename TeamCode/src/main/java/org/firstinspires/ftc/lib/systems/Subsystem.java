@@ -50,7 +50,7 @@ public class Subsystem extends Replayable {
         } else if (Autonomous.hasInstance() && Autonomous.getHardwareMap() != null) {
             return Autonomous.getHardwareMap();
         } else {
-            return null;
+            throw new RuntimeException("No hardware map has been found!");
         }
     }
 

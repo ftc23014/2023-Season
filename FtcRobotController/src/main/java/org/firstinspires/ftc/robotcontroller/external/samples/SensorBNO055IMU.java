@@ -45,6 +45,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
+import static com.qualcomm.hardware.bosch.BNO055IMU.I2CADDR_ALTERNATE;
+
 /*
  * This OpMode gives a short demo on how to use the BNO055 Inertial Motion Unit (IMU) from AdaFruit.
  *
@@ -81,6 +83,7 @@ public class SensorBNO055IMU extends LinearOpMode
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //parameters.i2cAddr = I2CADDR_ALTERNATE;
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode

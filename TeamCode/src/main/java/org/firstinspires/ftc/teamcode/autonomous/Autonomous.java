@@ -159,6 +159,11 @@ public class Autonomous extends OpMode {
     }
 
     @Override
+    public void init_loop() {
+        telemetry.update();
+    }
+
+    @Override
     public void stop() {
         // -- DISABLE --
         m_autonomousEnabled = false;

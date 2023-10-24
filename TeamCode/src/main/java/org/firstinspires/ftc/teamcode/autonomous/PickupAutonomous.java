@@ -12,6 +12,11 @@ public class PickupAutonomous extends OpMode  {
     }
 
     @Override
+    public void init_loop() {
+        Autonomous.getInstance().init_loop();
+    }
+
+    @Override
     public void start() {
         Autonomous.getInstance().start();
     }

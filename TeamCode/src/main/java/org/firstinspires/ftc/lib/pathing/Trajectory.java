@@ -110,12 +110,14 @@ public class Trajectory extends Command {
         //TODO: Use odometry to calculate the real velocity.
         Unit currentRealVelocity = new Unit(0, Unit.Type.Meters);
 
+        //get the centripetal force at the current point.
         double centripetalForce = pathObject.centripetalForce(
                 currentPathTValue,
                 m_constants.getMass(),
                 currentRealVelocity
         );
 
+        //calculate the new motion direction and magnitude using the centripetal force.
         Cartesian2d newMotionDirection = Physics.calculateRobotMotion(
                 centripetalForce,
                 currentRealVelocity.get(Unit.Type.Meters), //m/s
@@ -124,8 +126,10 @@ public class Trajectory extends Command {
                 m_constants.getDeltaTime()
         );
 
+        //convert the new motion direction to a translation2d (velocities that we can use to drive the robot
         Translation2d motionValues = newMotionDirection.toTranslation2d();
 
+        //drive the robot
         m_driveSubsystem.drive(
                 motionValues,
                 rotation_speed,
