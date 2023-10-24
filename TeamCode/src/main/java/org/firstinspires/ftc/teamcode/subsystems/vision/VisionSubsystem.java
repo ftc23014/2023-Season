@@ -45,7 +45,7 @@ public class VisionSubsystem extends Subsystem {
         
         myVisionPortal = new VisionPortal.Builder()
                 .setCamera(getHardwareMap().get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod, aprilTag, backboardDetectionPipeline)
+                .addProcessors(tfod, aprilTag)
                 .build();
     }
 
