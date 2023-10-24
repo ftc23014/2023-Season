@@ -14,6 +14,8 @@ public class AutonomousConstants {
 
     private boolean open_loop_drive = true;
 
+    private boolean use_physics_calculations = true;
+
     /**
      * Create a new constant profile for autonomous.
      * @param max_speed The max speed of the robot, in [unit] per second.
@@ -29,6 +31,22 @@ public class AutonomousConstants {
         this.mass = mass_in_kg;
         this.m_controller = controller;
         this.DELTA_TIME = delta_time;
+    }
+
+    /**
+     * Set whether to use physics calculations or not in trajectory generation.
+     * @param use_physics Whether to use physics calculations or not.
+     */
+    public void setUsePhysicsCalculations(boolean use_physics) {
+        this.use_physics_calculations = use_physics;
+    }
+
+    /**
+     * Returns whether to use physics calculations or not.
+     * @return Whether to use physics calculations or not.
+     */
+    public boolean usePhysicsCalculations() {
+        return this.use_physics_calculations;
     }
 
     /**

@@ -35,13 +35,12 @@ public class Trajectory extends Command {
 
     private boolean hasBeenExecuted = false;
 
-    private boolean m_usePhysicsCalculations = true;
-
     public Trajectory(DriveSubsystem driveSubsystem, Segment... segments) {
         super();
 
         this.m_driveSubsystem = driveSubsystem;
         m_segments = segments;
+        m_driveMode = DriveMode.InstantChange;
     }
 
     public void generate() {
@@ -92,7 +91,7 @@ public class Trajectory extends Command {
                 (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
         );
 
-        if (!m_usePhysicsCalculations) {
+        if (!m_constants.usePhysicsCalculations()) {
             m_driveSubsystem.drive(
                     velocities,
                     rotation_speed,
