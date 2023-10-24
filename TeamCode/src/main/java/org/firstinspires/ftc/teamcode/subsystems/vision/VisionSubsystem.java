@@ -40,6 +40,8 @@ public class VisionSubsystem extends Subsystem {
 
         tfod = new TfodProcessor.Builder()
                 .build();
+        tfod.setZoom(2.0);
+
 
         backboardDetectionPipeline = new BackboardDetectionPipeline(BackboardDetectionPipeline.Strategy.Tower_Of_Babel);
         
