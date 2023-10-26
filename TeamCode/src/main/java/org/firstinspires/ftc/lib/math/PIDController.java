@@ -13,6 +13,12 @@ public class PIDController {
 
     private double m_lastSetpoint;
 
+    /**
+     * Create a new PID controller with the given constants.
+     * @param kP The proportional constant
+     * @param kI The integral constant
+     * @param kD The derivative constant
+     */
     public PIDController(double kP, double kI, double kD) {
         m_kP = kP;
         m_kI = kI;

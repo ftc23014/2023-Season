@@ -3,6 +3,10 @@ package org.firstinspires.ftc.lib.field;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 
+/**
+ * This class represents the field for the 2023-2024 season, Center Stage.
+ * This class is a singleton, and should be accessed through the static instance variable.
+ */
 public class CenterStageField extends Field {
 
     private static final Unit tile = new Unit(23d + ((double) 1 /8), Unit.Type.Inches);
@@ -59,7 +63,7 @@ public class CenterStageField extends Field {
             new Unit(25d + (5d / 8), Unit.Type.Inches),
             new Unit(11d + (1d / 4), Unit.Type.Inches)
         ),
-        //truss supports
+        //truss supports TODO
         new Obstacle(), //1st top
         new Obstacle(), //1st bottom
         new Obstacle(), //2nd top

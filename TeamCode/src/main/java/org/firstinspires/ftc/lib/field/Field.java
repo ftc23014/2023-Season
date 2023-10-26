@@ -3,9 +3,16 @@ package org.firstinspires.ftc.lib.field;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 
+/**
+ * This class is used to store information about the field.
+ * It is used for pathing, odometry, etc.
+ */
 public class Field {
     public static Field field;
 
+    /**
+     * Creates a new field.
+     */
     public static void init() {
         field = new CenterStageField();
     }

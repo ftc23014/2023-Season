@@ -19,6 +19,11 @@ public class ExpectedRelativeMotion {
 
     private String name;
 
+    /**
+     * Created an "expected" motion profile for the robot that's used for debugging purposes.
+     * @param subsystem The drive subsystem that this motion profile is for.
+     * @param numberOfWheels The number of wheels that the robot has.
+     */
     public ExpectedRelativeMotion(DriveSubsystem subsystem, int numberOfWheels) {
         m_numberOfWheels = numberOfWheels;
         m_wheelMotion = new Cartesian2d[m_numberOfWheels];
@@ -33,15 +38,28 @@ public class ExpectedRelativeMotion {
         MotionAPI.expectedRelativeMotions.add(this);
     }
 
+    /**
+     * Sets the expected motion of the robot.
+     * @param movement The expected movement of the robot.
+     * @param rotationSpeed The expected rotation speed of the robot.
+     */
     public void setExpectedMotion(Translation2d movement, Rotation2d rotationSpeed) {
         this.m_expectedRotation = rotationSpeed;
         this.m_expectedVelocities = movement;
     }
 
+    /**
+     * Returns the name of the motion profile.
+     * @return The name of the motion profile.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Returns the expected motion of the robot in JSON format.
+     * @return The expected motion of the robot in JSON format.
+     */
     public JsonObject asJSON() {
         JsonObject obj = new JsonObject();
 
@@ -84,6 +102,10 @@ public class ExpectedRelativeMotion {
         return obj;
     }
 
+    /**
+     * Returns the expected motion of the robot in JSON format as a string.
+     * @return The expected motion of the robot in JSON format as a string.
+     */
     public String toString() {
         Gson gson = new Gson();
 

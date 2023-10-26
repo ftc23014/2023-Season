@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import org.firstinspires.ftc.lib.math.Rotation2d;
@@ -13,10 +14,7 @@ import org.firstinspires.ftc.lib.systems.DriveSubsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
 
 
@@ -30,7 +28,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     private Unit m_maxVelocity = new Unit(1, Unit.Type.Meters); //per second
     private Unit m_velocityLimit = new Unit(1, Unit.Type.Meters); //per second
 
-    private BNO055IMU m_imu;
+    private AdafruitBNO055IMU m_imu;
     private Orientation m_angles;
     private Acceleration m_gravity;
 
@@ -83,16 +81,17 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     }
 
     private void setupIMU() {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
+        AdafruitBNO055IMU.Parameters parameters = new AdafruitBNO055IMU.Parameters();
+        //parameters.i2cAddr = I2CADDR_ALTERNATE;
+        parameters.angleUnit           = AdafruitBNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = AdafruitBNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        //not sure if we need this, generally the IMU worked well.
+        //parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample OpMode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        m_imu = getHardwareMap().get(BNO055IMU.class, "imu");
+        m_imu = getHardwareMap().get(AdafruitBNO055IMU.class, "gyro");
         m_imu.initialize(parameters);
     }
 
@@ -149,7 +148,9 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
      * @return The real angle of the robot.
      */
     public Rotation2d getAngle() {
-        return Rotation2d.zero();
+        return Rotation2d.fromDegrees(
+                m_imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle
+        );
     }
 
     /**
