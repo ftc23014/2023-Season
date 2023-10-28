@@ -77,7 +77,7 @@ public class ReplayManager {
             System.out.println("[Info] Running v" + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ") of " + BuildConfig.APPLICATION_ID + " on " + BuildConfig.BUILD_TYPE + " build.");
         }
 
-        writer.saveInfo("ALC" + cycle++ + (cycle < 3 ? "(s)" : ""));
+        writer.saveInfo("ALC" + ++cycle + (cycle < 3 ? "(s)" : ""));
 
         if (cycle < 3) return; //skip first three cycles, let everything initialize
 
