@@ -234,6 +234,11 @@ public class BezierSegment extends Segment {
         );
     }
 
+    @Override
+    public void flipX() {
+        m_bezier.flipX();
+    }
+
     public boolean connectedTo(Segment seg) {
         return seg.getWaypoints()[0].equals(getWaypoints()[getWaypoints().length - 1]) || seg.getWaypoints()[seg.getWaypoints().length - 1].equals(getWaypoints()[0]);
     }

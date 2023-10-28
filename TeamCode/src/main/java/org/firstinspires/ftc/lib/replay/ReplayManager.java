@@ -297,4 +297,8 @@ public class ReplayManager {
         replayTimer.cancel();
         replayCycle = 0;
     }
+
+    public static int getCycle() {
+        return cycle;
+    }
 }

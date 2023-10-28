@@ -42,14 +42,14 @@ public class Autonomous extends OpMode {
         return k_autoReferral.telemetry;
     }
 
-    public static Autonomous setAutonomous(AutonomousMode autoMode, OpMode referral) {
+    public static Autonomous setAutonomous(AutonomousMode autoMode, StartingSide side, OpMode referral) {
         if (instance != null) {
             throw new RuntimeException("Autonomous was already created but you're changing it?");
         }
 
         k_autoReferral = referral;
 
-        instance = new Autonomous(autoMode);
+        instance = new Autonomous(autoMode, side);
 
         return instance;
     }
@@ -67,6 +67,11 @@ public class Autonomous extends OpMode {
         BACKDROP_AUTONOMOUS;
     }
 
+    public enum StartingSide {
+        RED,
+        BLUE;
+    }
+
     public enum PathSelectionFlags {
         ONE,
         TWO,
@@ -81,10 +86,12 @@ public class Autonomous extends OpMode {
     private MecanumDriveSubsystem m_driveSubsystem;
 
     private AutonomousMode m_autonomousMode;
+    private StartingSide m_side;
     private boolean m_autonomousEnabled;
 
-    public Autonomous(AutonomousMode autoMode) {
+    public Autonomous(AutonomousMode autoMode, StartingSide side) {
         m_autonomousMode = autoMode;
+        m_side = side;
     }
 
     private PlannedAuto auto;
@@ -115,25 +122,23 @@ public class Autonomous extends OpMode {
             new InstantCommand(() -> {
                 telemetry().addLine("Autonomous Loaded!");
             }),
-            new ParallelCommand(
-                new InstantCommand(() -> {
-                    telemetry().addLine("Autonomous Sequential 1!");
-                }),
-                new InstantCommand(() -> {
-                    telemetry().addLine("Autonomous Sequential 2!");
-                })
-            ),
             new InstantCommand(() -> {
                 telemetry().update();
             }),
-            new WaitCommand(2),
-            m_driveSubsystem.driveCommand(new Translation2d(0, 0.5), 0),
-            new WaitCommand(2),
+            m_driveSubsystem.driveCommand(
+                    new Translation2d(0.1, 0),
+                    0
+            ),
+            new WaitCommand(0.5),
             m_driveSubsystem.stop(),
-            new Trajectory(
-                    m_driveSubsystem,
-                    BezierSegment.loadFromResources(R.raw.example)
-            )
+            new WaitCommand(0.5),
+            m_driveSubsystem.driveCommand(
+                    m_side == StartingSide.BLUE ?
+                            new Translation2d(-0.5, 0)
+                            : new Translation2d(0.5, 0)
+            , 0),
+            new WaitCommand(2),
+            m_driveSubsystem.stop()
         );
 
         telemetry().addLine("Autonomous Generated!");

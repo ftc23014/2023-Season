@@ -17,6 +17,14 @@ public class Field {
         field = new CenterStageField();
     }
 
+    public Unit getWidth() {
+        return new Unit(0, Unit.Type.Inches);
+    }
+
+    public Unit getHeight() {
+        return new Unit(0, Unit.Type.Inches);
+    }
+
     public static class Obstacle {
         Translation2d position;
         Unit width;

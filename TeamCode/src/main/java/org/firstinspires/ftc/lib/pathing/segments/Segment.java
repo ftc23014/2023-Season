@@ -24,6 +24,8 @@ public abstract class Segment {
 
     public abstract Object getPathObject();
 
+    public abstract void flipX();
+
     public Translation2d getVelocityAtPoint(int pointIndex, double deltaTime) {
         if (pointIndex + 1 >= getPoints().size()) {
             throw new IndexOutOfBoundsException("Too high of a point index!");

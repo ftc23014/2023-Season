@@ -64,6 +64,14 @@ public class Translation2d {
         );
     }
 
+    public void setX(double x) {
+        this.m_x = x;
+    }
+
+    public void setY(double y) {
+        this.m_y = y;
+    }
+
     public Translation2d withAttribute(String name, double value) {
         addAttribute(name, value);
         return this;

@@ -14,7 +14,7 @@ public class Simulate {
         // Start the simulation
         Simulation.start(
                 new TeleOp(),
-                new Autonomous(Autonomous.AutonomousMode.PICKUP_AUTONOMOUS)
+                new Autonomous(Autonomous.AutonomousMode.PICKUP_AUTONOMOUS, Autonomous.StartingSide.RED)
         );
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.lib.replay.log.writers;
 
+import org.firstinspires.ftc.lib.replay.ReplayManager;
 import org.firstinspires.ftc.lib.simulation.Simulation;
 
 import java.io.File;
@@ -73,15 +74,41 @@ public class FileWriter extends LogWriter {
         initializedFile = true;
     }
 
+    private String lastLogged = "";
+    private String lastALCLog = "";
+    private boolean inWaitingMode = false;
+
     @Override
     public void saveLine(String line) {
         if (!initializedFile) return;
+
+        if (line.startsWith("ALC")) {
+            lastALCLog = line;
+        }
+
+        if (line.startsWith("ALC") && lastLogged.startsWith("ALC")) {
+            inWaitingMode = true;
+            lastLogged = line;
+            return;
+        }
+
+        boolean justFinishedWait = false;
+
+        if (inWaitingMode) {
+            line = "ALC" + ReplayManager.getCycle() + "u\n" + line;
+            inWaitingMode = false;
+            justFinishedWait = true;
+        }
 
         //Append line to file
         try {
             java.io.FileWriter fw = new java.io.FileWriter(filePath, true);
             fw.write(line + "\n");
             fw.close();
+
+            if (!justFinishedWait) {
+                lastLogged = line;
+            } else lastLogged = "";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,6 +118,24 @@ public class FileWriter extends LogWriter {
     public void saveInfo(String encodedInfo) {
         if (!initializedFile) return;
 
+        if (encodedInfo.startsWith("ALC")) {
+            lastALCLog = encodedInfo;
+        }
+
+        if (encodedInfo.startsWith("ALC") && lastLogged.startsWith("ALC")) {
+            inWaitingMode = true;
+            lastLogged = encodedInfo;
+            return;
+        }
+
+        boolean justFinishedWait = false;
+
+        if (inWaitingMode) {
+            encodedInfo = "ALC" + ReplayManager.getCycle() + "\n" + encodedInfo;
+            inWaitingMode = false;
+            justFinishedWait = true;
+        }
+
         //Append line to file
         try {
             if (encodedInfo == null) return;
@@ -98,8 +143,12 @@ public class FileWriter extends LogWriter {
             java.io.FileWriter fw = new java.io.FileWriter(filePath, true);
             fw.write(encodedInfo + "\n");
             fw.close();
+
+            if (!justFinishedWait) {
+                lastLogged = encodedInfo;
+            } else lastLogged = "";
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -112,7 +161,7 @@ public class FileWriter extends LogWriter {
             fw.write(str);
             fw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }

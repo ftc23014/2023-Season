@@ -97,12 +97,26 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
     public void drive(Translation2d translation, Rotation2d rotationSpeed, boolean fieldRelative, boolean openLoop) {
         //First, rotate the motion to the robot's current rotation
+        Translation2d rotated = fieldRelative ?
+                translation.rotateBy(getAngle().inverse())
+                : translation;
 
         //Second, scale down the motion to the speed limit
         double maxVelocity = m_maxVelocity.get(Unit.Type.Meters);
         double velocityLimit = m_velocityLimit.get(Unit.Type.Meters);
 
-        motionProfile.setExpectedMotion(translation, rotationSpeed);
+        Translation2d limited = new Translation2d(
+                Math.min(rotated.getX(), velocityLimit) / maxVelocity,
+                Math.min(rotated.getY(), velocityLimit) / maxVelocity
+        );
+
+        motionProfile.setExpectedMotion(limited, rotationSpeed);
+
+        if (openLoop) {
+            driveMotors(limited, rotationSpeed.getDegrees());
+        } else {
+            throw new RuntimeException("Mecanum drive closed loop control has not been implemented yet!");
+        }
     }
 
     public Command driveCommand(Translation2d power, double rotate) {
@@ -125,8 +139,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         double backRightPower = drive + strafe - rotate;
 
         // set power to motors
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
+        frontLeft.setPower(-frontLeftPower);
+        frontRight.setPower(-frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
 
@@ -136,11 +150,19 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         stop(); // stop all motors
     }
 
+    /**
+     * Stops the motors of the robot.
+     */
     public void stop_motors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    //TODO: test and return translation2d instead for x and y velocity.
+    public Velocity getIMUVelocity() {
+        return m_imu.getVelocity();
     }
 
     /**
@@ -159,6 +181,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
      */
     public Rotation2d getRealAngle() {
         return Rotation2d.fromDegrees(getRealAngle().getDegrees() - startingAngle.getDegrees());
+    }
+
+    public Unit getVelocityLimit() {
+        return m_velocityLimit;
     }
 
     private boolean setupAngleLogging = false;

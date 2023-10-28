@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.lib.pathing;
 
+import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.math.*;
 
 import java.util.*;
@@ -402,4 +403,9 @@ public class FourPointBezier {
         } while (d < maxDistance);
     }
 
+    public void flipX() {
+        for (Translation2d point : m_points) {
+            point.setX(Field.field.getWidth().get(Unit.Type.Meters) - point.getX());
+        }
+    }
 }

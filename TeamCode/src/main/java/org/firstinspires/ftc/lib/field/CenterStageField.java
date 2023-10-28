@@ -13,6 +13,13 @@ public class CenterStageField extends Field {
     private static final Unit fieldWidth = new Unit(tile.get(Unit.Type.Inches) * 6, Unit.Type.Inches);
     private static final Unit fieldHeight = new Unit(tile.get(Unit.Type.Inches) * 6, Unit.Type.Inches);
 
+    public Unit getWidth() {
+        return fieldWidth;
+    }
+
+    public Unit getHeight() {
+        return fieldHeight;
+    }
 
     public CenterStageField() {
         double[] distances = {

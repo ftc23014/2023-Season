@@ -97,6 +97,8 @@ public class StartupManager {
                     }
                 });
             }
+
+            telemetry.update();
         }
     }
 }

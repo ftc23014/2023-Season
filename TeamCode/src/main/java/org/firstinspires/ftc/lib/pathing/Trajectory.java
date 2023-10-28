@@ -58,6 +58,12 @@ public class Trajectory extends Command {
         m_constants = constants;
     }
 
+    public void flipX() {
+        for (Segment seg : m_segments) {
+            seg.flipX();
+        }
+    }
+
     @Override
     public void execute() {
         if (!hasBeenExecuted) {
