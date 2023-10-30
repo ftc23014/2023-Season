@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="pickup autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Basic Park Backstage Autonomous")
 public class RedBackstageAutonomous extends OpMode  {
     @Override
     public void init() {
-        Autonomous.setAutonomous(Autonomous.AutonomousMode.PICKUP_AUTONOMOUS, Autonomous.StartingSide.RED, this).init();
+        Autonomous.setAutonomous(Autonomous.AutonomousMode.BASIC_AUTO, Autonomous.StartingSide.RED, this).init();
     }
 
     @Override

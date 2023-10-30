@@ -106,7 +106,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         double velocityLimit = m_velocityLimit.get(Unit.Type.Meters);
 
         Translation2d limited = new Translation2d(
-                Math.min(rotated.getX(), velocityLimit) / maxVelocity,
+                -Math.min(rotated.getX(), velocityLimit) / maxVelocity,
                 Math.min(rotated.getY(), velocityLimit) / maxVelocity
         );
 
@@ -139,8 +139,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         double backRightPower = drive + strafe - rotate;
 
         // set power to motors
-        frontLeft.setPower(-frontLeftPower);
-        frontRight.setPower(-frontRightPower);
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
 

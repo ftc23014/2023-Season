@@ -90,10 +90,10 @@ public class TeleOp extends OpMode {
         if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || Math.abs(gamepad1.right_stick_x) > 0.05) {
             m_mecanumDriveSubsystem.drive(
                     new Translation2d(
-                            -gamepad1.left_stick_x,
+                            gamepad1.left_stick_x,
                             gamepad1.left_stick_y
                     ).scalar(m_mecanumDriveSubsystem.getVelocityLimit().get(Unit.Type.Meters)),
-                    Rotation2d.fromDegrees(gamepad1.right_stick_x * 180),
+                    Rotation2d.fromDegrees(-Math.pow(gamepad1.right_stick_x, 5) * 90),
                     true,
                     true
             );

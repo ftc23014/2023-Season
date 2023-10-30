@@ -63,8 +63,8 @@ public class Autonomous extends OpMode {
     }
 
     public enum AutonomousMode {
-        PICKUP_AUTONOMOUS,
-        BACKDROP_AUTONOMOUS;
+        TESTING,
+        BASIC_AUTO;
     }
 
     public enum StartingSide {
@@ -117,29 +117,54 @@ public class Autonomous extends OpMode {
                 1d/32d
         );
 
-        auto = new PlannedAuto(
-            constants,
-            new InstantCommand(() -> {
-                telemetry().addLine("Autonomous Loaded!");
-            }),
-            new InstantCommand(() -> {
-                telemetry().update();
-            }),
-            m_driveSubsystem.driveCommand(
-                    new Translation2d(0.1, 0),
-                    0
-            ),
-            new WaitCommand(0.5),
-            m_driveSubsystem.stop(),
-            new WaitCommand(0.5),
-            m_driveSubsystem.driveCommand(
-                    m_side == StartingSide.BLUE ?
-                            new Translation2d(-0.5, 0)
-                            : new Translation2d(0.5, 0)
-            , 0),
-            new WaitCommand(2),
-            m_driveSubsystem.stop()
-        );
+        //NEGATIVE is left,
+        //POSITIVE is right
+
+//        auto = new PlannedAuto(
+//                constants,
+//                new InstantCommand
+//        )
+        if (m_autonomousMode == AutonomousMode.BASIC_AUTO) {
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Autonomous Loaded!");
+                    }),
+                    new InstantCommand(() -> {
+                        telemetry().update();
+                    }),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0.2, 0),
+                            0
+                    ),
+                    new WaitCommand(0.5),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.5),
+                    m_driveSubsystem.driveCommand(
+                            m_side == StartingSide.BLUE ?
+                                    new Translation2d(-0.5, 0)
+                                    : new Translation2d(0.5, 0)
+                            , 0),
+                    new WaitCommand(2),
+                    m_driveSubsystem.stop()
+            );
+        } else if (m_autonomousMode == AutonomousMode.TESTING) {
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Autonomous Loaded!");
+                    }),
+                    new InstantCommand(() -> {
+                        telemetry().update();
+                    }),
+                    new WaitCommand(1),
+                    new Trajectory(
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.example)
+                    ),
+                    m_driveSubsystem.stop()
+            );
+        }
 
         telemetry().addLine("Autonomous Generated!");
         telemetry().update();

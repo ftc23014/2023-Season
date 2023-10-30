@@ -8,17 +8,12 @@ public class Subsystems {
     private static ArrayList<Subsystem> subsystems = new ArrayList<>();
 
     protected static HardwareMap alternateHardwareMap = null;
-    private static boolean hasBeenInited = false;
 
     protected static void addSubsystem(Subsystem subsystem) {
         subsystems.add(subsystem);
     }
 
     public static void onInit() {
-        //stop any more init calls since ideally this should only be called once
-        if (hasBeenInited) return;
-        hasBeenInited = true;
-
         for (Subsystem subsystem : subsystems) {
             subsystem.init();
         }
@@ -26,10 +21,6 @@ public class Subsystems {
 
     public static void onInit(HardwareMap alternate) {
         alternateHardwareMap = alternate;
-
-        //stop any more init calls since ideally this should only be called once
-        if (hasBeenInited) return;
-        hasBeenInited = true;
 
         for (Subsystem subsystem : subsystems) {
             subsystem.init();
