@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.StartupManager;
 
 public class MecanumDriveSubsystem extends DriveSubsystem {
 
+    public static Unit maxVelocity = new Unit((312d / 60d) * 0.1d * Math.PI, Unit.Type.Meters);
+
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
