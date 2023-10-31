@@ -55,7 +55,7 @@ public class TeleOp extends OpMode {
         m_visionSubsystem =  new VisionSubsystem();
         //END SUBSYSTEM CREATION
 
-        StartupManager.printChecks(telemetry);
+        //StartupManager.printChecks(telemetry);
 
         Robot.init();
 

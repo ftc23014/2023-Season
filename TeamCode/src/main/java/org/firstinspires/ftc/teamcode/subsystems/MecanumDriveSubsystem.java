@@ -16,6 +16,7 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
+import org.firstinspires.ftc.teamcode.TeleOp;
 
 
 public class MecanumDriveSubsystem extends DriveSubsystem {
@@ -36,6 +37,13 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
 
     private Rotation2d startingAngle = Rotation2d.zero();
+
+    private double joyStickX;
+    private double joyStickY;
+    private double velocityX;
+    private double velocityY;
+
+
 
     /**
      * Creates a new MecanumDriveSubsystem.
@@ -119,6 +127,13 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         } else {
             throw new RuntimeException("Mecanum drive closed loop control has not been implemented yet!");
         }
+
+        joyStickX = translation.getX();
+        joyStickY = translation.getY();
+
+        // Calculate velocity based on joystick inputs
+        velocityX = joyStickX * maxVelocity;
+        velocityY = joyStickY * maxVelocity;
     }
 
     public Command driveCommand(Translation2d power, double rotate) {
@@ -197,6 +212,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
             m_imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             setupAngleLogging = true;
         }
+        TeleOp.getTelemetry().addData("Joystick X", joyStickX);
+        TeleOp.getTelemetry().addData("Joystick Y", joyStickY);
+        TeleOp.getTelemetry().addData("Velocity X (m/s)", velocityX);
+        TeleOp.getTelemetry().addData("Velocity Y (m/s)", velocityY);
     }
 
     @Replay(name="expected_motion_replay")
