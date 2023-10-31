@@ -11,11 +11,21 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
  */
 public class MotorTestSubsystem extends Subsystem {
     DcMotor motor;
+    Gamepad gamepad;
+
+    public void setGamepad(Gamepad gamepad) {
+        this.gamepad = gamepad;
+    }
+
 
     @Override
     public void init() {
 
-        motor = getHardwareMap().get(DcMotor.class, "motor");
+
+        motor = getHardwareMap().dcMotor.get("MotorTest");
+
+
+
         //motor.setDirection(DcMotor.Direction.REVERSE); for direction
         //motor.setDirection(DcMotor.Direction.FORWARD);
 
@@ -23,7 +33,18 @@ public class MotorTestSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-        motor.setPower(1);
+
+        if (gamepad.a) {
+            motor.setPower(0.5);
+        }
+        else if (gamepad.b) {
+            motor.setPower(-0.5);
+        }
+        else {
+            motor.setPower(0);
+
+        }
+
     }
 
     @Override
