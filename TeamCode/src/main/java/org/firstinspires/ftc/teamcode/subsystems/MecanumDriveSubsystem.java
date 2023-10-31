@@ -17,6 +17,7 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
 import org.firstinspires.ftc.teamcode.TeleOp;
+import java.util.ArrayList;
 
 
 public class MecanumDriveSubsystem extends DriveSubsystem {
@@ -43,7 +44,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     private double velocityX;
     private double velocityY;
 
-
+    private final double baseTrackRadius = 0.0; //in meters? CHANGE CHANGE CHANGE
+    //base track radius = distance between wheel and center of robot (1/2 wheel distance from each other)
 
     /**
      * Creates a new MecanumDriveSubsystem.
@@ -58,7 +60,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     }
 
     public MecanumDriveSubsystem() {
-        this(new Unit(1, Unit.Type.Meters), new Unit(1, Unit.Type.Meters));
+        this(maxVelocity, new Unit(1, Unit.Type.Meters));
     }
 
     //[gyroscope declaration]
@@ -222,5 +224,57 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     private void expectedMotionReplay(String json) {
         //todo: fill in
         return;
+    }
+
+
+    /**
+     * Kinematics - For determining position of wheels (end effector?) during driving
+     * Kinematics based off of Mecanum Drive
+     * ! Forward Kinematics = Joint space -> Cartesian Space
+     * ! Inverse Kinematics = Cartesian Space -> Joint Space
+     * Method calculates for BOTH
+     */
+    public ArrayList kinematicsAll (double LVFR, double LVBR, double LVFL, double LVBL, double VFrelative, double Vstrafe, double Omega)
+    {
+        ArrayList <Double> calculationResults = new ArrayList <Double> ();
+        double Vfr = LVFR; //linear velocity front (leading) right wheel
+        double Vbr = LVBR; //linear velocity back (trailing) right wheel
+        double Vfl = LVFL; //linear velocity front (leading) left wheel
+        double Vbl = LVBL; //linear velocity back (trailing) left wheel
+
+        double Vf = VFrelative;//FORWARD velocity of robot body relative to itself
+        double Vs = Vstrafe; //strafe (sideways) velocity of the robot, relative to itself.
+
+        double omega =  Omega;//rotational(angular) velocity of robot //radians per second //+ values COUNTERCLOCKWISE from above
+
+        //linear velocity conversion says: Wheel rotational velocity in radians/second can be
+        // converted to linear velocity by multiplying by the wheel’s radius
+
+        /**
+         Forward Kinematics: relate the velocity of the wheels to the forward and
+         rotational velocities of the robot, relative to itself.
+         */
+        Vf = ((Vfr + Vbr + Vfl + Vbl)/4);
+        Vs = ((Vfr + Vbl - Vfl - Vbr)/4);
+        omega = ((Vbr + Vfr - Vfl - Vbl)/(4*2*baseTrackRadius));
+
+        /**
+         * Inverse Kinematics: relate the desired velocity of the robot to the velocity required of the wheels
+         */
+        Vfl = Vf - Vs - (2*baseTrackRadius*omega);
+        Vbl = Vf + Vs - (2*baseTrackRadius*omega);
+        Vbr = Vf - Vs + (2*baseTrackRadius*omega);
+        Vfr = Vf + Vs + (2*baseTrackRadius*omega);
+
+        //Order of arraylist elements = AS FOLLOWING
+        calculationResults.add(Vf);
+        calculationResults.add(Vs);
+        calculationResults.add(omega);
+        calculationResults.add(Vfl);
+        calculationResults.add(Vbl);
+        calculationResults.add(Vbr);
+        calculationResults.add(Vfr);
+
+        return(calculationResults); //Return arraylist of all calculated values
     }
 }

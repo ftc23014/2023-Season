@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.firstinspires.ftc.lib.systems.Subsystem;
 
 /**
@@ -11,7 +14,11 @@ public class MotorTestSubsystem extends Subsystem {
 
     @Override
     public void init() {
+
         motor = getHardwareMap().get(DcMotor.class, "motor");
+        //motor.setDirection(DcMotor.Direction.REVERSE); for direction
+        //motor.setDirection(DcMotor.Direction.FORWARD);
+
     }
 
     @Override
