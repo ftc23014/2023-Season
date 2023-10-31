@@ -28,7 +28,7 @@ public class Robot {
         //This will make all System.out.println() calls go to the log file as well as the console.
         ReplayManager.captureConsoleToLog();
         // Set the log writer to a new FileWriter, which will write the data to a file.
-        ReplayManager.setWriter(new FileWriter());
+        ReplayManager.setWriter(new NoLog());
         // Initialize the replay manager, which will handle the logging of the data.
         ReplayManager.init();
     }
