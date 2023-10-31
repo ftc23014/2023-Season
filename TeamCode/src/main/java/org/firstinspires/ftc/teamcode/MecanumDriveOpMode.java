@@ -32,5 +32,6 @@ public class MecanumDriveOpMode extends OpMode {
 
         // Drive the robot using the gamepad inputs
         mecanumDriveSubsystem.driveMotors(new Translation2d(strafe, drive), rotate);
+
     }
 }

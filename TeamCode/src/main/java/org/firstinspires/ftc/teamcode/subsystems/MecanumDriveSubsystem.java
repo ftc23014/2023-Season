@@ -223,4 +223,45 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         //todo: fill in
         return;
     }
+
+
+    /**
+     * Kinematics - For determining position of wheels (end effector?) during driving
+     * Kinematics based off of Mecanum Drive
+     * ! Forward Kinematics = Joint space -> Cartesian Space
+     * ! Inverse Kinematics = Cartesian Space -> Joint Space
+     */
+    public void kinematicsAll (double LVFR, double LVBR, double LVFL, double LVBL, double VFrelative, double Vstrafe, double Omega, double baseTrackRadius)
+    {
+        double Vfr = LVFR; //linear velocity of the front (leading) right wheel
+        double Vbr = LVBR; //linear velocity of the back (trailing) right wheel
+        double Vfl = LVFL; //linear velocity of the front (leading) left wheel
+        double Vbl = LVBL; //linear velocity of the back (trailing) left wheel
+
+        double Vf = VFrelative;//FORWARD velocity of robot body relative to itself
+        double Vs = Vstrafe; //strafe (sideways) velocity of the robot, relative to itself.
+
+        double omega =  Omega;//rotational(angular) velocity of robot //radians per second //+ values COUNTERCLOCKWISE from above
+        double Rb = baseTrackRadius;//base track radius = distance between wheel and center of robot (1/2 wheel distance from each other)
+
+        //linear velocity conversion says: Wheel rotational velocity in radians/second can be
+        // converted to linear velocity by multiplying by the wheel’s radius
+
+        /**
+         Forward Kinematics: relate the velocity of the wheels to the forward and
+         rotational velocities of the robot, relative to itself.
+         */
+        Vf = ((Vfr + Vbr + Vfl + Vbl)/4);
+        Vs = ((Vfr + Vbl - Vfl - Vbr)/4);
+        omega = ((Vbr + Vfr - Vfl - Vbl)/(4*2*Rb));
+
+        /**
+         * Inverse Kinematics: relate the desired velocity of the robot to the velocity required of the wheels
+         */
+        Vfl = Vf - Vs - (2*Rb*omega);
+        Vbl = Vf + Vs - (2*Rb*omega);
+        Vbr = Vf - Vs + (2*Rb*omega);
+        Vfr = Vf + Vs + (2*Rb*omega);
+
+    }
 }
