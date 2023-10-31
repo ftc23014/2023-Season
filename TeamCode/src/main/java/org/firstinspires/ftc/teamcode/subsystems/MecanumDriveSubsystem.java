@@ -58,7 +58,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     }
 
     public MecanumDriveSubsystem() {
-        this(new Unit(1, Unit.Type.Meters), new Unit(1, Unit.Type.Meters));
+        this(maxVelocity, new Unit(1, Unit.Type.Meters));
     }
 
     //[gyroscope declaration]
