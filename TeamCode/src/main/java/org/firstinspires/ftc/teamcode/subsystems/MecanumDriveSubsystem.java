@@ -108,7 +108,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     public void drive(Translation2d translation, Rotation2d rotationSpeed, boolean fieldRelative, boolean openLoop) {
         //First, rotate the motion to the robot's current rotation
         Translation2d rotated = fieldRelative ?
-                translation.rotateBy(getAngle().inverse())
+                translation.rotateBy(getAngle())
                 : translation;
 
         //Second, scale down the motion to the speed limit
