@@ -83,7 +83,7 @@ public class Autonomous extends OpMode {
         SIX
     }
 
-    private MecanumDriveSubsystem m_driveSubsystem;
+    public MecanumDriveSubsystem m_driveSubsystem;
 
     private AutonomousMode m_autonomousMode;
     private StartingSide m_side;

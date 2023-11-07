@@ -212,10 +212,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
             m_imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             setupAngleLogging = true;
         }
-        TeleOp.getTelemetry().addData("Joystick X", joyStickX);
-        TeleOp.getTelemetry().addData("Joystick Y", joyStickY);
-        TeleOp.getTelemetry().addData("Velocity X (m/s)", velocityX);
-        TeleOp.getTelemetry().addData("Velocity Y (m/s)", velocityY);
+        telemetry().addData("Joystick X", joyStickX);
+        telemetry().addData("Joystick Y", joyStickY);
+        telemetry().addData("Velocity X (m/s)", velocityX);
+        telemetry().addData("Velocity Y (m/s)", velocityY);
     }
 
     @Replay(name="expected_motion_replay")
