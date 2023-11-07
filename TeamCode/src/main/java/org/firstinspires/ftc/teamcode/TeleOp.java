@@ -97,10 +97,6 @@ public class TeleOp extends OpMode {
                     true,
                     true
             );
-//            m_mecanumDriveSubsystem.driveMotors(new Translation2d(
-//                    -gamepad1.left_stick_x,
-//                    gamepad1.left_stick_y
-//            ), gamepad1.right_stick_x);
         } else {
             m_mecanumDriveSubsystem.stop_motors();
         }

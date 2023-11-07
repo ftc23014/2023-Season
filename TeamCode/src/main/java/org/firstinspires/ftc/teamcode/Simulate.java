@@ -15,14 +15,10 @@ public class Simulate {
 
     public static void main(String[] args) {
         // Start the simulation
-        /*
         Simulation.start(
                 new TeleOp(),
-                new Autonomous(Autonomous.AutonomousMode.PICKUP_AUTONOMOUS, Autonomous.StartingSide.RED)
+                new Autonomous(Autonomous.AutonomousMode.BASIC_AUTO, Autonomous.StartingSide.RED)
         );
-
-
-         */
     }
 }
 

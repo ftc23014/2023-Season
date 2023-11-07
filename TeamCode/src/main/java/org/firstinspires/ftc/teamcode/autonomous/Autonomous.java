@@ -44,7 +44,7 @@ public class Autonomous extends OpMode {
 
     public static Autonomous setAutonomous(AutonomousMode autoMode, StartingSide side, OpMode referral) {
         if (instance != null) {
-            throw new RuntimeException("Autonomous was already created but you're changing it?");
+            System.out.println("[Autonomous] Odd... Autonomous was already created but you're changing it? This is fine, we hope.");
         }
 
         k_autoReferral = referral;
@@ -112,10 +112,12 @@ public class Autonomous extends OpMode {
         AutonomousConstants constants = new AutonomousConstants(
                 new Unit(1, Unit.Type.Meters),
                 new Unit(0.5, Unit.Type.Meters),
-                12,
+                6,
                 new PIDController(0.2, 0.00, 0.00),
                 1d/32d
         );
+
+        constants.setUsePhysicsCalculations(false);
 
         //NEGATIVE is left,
         //POSITIVE is right
@@ -160,8 +162,11 @@ public class Autonomous extends OpMode {
                     new WaitCommand(1),
                     new Trajectory(
                             m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.example)
+                            BezierSegment.loadFromResources(R.raw.testing)
                     ),
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Finished!");
+                    }),
                     m_driveSubsystem.stop()
             );
         }

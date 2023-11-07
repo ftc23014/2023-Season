@@ -65,14 +65,23 @@ public class Trajectory extends Command {
     }
 
     @Override
+    public boolean hasFinished() {
+        return m_onSegment >= m_segments.length;
+    }
+
+    private double lastExecute = 0;
+
+    @Override
     public void execute() {
         if (!hasBeenExecuted) {
             hasBeenExecuted = true;
             m_startTime = System.currentTimeMillis();
+            lastExecute = System.currentTimeMillis();
         }
 
         double currentTime = System.currentTimeMillis();
         double timeSincePathStarted = currentTime - m_startTime;
+        double deltaExecute = currentTime - lastExecute;
 
         Translation2d velocity = m_segments[m_onSegment].getVelocityAtPoint(m_onPoint, m_constants.getDeltaTime());
         Translation2d nextVelocity;
@@ -89,13 +98,20 @@ public class Trajectory extends Command {
         Translation2d velocities = new Translation2d(
                 nextVelocity.getX() - velocity.getX(),
                 nextVelocity.getY() - velocity.getY()
-        ).scalar(1 / (timeSincePathStarted % m_constants.getDeltaTime())); //uhh idk what i was doing here, might be wrong. todo: look at this.
+        ).scalar(1 / deltaExecute);
+
+        //rotate the velocities to the robot's current angle, 90°
+        velocities = velocities.rotateBy(Rotation2d.fromDegrees(-90));
+
+        lastExecute = currentTime;
 
         Pair<Rotation2d, Rotation2d> rotations = m_segments[m_onSegment].angles();
 
         Rotation2d rotation_speed = new Rotation2d(
                 (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
         );
+
+        rotation_speed = Rotation2d.zero();
 
         if (!m_constants.usePhysicsCalculations()) {
             m_driveSubsystem.drive(
