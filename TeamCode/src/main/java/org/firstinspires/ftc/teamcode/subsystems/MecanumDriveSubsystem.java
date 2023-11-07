@@ -108,7 +108,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     public void drive(Translation2d translation, Rotation2d rotationSpeed, boolean fieldRelative, boolean openLoop) {
         //First, rotate the motion to the robot's current rotation
         Translation2d rotated = fieldRelative ?
-                translation.rotateBy(getAngle().inverse())
+                translation.rotateBy(getAngle())
                 : translation;
 
         //Second, scale down the motion to the speed limit
@@ -212,10 +212,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
             m_imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             setupAngleLogging = true;
         }
-        TeleOp.getTelemetry().addData("Joystick X", joyStickX);
-        TeleOp.getTelemetry().addData("Joystick Y", joyStickY);
-        TeleOp.getTelemetry().addData("Velocity X (m/s)", velocityX);
-        TeleOp.getTelemetry().addData("Velocity Y (m/s)", velocityY);
+        telemetry().addData("Joystick X", joyStickX);
+        telemetry().addData("Joystick Y", joyStickY);
+        telemetry().addData("Velocity X (m/s)", velocityX);
+        telemetry().addData("Velocity Y (m/s)", velocityY);
     }
 
     @Replay(name="expected_motion_replay")
