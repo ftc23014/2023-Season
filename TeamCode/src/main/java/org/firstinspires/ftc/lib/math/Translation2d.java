@@ -37,6 +37,10 @@ public class Translation2d {
         return new Translation2d(m_x + other.getX(), m_y + other.getY());
     }
 
+    public Translation2d translateBy(double other_x, double other_y) {
+        return new Translation2d(m_x + other_x, m_y + other_y);
+    }
+
     public Translation2d rotateBy(Rotation2d rotation) {
         return new Translation2d(m_x * rotation.getCos() - m_y * rotation.getSin(), m_x * rotation.getSin() + m_y * rotation.getCos());
     }
