@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+
+import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
@@ -12,12 +14,16 @@ import org.firstinspires.ftc.lib.replay.log.Log;
 import org.firstinspires.ftc.lib.systems.DriveSubsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import static java.lang.Double.NaN;
+
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
 import org.firstinspires.ftc.teamcode.TeleOp;
 
+import java.util.ArrayList; //Got a warning; java.util.ArrayList<java.lang.Double> ?
 
 public class MecanumDriveSubsystem extends DriveSubsystem {
 
@@ -43,7 +49,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     private double velocityX;
     private double velocityY;
 
-
+    private final double baseTrackRadius = 0.0; //Change once determined
 
     /**
      * Creates a new MecanumDriveSubsystem.
@@ -231,8 +237,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
      * ! Forward Kinematics = Joint space -> Cartesian Space
      * ! Inverse Kinematics = Cartesian Space -> Joint Space
      */
-    public void kinematicsAll (double LVFR, double LVBR, double LVFL, double LVBL, double VFrelative, double Vstrafe, double Omega, double baseTrackRadius)
+    public ArrayList kinematicsAll (double LVFR, double LVBR, double LVFL, double LVBL, double VFrelative, double Vstrafe, double Omega)
     {
+        ArrayList <Double> calculatedValues= new ArrayList();
+
         double Vfr = LVFR; //linear velocity of the front (leading) right wheel
         double Vbr = LVBR; //linear velocity of the back (trailing) right wheel
         double Vfl = LVFL; //linear velocity of the front (leading) left wheel
@@ -263,5 +271,13 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         Vbr = Vf - Vs + (2*Rb*omega);
         Vfr = Vf + Vs + (2*Rb*omega);
 
+        calculatedValues.add(Vf);
+        calculatedValues.add(Vs);
+        calculatedValues.add(Vfl);
+        calculatedValues.add(Vbl);
+        calculatedValues.add(Vbr);
+        calculatedValues.add(Vfr);
+
+        return(calculatedValues);
     }
 }
