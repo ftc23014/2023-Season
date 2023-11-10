@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.vision;
 
 import android.graphics.Canvas;
 import android.util.Pair;
+import org.firstinspires.ftc.lib.Lambda;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -15,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class BackboardDetectionPipeline implements VisionProcessor {
+
+    public static BackboardDetectionPipeline instance;
 
     public enum Strategy {
         //place the pixel on the same row it's in currently unless it's above a certain threshold.
@@ -49,20 +52,33 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
     private final boolean drawGraphics = true;
 
+    private List<Double> backboardPercentages = new ArrayList<>();
+
+    private Lambda onFrameProcessed;
+
     public BackboardDetectionPipeline(Strategy strategy) {
         super();
 
+        instance = this;
+
         this.strategy = strategy;
+        this.backboardPercentages = new ArrayList<>();
+    }
+
+    public void requestFrame(Lambda onFrameProcessed) {
+        this.onFrameProcessed = onFrameProcessed;
+        requestFrame = true;
     }
 
     public void switchStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
 
-    @Override
-    public void init(int width, int height, CameraCalibration calibration) {
-
+    public List<Double> getBackboardPercentages() {
+        return backboardPercentages;
     }
+
+    // # UTILS SECTION
 
     private boolean toverlap(Translation2d rect1pos, Translation2d rect1opos, Translation2d rect2pos, Translation2d rect2opos) {
         if (rect1opos.getX() >= rect2opos.getX()
@@ -113,6 +129,9 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         return new Translation2d(x, y);
     }
 
+    // # END UTILS SECTION
+
+    // # PROCESSING SECTION
     @Override
     public Mat processFrame(Mat input, long captureTimeNanos) {
         //we don't want to process the frame if we don't need to. this is to save processing power since it's a bit resource intensive.
@@ -147,6 +166,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         int i = 0;
         int j = 0;
 
+        //go through all the contours, remove any that are too small, or the ratio is not like the backboard lines (using a 1:5 ratio here)
         for (MatOfPoint c : contours) {
             Rect rect = Imgproc.boundingRect(c);
 
@@ -171,15 +191,19 @@ public class BackboardDetectionPipeline implements VisionProcessor {
             }
         }
 
+        //sort the high contours by area, highest to lowest
         highContours.sort((o1, o2) -> (int) (Imgproc.contourArea(o2) - Imgproc.contourArea(o1)));
 
+        //if there's less than 2 contours, then we can't do the calculation.
         if (highContours.size() < 2) {
             //report nothing found
             return input;
         }
 
+
         List<Rect> preCombinedContours = new ArrayList<>();
 
+        //go through all the contours and combine the ones that are close together
         for (MatOfPoint c : highContours) {
             Rect rect = Imgproc.boundingRect(c);
 
@@ -223,7 +247,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
         List<Rect> combinedContours = new ArrayList<>();
 
-        //quick second pass through to combine the contours just in case
+        //quick second pass through to combine the contours again just in case
 
         i = 0;
 
@@ -263,12 +287,14 @@ public class BackboardDetectionPipeline implements VisionProcessor {
             }
         }
 
+        //find the average combined area
         double avgCombinedArea = 0d;
 
         for (Rect rect : combinedContours) {
             avgCombinedArea += rect.area();
         }
 
+        //if there's more than three, reduce the amount of contours by removing the ones that are less than half the average area
         if (combinedContours.size() > 3) {
             avgCombinedArea /= combinedContours.size();
             i = 0;
@@ -277,6 +303,8 @@ public class BackboardDetectionPipeline implements VisionProcessor {
                 if (rect.area() < avgCombinedArea * 0.5) {
                     combinedContours.remove(i);
                     i--;
+                    //quick prevent too small
+                    if (combinedContours.size() == 2) break;
                 }
 
                 i++;
@@ -290,13 +318,16 @@ public class BackboardDetectionPipeline implements VisionProcessor {
             }
         }
 
+        //sort by y value
         combinedContours.sort((o1, o2) -> (int) (o1.y - o2.y));
 
+        //if there's less than 2 contours, then we can't do the calculation.
         if (combinedContours.size() < 2) {
             //unable to do the calculation.
             return input;
         }
 
+        //hand it off to the processing function once we know the bar locations
         return processBar(input, combinedContours.get(0), combinedContours.get(1));
     }
 
@@ -304,6 +335,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         Mat copy = input.clone();
         Mat image = input.clone();
 
+        //general drawing things, not really important, drawing the sides of the backboard
         double slope = ((double) bar2.y - bar1.y) / ((double) bar2.x - bar1.x);
         double y_val = slope * -bar1.x + bar1.y;
 
@@ -322,6 +354,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         int center_x = (bar1.x + bar1.width) / 2;
         int center_y = (bar1.y + bar1.height) / 2;
 
+        //get the general intersection between the two sides, used for drawing again.
         Translation2d ipoint = line_intersection(
                 new Translation2d(bar1.x, bar1.y),
                 new Translation2d(0, (int) Math.round(y_val)),
@@ -331,11 +364,14 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
         final int sections = 5;
 
+        //track how long it takes to process this.
         long start = System.currentTimeMillis();
 
         ArrayList<Pair<Double, Double>> backboardInfo = new ArrayList<>();
 
+        //loop through sections
         for (int i = 0; i <= sections; i++) {
+            //again, general drawing things, draw the "sections" of the backboard.
             Translation2d point_between = new Translation2d(
                     bar1.x + Math.round(bar1.width + ((float) i / sections)),
                     bar1.y
@@ -355,10 +391,12 @@ public class BackboardDetectionPipeline implements VisionProcessor {
                 Imgproc.line(copy, new org.opencv.core.Point(point_between.getX(), point_between.getY()), new org.opencv.core.Point(s, (int) Math.round(p_y_val)), new Scalar(0, 255, 0), 5);
             }
 
+            //gets a bit weird when i = sections, so we just skip it.
             if (i == sections) {
                 continue;
             }
 
+            //real work, split the mat into submats based on the section sizes and process them.
             Translation2d p2 = new Translation2d(
                     point_between.getX() + Math.round(bar1.width * ((float) 1 / sections)),
                     image.height()
@@ -371,11 +409,13 @@ public class BackboardDetectionPipeline implements VisionProcessor {
                     ))
             );
 
+            //add the info from processing the bar to the list.
             backboardInfo.add(
                     dist
             );
         }
 
+        //get the highest bottom of the backboard, generally the correct one since it's not always accurate.
         double highestBottomOfBackboard = 0d;
 
         for (Pair<Double, Double> pair : backboardInfo) {
@@ -384,32 +424,66 @@ public class BackboardDetectionPipeline implements VisionProcessor {
             }
         }
 
-        Imgproc.line(copy, new Point(
-                0, highestBottomOfBackboard + bar1.y
-        ), new Point(
-                image.width(),
-                highestBottomOfBackboard + bar1.y
-        ), new Scalar(0, 0, 255), 5);
+        //draw a line accross for the bottom of the backboard.
+        if (drawGraphics) {
+            Imgproc.line(copy, new Point(
+                    0, highestBottomOfBackboard + bar1.y
+            ), new Point(
+                    image.width(),
+                    highestBottomOfBackboard + bar1.y
+            ), new Scalar(0, 0, 255), 5);
+        }
 
         System.out.println("total time taken: " + (System.currentTimeMillis() - start) + "ms");
+
+        //get the percentages of the backboard from the bottom of the backboard to the bottom of the top bar.
+        ArrayList<Double> percentages = new ArrayList<>();
+
+        for (Pair<Double, Double> pair : backboardInfo) {
+            double heightUpToBackboard = highestBottomOfBackboard - pair.first;
+            double percentage = heightUpToBackboard / (highestBottomOfBackboard - bar1.y);
+
+            percentages.add(percentage);
+        }
+
+        //set the percentages
+        backboardPercentages = percentages;
+
+        //run the event lambda if it's not null
+        if (onFrameProcessed != null) {
+            onFrameProcessed.run();
+        }
 
         return copy;
     }
 
     private Pair<Double, Double> processSingleBar(Mat input) {
+        /** general settings */
+
+        //how many pixels to skip when graphing, lower = more accurate but slower, higher = less accurate but faster
         final int per = 8;
+        //how many pixels in a row must be empty to be considered empty
         final int empty_count_threshold = 50;
+        //how many pixels in a row must be taken to be considered "in pixels" and has passed the bottom of the empty space
         final int taken_count_threshold = 100;
+        //the y value the pixel stack starts after, to prevent false positives due to lighting/etc
         final int stack_starts_after = 300;
+
+        /** end settings */
 
         Mat img = input.clone();
 
+        //timing to see how long it takes to process a single bar
         long start_time = System.currentTimeMillis();
+
+        //convert to grayscale
         Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 
         Mat edges = img.clone();
+        //get the edges of the image
         Imgproc.Canny(img, edges, 50, 150, 3);
 
+        //find those edges, and get the contours
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -419,6 +493,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
         List<Rect> rects = new ArrayList<>();
 
+        //loop through, convert those contours to rects
         for (MatOfPoint c : contours) {
             Rect rect = Imgproc.boundingRect(c);
 
@@ -433,6 +508,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
         List<Integer> graph = new ArrayList<>();
 
+        //loop through the image, and graph the amount of rects in each row
         for (int y = 0; y < img.height(); y += per) {
             int count = 0;
 
@@ -448,6 +524,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         //garbage collect rects
         rects.clear();
 
+        //get the largest value in the graph, which is the amount of rects in a row
         int largest = Collections.max(graph);
 
         int free_count = 0;
@@ -457,6 +534,7 @@ public class BackboardDetectionPipeline implements VisionProcessor {
 
         int bottomOfBackboard = 0;
 
+        //loop through the graph, and find the lowest free count, and the bottom of the backboard
         for (int y = 0; y < graph.size(); y++) {
             if (graph.get(y) > 0) {
                 if (free_count > 0 && !passedLargestValue) {
@@ -487,8 +565,15 @@ public class BackboardDetectionPipeline implements VisionProcessor {
         return new Pair<>((double) lowest_free_count, (double) bottomOfBackboard);
     }
 
+    // # END PROCESSING SECTION
+
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+
+    }
+
+    @Override
+    public void init(int width, int height, CameraCalibration calibration) {
 
     }
 }

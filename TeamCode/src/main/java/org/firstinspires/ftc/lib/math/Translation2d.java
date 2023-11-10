@@ -85,6 +85,10 @@ public class Translation2d {
         return attributes.containsKey(name) ? attributes.get(name) : 0;
     }
 
+    public boolean isZero() {
+        return m_x == 0 && m_y == 0;
+    }
+
     @Override
     public String toString() {
         return "(" + m_x + "," + m_y + ")" + (!attributes.keySet().isEmpty() ? " [" + attributes.toString() + "]" : "");

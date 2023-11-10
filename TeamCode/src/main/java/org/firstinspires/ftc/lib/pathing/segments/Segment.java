@@ -28,7 +28,7 @@ public abstract class Segment {
 
     public Translation2d getVelocityAtPoint(int pointIndex, double deltaTime) {
         if (pointIndex + 1 >= getPoints().size()) {
-            throw new IndexOutOfBoundsException("Too high of a point index!");
+            return Translation2d.zero();
         }
 
         Translation2d point1 = getPoints().get(pointIndex);
@@ -39,7 +39,7 @@ public abstract class Segment {
                 point2.getY() - point1.getY()
         );
 
-        difference = difference.scalar(1d / deltaTime);
+        //difference = difference.scalar(1d / deltaTime);
 
         if (point1.getAttribute("t") != 0 && point2.getAttribute("t") != 0)
             difference.addAttribute(

@@ -6,7 +6,13 @@ import org.firstinspires.ftc.lib.math.*;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.pathing.segments.Segment;
 import org.firstinspires.ftc.lib.systems.DriveSubsystem;
+import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.lib.systems.commands.Command;
+import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Trajectory extends Command {
 
@@ -71,12 +77,32 @@ public class Trajectory extends Command {
 
     private double lastExecute = 0;
 
+
+    private TimerTask incremental;
+    private Timer timer = new Timer();
+
     @Override
     public void execute() {
         if (!hasBeenExecuted) {
             hasBeenExecuted = true;
             m_startTime = System.currentTimeMillis();
             lastExecute = System.currentTimeMillis();
+
+            timer = new Timer();
+            incremental = new TimerTask() {
+                @Override
+                public void run() {
+                    if (m_onSegment >= m_segments.length) return;
+
+                    m_onPoint++;
+                    if (m_onPoint >= m_segments[m_onSegment].getPoints().size()) {
+                        m_onPoint = 0;
+                        m_onSegment++;
+                    }
+                }
+            };
+
+            timer.schedule(incremental, 0, (long) (m_constants.getDeltaTime() * 1000));
         }
 
         double currentTime = System.currentTimeMillis();
@@ -95,13 +121,11 @@ public class Trajectory extends Command {
             nextVelocity = m_segments[m_onSegment].getVelocityAtPoint(m_onPoint + 1, m_constants.getDeltaTime());
         }
 
-        Translation2d velocities = new Translation2d(
-                nextVelocity.getX() - velocity.getX(),
-                nextVelocity.getY() - velocity.getY()
-        ).scalar(1 / deltaExecute);
+        Translation2d velocities = (
+                velocity.isZero() ? nextVelocity : velocity
+        ).rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / deltaExecute);
 
-        //rotate the velocities to the robot's current angle, 90°
-        velocities = velocities.rotateBy(Rotation2d.fromDegrees(-90));
+        Autonomous.getTelemetry().addLine("v: " + velocities.toString());
 
         lastExecute = currentTime;
 
