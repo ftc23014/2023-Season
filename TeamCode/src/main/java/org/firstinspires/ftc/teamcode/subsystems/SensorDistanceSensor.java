@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.view.View;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -14,6 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //@Disabled                            // Comment this out to add to the opmode list
 public class SensorDistanceSensor extends LinearOpMode {
     DistanceSensor sensorDistance;
+    boolean objectWithin3cm = false;
+    long objectDetectedTime = 0;
+    int numOfPixels = 0;
 
     @Override
     public void runOpMode() {
@@ -28,11 +27,23 @@ public class SensorDistanceSensor extends LinearOpMode {
         while (opModeIsActive()) {
             double distance = sensorDistance.getDistance(DistanceUnit.CM);
 
-            // check if the distance is less than or equal to 10cm
-            if (distance <= 10) {
-                telemetry.addData("Status", "Stop");
+            if (distance <= 3 && !objectWithin3cm) {
+                objectWithin3cm = true;
+                objectDetectedTime = System.currentTimeMillis();
+                telemetry.addData("Status", "Object within 3cm");
+            } else if (distance > 3 && objectWithin3cm) {
+                objectWithin3cm = false;
+                long elapsedTime = System.currentTimeMillis() - objectDetectedTime;
+                if (elapsedTime >= 500) {  // 0.5 seconds
+                    numOfPixels++;
+                    telemetry.addData("Status", "Pixel count increased");
+                }
+            }
+
+            if (numOfPixels >= 2) {
+                telemetry.addData("Status", "Stop Intake");
             } else {
-                telemetry.addData("Status", "Moving");
+                telemetry.addData("Status", "Go Intake");
             }
 
             telemetry.addData("Distance (cm)", distance);
