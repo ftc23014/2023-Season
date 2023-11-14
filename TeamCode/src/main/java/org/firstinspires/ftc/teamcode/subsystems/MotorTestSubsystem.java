@@ -22,7 +22,7 @@ public class MotorTestSubsystem extends Subsystem {
     public void init() {
 
 
-        motor = getHardwareMap().dcMotor.get("MotorTest");
+        motor = getHardwareMap().dcMotor.get("intake_motor");
 
 
 
