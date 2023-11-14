@@ -5,6 +5,8 @@ import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 
 public class MecanumOdometry {
+    private static MecanumOdometry instance;
+
     private Pose2d pose;
     
     private double m_leftEncoder;
@@ -14,6 +16,21 @@ public class MecanumOdometry {
     private double m_trackwidth;
     private double m_forwardOffset;
 
+    /**
+     * Creates a new MecanumOdometry instance.
+     * If there's already an instance, it will eight return the existing instance or create a new one.
+     * @param m_currentPosition The current position of the robot.
+     *                          This is used to set the initial position of the robot.
+     *                          If there's already an instance, this parameter is ignored.
+     * @param preserve Whether to preserve the existing instance.
+     * */
+    public static MecanumOdometry create(Pose2d m_currentPosition, boolean preserve) {
+        if (instance != null && preserve)
+            return instance;
+
+        instance = new MecanumOdometry(m_currentPosition);
+        return instance;
+    }
 
     public MecanumOdometry(Pose2d m_currentPosition) {
         this.pose = m_currentPosition;

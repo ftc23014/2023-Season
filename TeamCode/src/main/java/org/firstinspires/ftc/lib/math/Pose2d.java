@@ -4,6 +4,10 @@ public class Pose2d {
     private Translation2d m_position;
     private Rotation2d m_rotation;
 
+    public static Pose2d zero() {
+        return new Pose2d(0, 0, 0);
+    }
+
     public Pose2d(Translation2d position, Rotation2d rotation) {
         m_position = position;
         m_rotation = rotation;

@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,15 +12,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class MecanumDriveOpMode extends OpMode {
 
     private MecanumDriveSubsystem mecanumDriveSubsystem;
+    private IntakeSubsystem intakeSubsystem;
 
     @Override
     public void init() {
         mecanumDriveSubsystem = new MecanumDriveSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
 
         Robot.init();
 
-        Subsystems.onInit(hardwareMap);
-
+        Subsystems.onInit(this);
     }
 
     @Override

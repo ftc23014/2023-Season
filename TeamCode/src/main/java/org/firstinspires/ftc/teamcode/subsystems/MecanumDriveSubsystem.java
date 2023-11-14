@@ -8,6 +8,7 @@ import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
+import org.firstinspires.ftc.lib.odometry.MecanumOdometry;
 import org.firstinspires.ftc.lib.odometry.motion.ExpectedRelativeMotion;
 import org.firstinspires.ftc.lib.replay.Replay;
 import org.firstinspires.ftc.lib.replay.log.Log;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
 import org.firstinspires.ftc.teamcode.TeleOp;
+import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
 import java.util.ArrayList; //Got a warning; java.util.ArrayList<java.lang.Double> ?
 
@@ -49,6 +51,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     private double velocityX;
     private double velocityY;
 
+    private MecanumOdometry odometry;
+
     private final double baseTrackRadius = 0.0; //Change once determined
 
     /**
@@ -61,6 +65,11 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
         m_maxVelocity = maxVelocity;
         m_velocityLimit = speedLimit;
+
+        odometry = MecanumOdometry.create(
+                Autonomous.getStartingPosition(),
+                true
+        );
     }
 
     public MecanumDriveSubsystem() {

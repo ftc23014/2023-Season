@@ -72,6 +72,10 @@ public class StartupManager {
         return false;
     }
 
+    public static void clear() {
+        checks.clear();
+    }
+
     public static void printChecks(Telemetry telemetry) {
         if (!Simulation.inSimulation()) {
             telemetry.addData("Checks Fulfilled", new Func<Object>() {

@@ -11,9 +11,11 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.IntakeMechanism;
 import org.firstinspires.ftc.teamcode.subsystems.vision.OLD_VisionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
@@ -37,13 +39,17 @@ public class TeleOp extends OpMode {
         return instance.hardwareMap.appContext;
     }
 
+    public static Gamepad gamepad(boolean gamepad1) {
+        return gamepad1 ? instance.gamepad1 : instance.gamepad2;
+    }
+
     private ElapsedTime m_runtime = new ElapsedTime();
 
     private boolean m_teleOpEnabled = false;
 
     private VisionSubsystem m_visionSubsystem;
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
-    private MotorTestSubsystem m_motorTestSubsystem; //= new MotorTestSubsystem();
+    private IntakeMechanism m_intakeSubsystem;
 
     @Override
     public void init() {
@@ -53,9 +59,12 @@ public class TeleOp extends OpMode {
         m_mecanumDriveSubsystem = new MecanumDriveSubsystem();
 
         m_visionSubsystem =  new VisionSubsystem();
+
+        m_intakeSubsystem = new IntakeMechanism();
         //END SUBSYSTEM CREATION
 
-        //StartupManager.printChecks(telemetry);
+        StartupManager.clear();
+        StartupManager.printChecks(telemetry);
 
         Robot.init();
 
@@ -83,7 +92,6 @@ public class TeleOp extends OpMode {
         m_teleOpEnabled = true;
 
     }
-
 
     @Override
     public void loop() {

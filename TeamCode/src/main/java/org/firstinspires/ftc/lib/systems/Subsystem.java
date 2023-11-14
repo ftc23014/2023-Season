@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.lib.systems;
 
 import android.content.Context;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.replay.Replayable;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -42,8 +43,8 @@ public class Subsystem extends Replayable {
     }
 
     public static HardwareMap getHardwareMap() {
-        if (Subsystems.alternateHardwareMap != null)
-             return Subsystems.alternateHardwareMap;
+        if (Subsystems.alternateOpMode != null)
+             return Subsystems.alternateOpMode.hardwareMap;
 
         if (TeleOp.hasInstance() && TeleOp.getHardwareMap() != null) {
             return TeleOp.getHardwareMap();
@@ -59,12 +60,29 @@ public class Subsystem extends Replayable {
     }
 
     public static Telemetry telemetry() {
+        if (Subsystems.alternateOpMode != null)
+            return Subsystems.alternateOpMode.telemetry;
+
         if (TeleOp.hasInstance() && TeleOp.getTelemetry() != null) {
             return TeleOp.getTelemetry();
         } else if (Autonomous.hasInstance() && Autonomous.getTelemetry() != null) {
             return Autonomous.getTelemetry();
         } else {
             return null;
+        }
+    }
+
+    public static Gamepad gamepad() {
+        return gamepad(false);
+    }
+
+    public static Gamepad gamepad(boolean second) {
+        if (TeleOp.hasInstance()) {
+            return TeleOp.gamepad(!second);
+        } else if (Subsystems.alternateOpMode != null) {
+            return Subsystems.alternateOpMode.gamepad1;
+        } else {
+            return null; // don't return since in autonomous we don't have a gamepad
         }
     }
 }

@@ -15,7 +15,7 @@ public class LinearSlideOpmode extends OpMode {
     public void init() {
         motorTestSubsystem = new MotorTestSubsystem();
         motorTestSubsystem.setGamepad(gamepad1);
-        Subsystems.onInit(hardwareMap);
+        Subsystems.onInit(this);
     }
 
     @Override

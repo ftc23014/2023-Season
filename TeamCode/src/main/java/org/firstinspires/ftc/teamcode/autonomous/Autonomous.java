@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.auto.PlannedAuto;
 import org.firstinspires.ftc.lib.math.PIDController;
+import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.Trajectory;
@@ -30,6 +31,8 @@ public class Autonomous extends OpMode {
     private static Autonomous instance;
     private static OpMode k_autoReferral;
 
+    private static Pose2d startingPosition;
+
     public static boolean hasInstance() {
         return instance != null;
     }
@@ -40,6 +43,10 @@ public class Autonomous extends OpMode {
 
     public static Telemetry getTelemetry() {
         return k_autoReferral.telemetry;
+    }
+
+    public static Pose2d getStartingPosition() {
+        return startingPosition == null ? Pose2d.zero() : startingPosition;
     }
 
     public static Autonomous setAutonomous(AutonomousMode autoMode, StartingSide side, OpMode referral) {

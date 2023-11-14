@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.lib.systems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 public class Subsystems {
     private static ArrayList<Subsystem> subsystems = new ArrayList<>();
 
-    protected static HardwareMap alternateHardwareMap = null;
+    protected static OpMode alternateOpMode = null;
 
     protected static void addSubsystem(Subsystem subsystem) {
         subsystems.add(subsystem);
@@ -19,8 +20,8 @@ public class Subsystems {
         }
     }
 
-    public static void onInit(HardwareMap alternate) {
-        alternateHardwareMap = alternate;
+    public static void onInit(OpMode alternate) {
+        alternateOpMode = alternate;
 
         for (Subsystem subsystem : subsystems) {
             subsystem.init();

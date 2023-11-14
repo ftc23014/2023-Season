@@ -11,7 +11,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void init() {
-        motor = getHardwareMap().get(DcMotor.class, "motor");
+        //motor = getHardwareMap().get(DcMotor.class, "motor");
     }
 
     @Override
