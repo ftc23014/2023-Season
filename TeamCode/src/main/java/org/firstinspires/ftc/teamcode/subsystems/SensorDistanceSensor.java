@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //@Disabled                            // Comment this out to add to the opmode list
 public class SensorDistanceSensor extends LinearOpMode {
     DistanceSensor sensorDistance;
+    DcMotor intakeMotor;
     boolean objectWithin3cm = false;
     long objectDetectedTime = 0;
     int numOfPixels = 0;
@@ -19,6 +21,7 @@ public class SensorDistanceSensor extends LinearOpMode {
 
         // get a reference to the distance sensor that shares the same name.
         sensorDistance = hardwareMap.get(DistanceSensor.class, "distance");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
 
         // wait for the start button to be pressed.
         waitForStart();
@@ -42,8 +45,10 @@ public class SensorDistanceSensor extends LinearOpMode {
 
             if (numOfPixels >= 2) {
                 telemetry.addData("Status", "Stop Intake");
+                intakeMotor.setPower(0); // Stop the intake motor
             } else {
                 telemetry.addData("Status", "Go Intake");
+                intakeMotor.setPower(1); // Set power to 1 to keep the intake running
             }
 
             telemetry.addData("Distance (cm)", distance);
