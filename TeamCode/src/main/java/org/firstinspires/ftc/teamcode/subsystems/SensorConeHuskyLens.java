@@ -20,7 +20,7 @@ public class SensorConeHuskyLens extends LinearOpMode {
         // init huskyLens
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
-        // make sure huskylens does die
+        // make sure huskylens doesnt die
         Deadline rateLimit = new Deadline(READ_TIME, TimeUnit.SECONDS);
         rateLimit.expire();
 
@@ -30,7 +30,7 @@ public class SensorConeHuskyLens extends LinearOpMode {
             telemetry.addData(">>", "Press start to continue");
         }
 
-        // set algorithm to funny object detection yay
+        // set algorithm to funny color detection yay
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
         telemetry.update();
@@ -57,7 +57,7 @@ public class SensorConeHuskyLens extends LinearOpMode {
 
             // -1 for left tape, 0 for middle tape, 1 for right tape
             if (blocks.length > 0) { // check that it detects one cone
-                telemetry.addData("Tape:", locateBlockPlacement(blocks[0].x));
+                telemetry.addData("Tape:", locateBlockPlacement(blocks[-1].x));
             }
 
             telemetry.update();
@@ -65,11 +65,11 @@ public class SensorConeHuskyLens extends LinearOpMode {
     }
 
     private static int locateBlockPlacement(int blockX) {
-        if (blockX < 100) {
+        if (blockX < 100) { // if block is between 0-100 pixels
             return -1;
-        } else if (blockX > 100 && blockX < 250) {
+        } else if (blockX > 100 && blockX < 250) { // if block is between 100-250 pixels
             return 0;
-        } else {
+        } else { // else
             return 1;
         }
     }
