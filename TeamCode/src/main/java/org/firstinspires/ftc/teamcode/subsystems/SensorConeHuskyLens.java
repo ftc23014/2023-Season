@@ -47,7 +47,7 @@ public class SensorConeHuskyLens extends LinearOpMode {
             // init list of blocks that huskylens detects
             HuskyLens.Block[] blocks = huskyLens.blocks();
 
-            // show number of blocks detected. I DONT KNOW WHY IT SAYS TWO WHEN IT ONLY SEES ONE, so super jank fix:
+            // shows number of blocks detected
             telemetry.addData("Block count:", blocks.length);
 
             // show list of blocks detected
