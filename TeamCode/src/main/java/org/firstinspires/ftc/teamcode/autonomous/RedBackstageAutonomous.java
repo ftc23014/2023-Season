@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
