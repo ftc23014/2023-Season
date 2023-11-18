@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Sensor: Cone Detection (HL)", group = "Sensor")
 public class SensorConeHuskyLensSubsystem extends Subsystem {
 
     private HuskyLens huskyLens;

@@ -39,12 +39,12 @@ public class LinearSlideSubsystem extends Subsystem {
 
         if (gamepad.a) {
             motor1.setPower(0.5);
-            motor2.setPower(0.5);
+            motor2.setPower(-0.5);
 
         }
         else if (gamepad.b) {
             motor1.setPower(-0.5);
-            motor2.setPower(-0.5);
+            motor2.setPower(0.5);
 
         }
         else {
