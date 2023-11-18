@@ -5,17 +5,23 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name= "Motor Test", group="Motor")
 public class LinearSlideOpmode extends OpMode {
 
     private MotorTestSubsystem motorTestSubsystem;
+    private LinearSlideSubsystem linearSlideSubsystem;
     @Override
     public void init() {
-        motorTestSubsystem = new MotorTestSubsystem();
+        /*motorTestSubsystem = new MotorTestSubsystem();
         motorTestSubsystem.setGamepad(gamepad1);
         Subsystems.onInit(this);
+        */
+         linearSlideSubsystem = new LinearSlideSubsystem();
+         linearSlideSubsystem.setGamepad(gamepad1);
+         Subsystems.onInit(this);
     }
 
     @Override
