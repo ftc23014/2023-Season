@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.lib.systems.Subsystem;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 public class LinearSlideSubsystem extends Subsystem {
     DcMotor motor1;
     DcMotor motor2;
+    Servo spatula;
 
     Gamepad gamepad;
 
@@ -26,6 +28,7 @@ public class LinearSlideSubsystem extends Subsystem {
 
         motor1 = getHardwareMap().dcMotor.get("Linear_Motor1");
         motor2 = getHardwareMap().dcMotor.get("Linear_Motor2");
+        spatula = getHardwareMap().servo.get("Spatula");
 
 
 
@@ -46,6 +49,13 @@ public class LinearSlideSubsystem extends Subsystem {
             motor1.setPower(-0.5);
             motor2.setPower(0.5);
 
+        }
+        else if (gamepad.y) {
+            spatula.setPosition(1);
+
+        }
+        else if (gamepad.x) {
+            spatula.setPosition(0);
         }
         else {
             motor1.setPower(0);
