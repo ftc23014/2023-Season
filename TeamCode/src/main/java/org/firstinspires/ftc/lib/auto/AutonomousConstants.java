@@ -6,6 +6,9 @@ import org.firstinspires.ftc.lib.math.Unit;
 public class AutonomousConstants {
     private Unit max_speed;
     private Unit max_acceleration;
+
+    private Unit min_speed;
+
     private double mass;
 
     private PIDController m_controller;
@@ -25,12 +28,13 @@ public class AutonomousConstants {
      * @param delta_time How often the robot should update its motion (in seconds).
      *                   This can potentially lead to unwanted motion from the PID, so make sure that you accordingly tune the PID.
      */
-    public AutonomousConstants(Unit max_speed, Unit max_acceleration, double mass_in_kg, PIDController controller, double delta_time) {
+    public AutonomousConstants(Unit max_speed, Unit min_speed, Unit max_acceleration, double mass_in_kg, PIDController controller, double delta_time) {
         this.max_speed = max_speed;
         this.max_acceleration = max_acceleration;
         this.mass = mass_in_kg;
         this.m_controller = controller;
         this.DELTA_TIME = delta_time;
+        this.min_speed = min_speed;
     }
 
     /**
@@ -87,6 +91,14 @@ public class AutonomousConstants {
      */
     public double getMass() {
         return mass;
+    }
+
+    /**
+     * Returns the minimum speed of the robot.
+     * @return Minimum speed of the robot.
+     */
+    public Unit getMinSpeed() {
+        return min_speed;
     }
 
     /**

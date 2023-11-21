@@ -26,9 +26,12 @@ public class BezierSegment extends Segment {
         String fileContents = "";
 
         try {
-            InputStream stream = Subsystem.getAppContext().getResources().openRawResource(resource);
+            //read from "~/res/raw/"
+            InputStream stream =
+                    Subsystem.getAppContext().getResources().openRawResource(resource);
 
             fileContents = FileUtils.read(stream);
+                    //new File("/Users/jgrimminck2023/Documents/coding/ftc/FtcRobotController/TeamCode/src/main/res/raw/testing.json"));
 
             return parseFromContents(fileContents);
         } catch (Exception e) {
@@ -79,7 +82,11 @@ public class BezierSegment extends Segment {
                 double heading = waypoint.get("heading").getAsDouble();
                 double type = waypoint.get("type").getAsDouble();
 
-                construction[constructionIndex] = new Waypoint(new Translation2d(x, y),
+                construction[constructionIndex] = new Waypoint(
+                        new Translation2d(
+                            new Unit(x, Unit.Type.Centimeters).get(Unit.Type.Meters),
+                            new Unit(y, Unit.Type.Centimeters).get(Unit.Type.Meters)
+                        ),
                         Rotation2d.fromDegrees(heading),
                         type == 0 ? Waypoint.Type.HARD : Waypoint.Type.SOFT
                 );
@@ -219,9 +226,9 @@ public class BezierSegment extends Segment {
         m_bezier.generateByPID(
                 0.001,
                 m_controller,
-                0.01,
-                m_constants.getMaxSpeed().get(Unit.Type.Centimeters),
-                m_constants.getMaxAcceleration().get(Unit.Type.Centimeters),
+                m_constants.getMinSpeed().get(Unit.Type.Meters),
+                m_constants.getMaxSpeed().get(Unit.Type.Meters),
+                m_constants.getMaxAcceleration().get(Unit.Type.Meters),
                 m_constants.getDeltaTime()
         );
     }

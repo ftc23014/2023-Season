@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Testing Auto", group = "Testing")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Testing Auto", group = "Testing", preselectTeleOp="Main TeleOp")
 public class AutonomousTesting extends OpMode {
     @Override
     public void init() {

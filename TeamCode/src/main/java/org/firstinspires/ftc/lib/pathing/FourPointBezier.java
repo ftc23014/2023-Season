@@ -346,12 +346,14 @@ public class FourPointBezier {
         double d = beginningDistance;
 
         do {
+            //do PID calculation
             double newCalc = controller.calculate(d, maxDistance);
 
             if (verbose) System.out.println("Calculated PID: " + newCalc + " cm for " + d + " to " + maxDistance);
 
             //include delta time
 
+            //check if the velocity is too high or too low.
             if (newCalc / delta_time > max_distance) {
                 newCalc = max_distance * delta_time;
                 if (newCalc + d > maxDistance) {

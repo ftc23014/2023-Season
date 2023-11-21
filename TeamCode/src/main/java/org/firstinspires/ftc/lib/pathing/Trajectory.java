@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Trajectory extends Command {
 
@@ -33,6 +34,8 @@ public class Trajectory extends Command {
 
     private int m_onSegment = 0;
     private int m_onPoint = 0;
+
+
     private Segment[] m_segments;
     private DriveSubsystem m_driveSubsystem;
     private AutonomousConstants m_constants;
@@ -92,13 +95,32 @@ public class Trajectory extends Command {
             incremental = new TimerTask() {
                 @Override
                 public void run() {
-                    if (m_onSegment >= m_segments.length) return;
+                    if (m_onSegment >= m_segments.length) {
+                        cancel();
+                        timer.cancel();
+                        return;
+                    }
 
                     m_onPoint++;
                     if (m_onPoint >= m_segments[m_onSegment].getPoints().size()) {
                         m_onPoint = 0;
                         m_onSegment++;
                     }
+
+                    //current velocity
+//                    Translation2d velocity = m_segments[m_onSegment]
+//                            .getVelocityAtPoint(m_onPoint, m_constants.getDeltaTime())
+//                            .rotateBy(Rotation2d.fromDegrees(-90))
+//                            .scalar(1 / m_constants.getDeltaTime());
+//
+//                    Autonomous.getTelemetry().addData("v", m_onPoint + "/" + m_segments[m_onSegment].getPoints().size() + " - v: " + velocity.toString());
+//
+//                    m_driveSubsystem.drive(
+//                            velocity,
+//                            Rotation2d.zero(),
+//                            true,
+//                            m_constants.getOpenLoop()
+//                    );
                 }
             };
 
@@ -107,25 +129,31 @@ public class Trajectory extends Command {
 
         double currentTime = System.currentTimeMillis();
         double timeSincePathStarted = currentTime - m_startTime;
-        double deltaExecute = currentTime - lastExecute;
+        double deltaExecute = (currentTime - lastExecute) / 1000;
 
-        Translation2d velocity = m_segments[m_onSegment].getVelocityAtPoint(m_onPoint, m_constants.getDeltaTime());
+        Translation2d velocity = m_onSegment >= m_segments.length ?
+                Translation2d.zero() :
+                    m_onPoint >= m_segments[m_onSegment].getPoints().size() ?
+                            Translation2d.zero() :
+                            m_segments[m_onSegment].getVelocityAtPoint(m_onPoint, m_constants.getDeltaTime());
+
         Translation2d nextVelocity;
-        if (m_onPoint >= m_segments[m_onSegment].getPoints().size()) {
-            if (m_onSegment + 1 < m_segments.length) {
+
+        if (m_onSegment + 1 < m_segments.length) {
+            if (m_onPoint >= m_segments[m_onSegment].getPoints().size()) {
                 nextVelocity = m_segments[m_onSegment + 1].getVelocityAtPoint(0, m_constants.getDeltaTime());
             } else {
-                nextVelocity = Translation2d.zero();
+                nextVelocity = m_segments[m_onSegment].getVelocityAtPoint(m_onPoint + 1, m_constants.getDeltaTime());
             }
         } else {
-            nextVelocity = m_segments[m_onSegment].getVelocityAtPoint(m_onPoint + 1, m_constants.getDeltaTime());
+            nextVelocity = Translation2d.zero();
         }
 
         Translation2d velocities = (
                 velocity.isZero() ? nextVelocity : velocity
-        ).rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / deltaExecute);
+        ).rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / m_constants.getDeltaTime());
 
-        Autonomous.getTelemetry().addLine("v: " + velocities.toString());
+        //Autonomous.getTelemetry().addLine("v: " + velocities.toString());
 
         lastExecute = currentTime;
 
@@ -182,5 +210,11 @@ public class Trajectory extends Command {
                 true,
                 m_constants.getOpenLoop()
         );
+    }
+
+    @Override
+    public void cancel() {
+        incremental.cancel();
+        timer.cancel();
     }
 }

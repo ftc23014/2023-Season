@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Blue Basic Park Backstage Autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Blue Basic Park Backstage Autonomous", group="Simple", preselectTeleOp="Main TeleOp")
 public class BlueBackstageAutonomous extends OpMode {
 
     private DistanceSensor distanceSensor;

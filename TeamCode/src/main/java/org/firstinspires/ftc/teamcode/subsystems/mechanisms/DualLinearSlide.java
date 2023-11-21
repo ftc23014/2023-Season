@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
@@ -21,34 +23,52 @@ public class DualLinearSlide extends Subsystem {
      * 4. figure out accurate positions, and make sure that they are consistent.
      */
 
+    private DcMotor leftSlideMotor;
+    private DcMotor rightSlideMotor;
+
+    private Gamepad gamepad;
+
     private final Rotation2d linearSlideAngle = Rotation2d.fromDegrees(30);
 
-    double groundToBottomOfPlacingPosition = 0;
-    double backboardAngle = 0;
-    double groundToBottomOfLinearSlide = 0;
+    private final Unit groundToBottomOfPlacingPosition = new Unit(20, Unit.Type.Centimeters);
+    private final Rotation2d backboardAngle = Rotation2d.fromDegrees(120);
+    private final Unit groundToBottomOfLinearSlide = new Unit(4, Unit.Type.Centimeters);
 
     Unit distanceFromBottomOfBackboardToThirdLevel = new Unit(0, Unit.Type.Meters);
 
-    public double getSlideHeightFromBackboardDistance(double distanceUpBackboard) {
-        double total = distanceUpBackboard + groundToBottomOfPlacingPosition;
+
+    public DualLinearSlide() {
+        super();
+
+        leftSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor1");
+        rightSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor2");
+    }
+
+    public void setPower(double p) {
+        leftSlideMotor.setPower(p);
+        rightSlideMotor.setPower(-p);
+    }
+
+    public Unit getSlideHeightFromBackboardDistance(Unit distanceUpBackboard) {
+        double total = distanceUpBackboard.get(Unit.Type.Centimeters) + groundToBottomOfPlacingPosition.get(Unit.Type.Centimeters);
 
         double h = total * Math.sin(
-                Math.PI - backboardAngle
+                Math.PI - backboardAngle.getRadians()
         );
 
-        return h - groundToBottomOfLinearSlide;
+        return new Unit(h - groundToBottomOfLinearSlide.get(Unit.Type.Centimeters), Unit.Type.Centimeters);
     }
     
-    public double getHeightOfLinearSlideFromBackboardDistance(double distanceUpBackboard) {
-        double slideHeight = getSlideHeightFromBackboardDistance(distanceUpBackboard);
+    public Unit getHeightOfLinearSlideFromBackboardDistance(Unit distanceUpBackboard) {
+        double slideHeight = getSlideHeightFromBackboardDistance(distanceUpBackboard).get(Unit.Type.Centimeters);
         
-        return slideHeight / Math.sin(Math.PI - linearSlideAngle.getRadians());
+        return new Unit(slideHeight / Math.sin(Math.PI - linearSlideAngle.getRadians()), Unit.Type.Centimeters);
     }
 
-    public double calculateDistanceFromBackboardFromLinearSlideHeight(double linearSlideHeight, double perpDistanceFromGround) {
-        return Math.sqrt(Math.pow(linearSlideHeight, 2) - Math.pow(
-                perpDistanceFromGround - groundToBottomOfLinearSlide, 2
-        ));
+    public Unit calculateDistanceFromBackboardFromLinearSlideHeight(Unit linearSlideHeight, Unit perpDistanceFromGround) {
+        return new Unit(Math.sqrt(Math.pow(linearSlideHeight.get(Unit.Type.Centimeters), 2) - Math.pow(
+                perpDistanceFromGround.get(Unit.Type.Centimeters) - groundToBottomOfLinearSlide.get(Unit.Type.Centimeters), 2
+        )), Unit.Type.Centimeters);
     }
 
     public Translation2d getPointToMoveTo() {

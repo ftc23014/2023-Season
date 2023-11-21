@@ -44,16 +44,11 @@ public class VisionSubsystem extends Subsystem {
                 //.setLensIntrinsics(3298.7389543652603, 3265.0187042219723, 1165.7536942923, 826.4908289614423)
                 .build();
 
-        tfod = new TfodProcessor.Builder()
-                .build();
-        tfod.setZoom(2.0);
-
-
-        backboardDetectionPipeline = new BackboardDetectionPipeline(BackboardDetectionPipeline.Strategy.Tower_Of_Babel);
+        //backboardDetectionPipeline = new BackboardDetectionPipeline(BackboardDetectionPipeline.Strategy.Tower_Of_Babel);
         
         myVisionPortal = new VisionPortal.Builder()
                 .setCamera(getHardwareMap().get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod, aprilTag)
+                .addProcessors(aprilTag)
                 .build();
     }
 
@@ -85,10 +80,14 @@ public class VisionSubsystem extends Subsystem {
         return currentRotation;
     }
 
+    boolean verbose = false;
+
     /**
      * Telemetry for AprilTag.
      */
     private void telemetryAprilTag() {
+        if (!verbose) return;
+
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry().addData("# AprilTags Detected", currentDetections.size());
 
@@ -120,6 +119,8 @@ public class VisionSubsystem extends Subsystem {
      * Add TeleOp.getTelemetry() about TensorFlow Object Detection (TFOD) recognitions.
      */
     private void telemetryTfod() {
+        if (!verbose) return;
+
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry().addData("# Objects Detected", currentRecognitions.size());
 

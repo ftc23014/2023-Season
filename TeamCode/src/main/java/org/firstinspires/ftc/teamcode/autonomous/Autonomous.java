@@ -7,24 +7,21 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.auto.PlannedAuto;
-import org.firstinspires.ftc.lib.math.PIDController;
+import org.firstinspires.ftc.lib.math.*;
+import org.firstinspires.ftc.lib.systems.commands.*;
+import org.firstinspires.ftc.teamcode.commands.HuskyDetectCommand;
+import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
-import org.firstinspires.ftc.lib.math.Pose2d;
-import org.firstinspires.ftc.lib.math.Translation2d;
-import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.Trajectory;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.systems.Subsystems;
-import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
-import org.firstinspires.ftc.lib.systems.commands.ParallelCommand;
-import org.firstinspires.ftc.lib.systems.commands.SequentialCommand;
-import org.firstinspires.ftc.lib.systems.commands.WaitCommand;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
 @Disabled
@@ -72,7 +69,8 @@ public class Autonomous extends OpMode {
 
     public enum AutonomousMode {
         TESTING,
-        BASIC_AUTO;
+        BASIC_AUTO,
+        FULL_AUTO;
     }
 
     public enum StartingSide {
@@ -81,6 +79,7 @@ public class Autonomous extends OpMode {
     }
 
     public enum PathSelectionFlags {
+        IGNORE,
         ONE,
         TWO,
         THREE,
@@ -91,18 +90,40 @@ public class Autonomous extends OpMode {
         SIX
     }
 
+    public enum HuskyLensDetection {
+        LEFT,
+        MIDDLE,
+        RIGHT
+    }
+
     public MecanumDriveSubsystem m_driveSubsystem;
+
+    private SensorConeHuskyLensSubsystem m_sensorConeHuskyLensSubsystem;
 
     private AutonomousMode m_autonomousMode;
     private StartingSide m_side;
+
+    private PathSelectionFlags m_pathSelectionFlag;
+
+    private HuskyLensDetection m_huskyLensDetection;
+
     private boolean m_autonomousEnabled;
 
     public Autonomous(AutonomousMode autoMode, StartingSide side) {
         m_autonomousMode = autoMode;
         m_side = side;
+        m_pathSelectionFlag = PathSelectionFlags.IGNORE;
+    }
+
+    public Autonomous(AutonomousMode autoMode, StartingSide side, PathSelectionFlags pathSelectionFlag) {
+        m_autonomousMode = autoMode;
+        m_side = side;
+        m_pathSelectionFlag = pathSelectionFlag;
     }
 
     private PlannedAuto auto;
+    
+    private AtomicInteger m_detectedConePosition = new AtomicInteger(0);
 
     @Override
     public void init() {
@@ -119,9 +140,10 @@ public class Autonomous extends OpMode {
     public void generateAuto() {
         AutonomousConstants constants = new AutonomousConstants(
                 new Unit(1, Unit.Type.Meters),
+                new Unit(0.1, Unit.Type.Meters),
                 new Unit(0.5, Unit.Type.Meters),
                 6,
-                new PIDController(0.2, 0.00, 0.00),
+                new PIDController(0.4, 0.00, 0.00),
                 1d/32d
         );
 
@@ -177,6 +199,42 @@ public class Autonomous extends OpMode {
                     }),
                     m_driveSubsystem.stop()
             );
+        } else if (m_autonomousMode == AutonomousMode.FULL_AUTO) {
+            if (m_pathSelectionFlag == PathSelectionFlags.ONE) {
+                auto = new PlannedAuto(
+                        constants,
+                        new InstantCommand(() -> {
+                            telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                        }),
+                        new HuskyDetectCommand(
+                                m_sensorConeHuskyLensSubsystem,
+                                0.5,
+                                (int detected) -> {
+                                    m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+                                }
+                        ),
+                        new WaitCommand(0.2),
+                        new Trajectory(
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.one_middle)
+                        ),
+                        new IfOrSkipCommand(() -> {
+                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                            },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(90)
+                            )
+                        ),
+                        new IfOrSkipCommand(() -> {
+                                return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                            },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(-90)
+                            )
+                        )
+//                        new
+                );
+            }
         }
 
         telemetry().addLine("Autonomous Generated!");
@@ -210,6 +268,8 @@ public class Autonomous extends OpMode {
     public void stop() {
         // -- DISABLE --
         m_autonomousEnabled = false;
+
+        m_driveSubsystem.stop_motors();
 
         Subsystems.onDisable();
     }

@@ -29,6 +29,12 @@ import java.util.ArrayList; //Got a warning; java.util.ArrayList<java.lang.Doubl
 
 public class MecanumDriveSubsystem extends DriveSubsystem {
 
+    private static MecanumDriveSubsystem instance;
+
+    public static MecanumDriveSubsystem instance() {
+        return instance;
+    }
+
     public static Unit maxVelocity = new Unit((312d / 60d) * 0.1d * Math.PI, Unit.Type.Meters);
 
     private DcMotor frontLeft;
@@ -62,6 +68,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
      */
     public MecanumDriveSubsystem(Unit maxVelocity, Unit speedLimit) {
         super();
+
+        instance = this;
 
         m_maxVelocity = maxVelocity;
         m_velocityLimit = speedLimit;
@@ -227,10 +235,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
             m_imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             setupAngleLogging = true;
         }
-        telemetry().addData("Joystick X", joyStickX);
-        telemetry().addData("Joystick Y", joyStickY);
-        telemetry().addData("Velocity X (m/s)", velocityX);
-        telemetry().addData("Velocity Y (m/s)", velocityY);
+//        telemetry().addData("Joystick X", joyStickX);
+//        telemetry().addData("Joystick Y", joyStickY);
+//        telemetry().addData("Velocity X (m/s)", velocityX);
+//        telemetry().addData("Velocity Y (m/s)", velocityY);
     }
 
     @Replay(name="expected_motion_replay")

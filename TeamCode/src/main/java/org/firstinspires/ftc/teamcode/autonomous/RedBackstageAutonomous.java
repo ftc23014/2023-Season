@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Basic Park Backstage Autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Basic Park Backstage Autonomous", group="Simple", preselectTeleOp="Main TeleOp")
 public class RedBackstageAutonomous extends OpMode  {
     private DistanceSensor distanceSensor;
 

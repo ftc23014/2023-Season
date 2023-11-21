@@ -15,6 +15,8 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
 
     private Deadline rateLimit;
 
+    private int lastDetection = 0;
+    private boolean hasDetected = false;
 
     @Override
     public void init() {
@@ -58,10 +60,24 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
 
         // -1 for left tape, 0 for middle tape, 1 for right tape
         if (blocks.length > 0) { // check that it detects one cone
-            telemetry().addData("Tape:", locateBlockPlacement(blocks[-1].x));
+            telemetry().addData("Tape:", locateBlockPlacement(blocks[blocks.length - 1].x));
+
+            lastDetection = locateBlockPlacement(blocks[blocks.length - 1].x);
+
+            hasDetected = true;
         }
 
+        hasDetected = false;
+
         telemetry().update();
+    }
+
+    public int getLastDetection() {
+        return lastDetection;
+    }
+
+    public boolean hasDetected() {
+        return hasDetected;
     }
 
     private static int locateBlockPlacement(int blockX) {
