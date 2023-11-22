@@ -8,7 +8,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name= "Motor Test", group="Motor")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name= "Linear Slide", group="Testing")
 public class LinearSlideOpmode extends OpMode {
 
     private MotorTestSubsystem motorTestSubsystem;

@@ -21,6 +21,7 @@ public class MecanumDriveOpMode extends OpMode {
     public void init() {
         mecanumDriveSubsystem = new MecanumDriveSubsystem();
         intakeSubsystem = new IntakeSubsystem();
+        intakeSubsystem.setGamepad(gamepad1);
         linearSlideSubsystem = new LinearSlideSubsystem();
         linearSlideSubsystem.setGamepad(gamepad1);
 

@@ -51,7 +51,7 @@ public class LinearSlideSubsystem extends Subsystem {
 
         }
         else if (gamepad.y) {
-            spatula.setPosition(1);
+            spatula.setPosition(0.35);
 
         }
         else if (gamepad.x) {
