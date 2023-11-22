@@ -13,6 +13,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.IntakeMechanism;
@@ -51,6 +52,8 @@ public class TeleOp extends OpMode {
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
     private IntakeMechanism m_intakeSubsystem;
 
+    private LinearSlideSubsystem m_linearSlideSubsystem;
+
     @Override
     public void init() {
         instance = this;
@@ -61,6 +64,9 @@ public class TeleOp extends OpMode {
         m_visionSubsystem =  new VisionSubsystem();
 
         m_intakeSubsystem = new IntakeMechanism();
+
+        m_linearSlideSubsystem = new LinearSlideSubsystem();
+
         //END SUBSYSTEM CREATION
 
         StartupManager.clear();

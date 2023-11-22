@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRGyro;
 
 /**
  * Just an example of how to move a motor with a subsystem.
@@ -51,7 +52,7 @@ public class LinearSlideSubsystem extends Subsystem {
 
         }
         else if (gamepad.y) {
-            spatula.setPosition(0.35);
+            spatula.setPosition(0.6);
 
         }
         else if (gamepad.x) {
@@ -61,8 +62,9 @@ public class LinearSlideSubsystem extends Subsystem {
             motor1.setPower(0);
             motor2.setPower(0);
 
-
         }
+
+        telemetry().addData("Spatula servo pos: ", String.format("%.3f", spatula.getPosition()));
 
     }
 

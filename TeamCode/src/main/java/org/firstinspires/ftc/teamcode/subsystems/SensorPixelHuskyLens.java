@@ -47,6 +47,7 @@ public class SensorPixelHuskyLens extends LinearOpMode {
             // init list of blocks that huskylens detects
             HuskyLens.Block[] blocks = huskyLens.blocks();
 
+
             // shows number of blocks detected
             telemetry.addData("Block count:", blocks.length);
 
