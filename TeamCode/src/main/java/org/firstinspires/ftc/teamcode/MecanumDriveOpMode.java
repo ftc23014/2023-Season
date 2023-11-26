@@ -5,8 +5,7 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name= "MecanumDriveOpMode", group="TeleOp")

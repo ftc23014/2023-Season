@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
-import android.content.Context;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,9 +17,8 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
@@ -270,6 +268,7 @@ public class Autonomous extends OpMode {
         m_autonomousEnabled = false;
 
         m_driveSubsystem.stop_motors();
+        auto.stop();
 
         Subsystems.onDisable();
     }

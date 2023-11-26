@@ -11,13 +11,10 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.MotorTestSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.IntakeMechanism;
-import org.firstinspires.ftc.teamcode.subsystems.vision.OLD_VisionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Spatula;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
@@ -52,7 +49,8 @@ public class TeleOp extends OpMode {
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
     private IntakeMechanism m_intakeSubsystem;
 
-    private LinearSlideSubsystem m_linearSlideSubsystem;
+    private DualLinearSlide m_linearSlideSubsystem;
+    private Spatula m_spatulaSubsystem;
 
     @Override
     public void init() {
@@ -65,7 +63,9 @@ public class TeleOp extends OpMode {
 
         m_intakeSubsystem = new IntakeMechanism();
 
-        m_linearSlideSubsystem = new LinearSlideSubsystem();
+        m_linearSlideSubsystem = new DualLinearSlide();
+
+        m_spatulaSubsystem = new Spatula();
 
         //END SUBSYSTEM CREATION
 
@@ -123,7 +123,7 @@ public class TeleOp extends OpMode {
         // -- DISABLE --
         m_teleOpEnabled = false;
 
-        m_mecanumDriveSubsystem.stop().execute();
+        m_mecanumDriveSubsystem.stop_motors();
 
         telemetry.addLine("Autonomous Disabled!");
         telemetry.update();

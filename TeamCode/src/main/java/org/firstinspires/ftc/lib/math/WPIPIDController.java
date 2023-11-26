@@ -245,7 +245,7 @@ public class WPIPIDController {
     }
 
     //Source: https://github.com/wpilibsuite/allwpilib/blob/main/wpimath/src/main/java/edu/wpi/first/math/MathUtil.java#L113
-    public double clamp(double value, double low, double high) {
+    public static double clamp(double value, double low, double high) {
         return Math.max(low, Math.min(value, high));
     }
 

@@ -40,4 +40,11 @@ public class SequentialCommand extends Command {
     public boolean hasFinished() {
         return currentCommand >= commands.size();
     }
+
+    public void cancel() {
+        //stops the current command
+        if (currentCommand < commands.size()) {
+            commands.get(currentCommand).cancel();
+        }
+    }
 }

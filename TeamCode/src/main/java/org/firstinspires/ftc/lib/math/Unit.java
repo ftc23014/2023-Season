@@ -22,6 +22,10 @@ public class Unit {
         }
     }
 
+    public static Unit zero() {
+        return new Unit(0, Type.Centimeters);
+    }
+
     private final double value;
     private final Type type;
 
@@ -34,4 +38,7 @@ public class Unit {
         return type.cm_to(this.type.convert_to_cm(value));
     }
 
+    public Unit clamp(Unit min, Unit max) {
+        return new Unit(Math.max(min.get(type), Math.min(max.get(type), get(type))), type);
+    }
 }

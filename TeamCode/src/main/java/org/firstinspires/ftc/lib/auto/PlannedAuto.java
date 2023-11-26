@@ -49,5 +49,9 @@ public class PlannedAuto {
         command.execute();
     }
 
+    public void stop() {
+        command.cancel();
+    }
+
 
 }

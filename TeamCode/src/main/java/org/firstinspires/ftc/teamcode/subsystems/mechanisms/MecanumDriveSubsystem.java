@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
 
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
-import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
@@ -15,14 +13,11 @@ import org.firstinspires.ftc.lib.replay.log.Log;
 import org.firstinspires.ftc.lib.systems.DriveSubsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import static java.lang.Double.NaN;
 
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
-import org.firstinspires.ftc.teamcode.TeleOp;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
 import java.util.ArrayList; //Got a warning; java.util.ArrayList<java.lang.Double> ?
