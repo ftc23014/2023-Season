@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.teamcode.TeleOp;
 
-public class IntakeMechanism extends Subsystem {
+public class Intake extends Subsystem {
     /**
      * TODO:
      * intake
@@ -14,7 +14,7 @@ public class IntakeMechanism extends Subsystem {
 
     private DcMotor intakeMotor;
 
-    public IntakeMechanism() {
+    public Intake() {
         super();
     }
 
