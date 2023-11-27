@@ -17,19 +17,19 @@ public class Spatula extends Subsystem {
         spatula = getHardwareMap().servo.get("Spatula");
     }
 
-    public Command spatulaUp() {
-        return new InstantCommand(this::setSpatulaUp);
+    public Command deploy() {
+        return new InstantCommand(this::setDeploy);
     }
 
-    public Command spatulaDown() {
-        return new InstantCommand(this::setSpatulaDown);
+    public Command retract() {
+        return new InstantCommand(this::setRetract);
     }
 
-    public void setSpatulaUp() {
+    public void setDeploy() {
         spatula.setPosition(SPATULA_UP);
     }
 
-    public void setSpatulaDown() {
+    public void setRetract() {
         spatula.setPosition(SPATULA_DOWN);
     }
 }

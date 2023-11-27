@@ -1,8 +1,15 @@
 package org.firstinspires.ftc.lib.systems.commands;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Command {
+    private UUID uuid = UUID.randomUUID();
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
     private boolean cancelled = false;
 
     public void init() {

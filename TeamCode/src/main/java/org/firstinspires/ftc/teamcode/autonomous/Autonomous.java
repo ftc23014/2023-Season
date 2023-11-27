@@ -17,7 +17,9 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Spatula;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -104,6 +106,8 @@ public class Autonomous extends OpMode {
     private PathSelectionFlags m_pathSelectionFlag;
 
     private HuskyLensDetection m_huskyLensDetection;
+    private Intake m_intakeSubsystem;
+    private Spatula m_spatulaSubsystem;
 
     private boolean m_autonomousEnabled;
 
@@ -128,6 +132,9 @@ public class Autonomous extends OpMode {
         //BezierSegment[] one = BezierSegment.loadFromFile(new File(""));
 
         m_driveSubsystem = new MecanumDriveSubsystem();
+        m_sensorConeHuskyLensSubsystem = new SensorConeHuskyLensSubsystem();
+        m_intakeSubsystem = new Intake();
+        m_spatulaSubsystem = new Spatula();
 
         Robot.init();
         Subsystems.onInit();
@@ -229,8 +236,18 @@ public class Autonomous extends OpMode {
                             new TurnToCommand(
                                     Rotation2d.fromDegrees(-90)
                             )
+                        ),
+                        m_intakeSubsystem.outtake_cmd(0.5),
+                        new WaitCommand(0.5),
+                        m_intakeSubsystem.stop_cmd(),
+                        new IfOrSkipCommand(
+                            () -> {
+                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
+                            },
+                            new TurnToCommand(
+                                Rotation2d.fromDegrees(90)
+                            )
                         )
-//                        new
                 );
             }
         }

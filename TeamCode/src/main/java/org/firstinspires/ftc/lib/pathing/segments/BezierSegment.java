@@ -292,4 +292,9 @@ public class BezierSegment extends Segment {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return "BezierSegment: " + m_bezier.toString();
+    }
 }

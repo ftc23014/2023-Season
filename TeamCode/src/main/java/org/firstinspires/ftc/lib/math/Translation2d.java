@@ -93,6 +93,10 @@ public class Translation2d {
         return m_x == 0 && m_y == 0;
     }
 
+    public Translation2d copy() {
+        return new Translation2d(m_x, m_y);
+    }
+
     @Override
     public String toString() {
         return "(" + m_x + "," + m_y + ")" + (!attributes.keySet().isEmpty() ? " [" + attributes.toString() + "]" : "");

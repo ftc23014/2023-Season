@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
+import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.pathing.Waypoint;
+import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -16,6 +19,12 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 public class VisionSubsystem extends Subsystem {
+
+    public static enum PathMakingStrategy {
+        BETWEEN,
+        VERT_CURVE,
+        HORIZ_CURVE;
+    }
 
     private AprilTagProcessor aprilTag;
 
@@ -54,8 +63,7 @@ public class VisionSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-        telemetryAprilTag();
-        telemetryTfod();
+        updatePose();
     }
 
     @Override
@@ -68,7 +76,7 @@ public class VisionSubsystem extends Subsystem {
      * Get the current pose of the robot.
      * @return The current pose of the robot.
      */
-    public Translation2d getCurrentPose() {
+    public Translation2d getCurrentPosition() {
         return currentPose;
     }
 
@@ -82,59 +90,86 @@ public class VisionSubsystem extends Subsystem {
 
     boolean verbose = false;
 
-    /**
-     * Telemetry for AprilTag.
-     */
-    private void telemetryAprilTag() {
-        if (!verbose) return;
+    public BezierSegment pathToTarget(Translation2d target, PathMakingStrategy strat) {
+        Translation2d currentPos = getCurrentPosition();
 
+        Translation2d controlpoint1;
+        Translation2d controlpoint2;
+
+        if (strat == PathMakingStrategy.VERT_CURVE) {
+            controlpoint1 = new Translation2d(
+                    currentPos.getX(),
+                    target.getY()
+            );
+
+            controlpoint2 = new Translation2d(
+                    target.getX(),
+                    currentPos.getY()
+            );
+        } else if (strat == PathMakingStrategy.HORIZ_CURVE) {
+            controlpoint1 = new Translation2d(
+                    target.getX(),
+                    currentPos.getY()
+            );
+
+            controlpoint2 = new Translation2d(
+                    currentPos.getX(),
+                    target.getY()
+            );
+        } else {
+            controlpoint1 = new Translation2d(
+                    (currentPos.getX() + target.getX()) / 2,
+                    (currentPos.getY() + target.getY()) / 2
+            );
+            controlpoint2 = controlpoint1.copy();
+        }
+
+        BezierSegment path = new BezierSegment(
+                new Waypoint(
+                        currentPos,
+                        Rotation2d.zero(),
+                        Waypoint.Type.HARD
+                ),
+                new Waypoint(
+                        controlpoint1,
+                        Rotation2d.zero(),
+                        Waypoint.Type.HARD
+                ),
+                new Waypoint(
+                        controlpoint2,
+                        Rotation2d.zero(),
+                        Waypoint.Type.HARD
+                ),
+                new Waypoint(
+                        target,
+                        Rotation2d.zero(),
+                        Waypoint.Type.HARD
+                )
+        );
+
+        if (verbose) {
+            System.out.println("Generated path: " + path.toString());
+        }
+
+        return path;
+    }
+
+    private void updatePose() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry().addData("# AprilTags Detected", currentDetections.size());
 
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                currentPose = new Translation2d(
-                        detection.ftcPose.x,
-                        detection.ftcPose.y
-                );
+        if (!currentDetections.isEmpty()) {
+            currentPose = new Translation2d(
+                    currentDetections.get(0).ftcPose.x,
+                    currentDetections.get(0).ftcPose.y
+            );
 
-                currentRotation = Rotation2d.fromDegrees(
-                        detection.ftcPose.yaw
-                );
+            currentRotation = Rotation2d.fromDegrees(
+                    currentDetections.get(0).ftcPose.yaw
+            );
+        }
+    }
 
-                telemetry().addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry().addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry().addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry().addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry().addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry().addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }   // end for() loop
-
-    }   // end method TeleOp.getTelemetry()AprilTag()
-
-    /**
-     * Add TeleOp.getTelemetry() about TensorFlow Object Detection (TFOD) recognitions.
-     */
-    private void telemetryTfod() {
-        if (!verbose) return;
-
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
-        telemetry().addData("# Objects Detected", currentRecognitions.size());
-
-        // Step through the list of recognitions and display info for each one.
-        for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-
-            telemetry().addData(""," ");
-            telemetry().addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry().addData("- Position", "%.0f / %.0f", x, y);
-            telemetry().addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-        }   // end for() loop
-
-    }   // end method TeleOp.getTelemetry()Tfod()
-    
+    public Pose2d getCurrentPose() {
+        return new Pose2d(currentPose, currentRotation);
+    }
 }

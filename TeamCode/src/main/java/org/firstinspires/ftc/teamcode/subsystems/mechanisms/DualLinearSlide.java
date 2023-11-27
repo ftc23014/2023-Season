@@ -31,7 +31,7 @@ public class DualLinearSlide extends Subsystem {
         NONE;
     }
 
-    private enum ControlType {
+    public enum ControlType {
         MANUAL,
         PID;
     }
@@ -92,6 +92,10 @@ public class DualLinearSlide extends Subsystem {
 
     public void setMoveDown() {
         setPower(-0.5);
+    }
+
+    public ControlType getMode() {
+        return controlType;
     }
 
     /**

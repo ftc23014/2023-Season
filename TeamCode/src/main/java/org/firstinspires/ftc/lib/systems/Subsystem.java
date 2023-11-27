@@ -4,23 +4,82 @@ import android.content.Context;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.replay.Replayable;
+import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOp;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public class Subsystem extends Replayable {
+
+    private ArrayList<Command> defaultCommands = new ArrayList<>();
 
     public Subsystem() {
         super();
         Subsystems.addSubsystem(this);
     }
 
+    public void addDefaultCommand(Command command) {
+        defaultCommands.add(command);
+    }
+
+    public void removeDefaultCommand(Command command) {
+        defaultCommands.remove(command);
+    }
+
+    protected ArrayList<UUID> getCommandUUIDs() {
+        ArrayList<UUID> uuids = new ArrayList<>();
+
+        for (Command command : defaultCommands) {
+            uuids.add(command.getUUID());
+        }
+
+        return uuids;
+    }
+
+    protected void initDefaultCommands(ArrayList<UUID> exclusionList) {
+        for (Command command : defaultCommands) {
+            if (exclusionList.contains(command.getUUID())) {
+                continue;
+            }
+
+            command.init();
+        }
+    }
+
     public void init() {
         System.out.println("Enabled " + getBaseName() + "! Override onEnable and whileEnable to add functionality!");
     }
 
+    protected void runDefaultCommands(ArrayList<UUID> exclusionList) {
+        for (Command command : defaultCommands) {
+            if (exclusionList.contains(command.getUUID())) {
+                continue;
+            }
+
+            command.execute();
+            if (command.hasFinished()) {
+                removeDefaultCommand(command);
+            }
+        }
+    }
+
     public void periodic() {
 
+    }
+
+    protected void cancelDefaultCommands(ArrayList<UUID> exclusionList) {
+        for (Command command : defaultCommands) {
+            if (exclusionList.contains(command.getUUID())) {
+                continue;
+            }
+
+            if (!command.hasFinished()) {
+                command.cancel();
+            }
+        }
     }
 
     public void onDisable() {

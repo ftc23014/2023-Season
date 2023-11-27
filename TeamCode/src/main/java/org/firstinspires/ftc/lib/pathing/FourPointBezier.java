@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.lib.pathing;
 
+import androidx.annotation.NonNull;
 import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.math.*;
 
@@ -409,5 +410,15 @@ public class FourPointBezier {
         for (Translation2d point : m_points) {
             point.setX(Field.field.getWidth().get(Unit.Type.Meters) - point.getX());
         }
+    }
+
+    @Override
+    public String toString() {
+        return "FourPointBezier{" +
+                "m_start=" + m_start +
+                ", m_end=" + m_end +
+                ", m_control1=" + m_control1 +
+                ", m_control2=" + m_control2 +
+                '}';
     }
 }

@@ -24,23 +24,21 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-
-
-        if (gamepad.dpad_up) {
-            motor.setPower(0.5);
-
-        }
-        else if (gamepad.dpad_down) {
-            motor.setPower(-0.5);
-
-
-        }
-        else {
-            motor.setPower(0);
-
-
-
-        }
+//        if (gamepad.dpad_up) {
+//            motor.setPower(0.5);
+//
+//        }
+//        else if (gamepad.dpad_down) {
+//            motor.setPower(-0.5);
+//
+//
+//        }
+//        else {
+//            motor.setPower(0);
+//
+//
+//
+//        }
     }
 
     @Override

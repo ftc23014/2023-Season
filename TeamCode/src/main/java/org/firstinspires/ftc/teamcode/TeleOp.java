@@ -11,6 +11,8 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.commands.teleop.AssistantControls;
+import org.firstinspires.ftc.teamcode.commands.teleop.DriverControls;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
@@ -52,11 +54,15 @@ public class TeleOp extends OpMode {
     private DualLinearSlide m_linearSlideSubsystem;
     private Spatula m_spatulaSubsystem;
 
+    private DriverControls m_driverControls;
+    private AssistantControls m_assistantControls;
+
     @Override
     public void init() {
         instance = this;
 
         //SETUP SUBSYSTEMS HERE
+
         m_mecanumDriveSubsystem = new MecanumDriveSubsystem();
 
         m_visionSubsystem =  new VisionSubsystem();
@@ -66,6 +72,12 @@ public class TeleOp extends OpMode {
         m_linearSlideSubsystem = new DualLinearSlide();
 
         m_spatulaSubsystem = new Spatula();
+
+        m_driverControls = new DriverControls(gamepad1, m_mecanumDriveSubsystem);
+        m_assistantControls = new AssistantControls(gamepad2, m_intakeSubsystem, m_spatulaSubsystem, m_linearSlideSubsystem);
+
+        m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);
+        m_intakeSubsystem.addDefaultCommand(m_assistantControls);
 
         //END SUBSYSTEM CREATION
 
@@ -101,20 +113,6 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || Math.abs(gamepad1.right_stick_x) > 0.05) {
-            m_mecanumDriveSubsystem.drive(
-                    new Translation2d(
-                            gamepad1.left_stick_x,
-                            gamepad1.left_stick_y
-                    ).scalar(m_mecanumDriveSubsystem.getVelocityLimit().get(Unit.Type.Meters)),
-                    Rotation2d.fromDegrees(-Math.pow(gamepad1.right_stick_x, 5) * 90),
-                    true,
-                    true
-            );
-        } else {
-            m_mecanumDriveSubsystem.stop_motors();
-        }
-
         Subsystems.periodic();
     }
 
