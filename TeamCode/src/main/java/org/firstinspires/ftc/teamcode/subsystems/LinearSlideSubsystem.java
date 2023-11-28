@@ -41,30 +41,30 @@ public class LinearSlideSubsystem extends Subsystem {
     @Override
     public void periodic() {
 
-//        if (gamepad.a) {
-//            motor1.setPower(0.5);
-//            motor2.setPower(-0.5);
-//
-//        }
-//        else if (gamepad.b) {
-//            motor1.setPower(-0.5);
-//            motor2.setPower(0.5);
-//
-//        }
-//        else if (gamepad.y) {
-//            spatula.setPosition(0.6);
-//
-//        }
-//        else if (gamepad.x) {
-//            spatula.setPosition(0);
-//        }
-//        else {
-//            motor1.setPower(0);
-//            motor2.setPower(0);
-//
-//        }
+        if (gamepad.a) {
+            motor1.setPower(0.5);
+            motor2.setPower(-0.5);
 
-        //telemetry().addData("Spatula servo pos: ", String.format("%.3f", spatula.getPosition()));
+        }
+        else if (gamepad.b) {
+            motor1.setPower(-0.5);
+            motor2.setPower(0.5);
+
+        }
+        else if (gamepad.y) {
+            spatula.setPosition(1);
+
+        }
+        else if (gamepad.x) {
+            spatula.setPosition(0.2);
+        }
+        else {
+            motor1.setPower(0);
+            motor2.setPower(0);
+
+        }
+
+        telemetry().addData("Spatula servo pos: ", String.format("%.3f", spatula.getPosition()));
 
     }
 
