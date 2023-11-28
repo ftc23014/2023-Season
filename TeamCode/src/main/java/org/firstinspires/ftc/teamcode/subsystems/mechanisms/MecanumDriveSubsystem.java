@@ -176,7 +176,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         // set power to motors
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
+        backLeft.setPower(-backLeftPower); //back left uses gears so it needs to be reversed
         backRight.setPower(backRightPower);
 
     }
