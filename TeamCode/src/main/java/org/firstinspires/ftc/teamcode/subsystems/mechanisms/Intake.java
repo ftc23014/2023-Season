@@ -30,7 +30,7 @@ public class Intake extends Subsystem {
     }
 
     public void intake(double power) {
-        intakeMotor.setPower(power);
+        intakeMotor.setPower(-power);
     }
 
     public Command outtake_cmd(final double power) {
