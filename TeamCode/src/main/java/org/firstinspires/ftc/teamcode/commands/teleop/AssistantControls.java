@@ -106,12 +106,6 @@ public class AssistantControls extends Command {
             } else {
                 m_spatulaSubsystem.setRetract();
             }
-            if (gamepad2.dpad_down){
-                m_spatulaSubsystem.setLock();
-            }
-            else if (gamepad2.dpad_up){
-                m_spatulaSubsystem.removeLock();
-            }
         }
 
         if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a) {
@@ -136,9 +130,20 @@ public class AssistantControls extends Command {
             }
         }
 
+        if (m_lastPixelClamperButtonState != gamepad2.x && gamepad2.x) {
+            m_pixelClamperDeployed = !m_pixelClamperDeployed;
+
+            if (m_pixelClamperDeployed) {
+                m_pixelClamperSubsystem.setDeploy();
+            } else {
+                m_pixelClamperSubsystem.setRetract();
+            }
+        }
+
         m_lastDroneLauncherButtonState = gamepad2.left_bumper;
         m_lastSpatulaButtonState = gamepad2.b;
-
+        m_lastLinearSlideButtonState = gamepad2.a;
+        m_lastPixelClamperButtonState = gamepad2.x;
 
         //selection controls
         if (m_lastDpadDownState != gamepad2.dpad_down && gamepad2.dpad_down) {
@@ -168,6 +173,11 @@ public class AssistantControls extends Command {
                 m_selectedColumn = 2;
             }
         }
+
+        m_lastDpadDownState = gamepad2.dpad_down;
+        m_lastDpadUpState = gamepad2.dpad_up;
+        m_lastDpadLeftState = gamepad2.dpad_left;
+        m_lastDpadRightState = gamepad2.dpad_right;
 
         //share CPU time
         if (System.currentTimeMillis() > m_lastTelemetryUpdate + 50) {

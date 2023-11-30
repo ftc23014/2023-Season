@@ -8,7 +8,7 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 public class PixelClamper extends Subsystem {
 
     //TODO: adjust
-    private final double PIXEL_CLAMPER_UP = 0.8;
+    private final double PIXEL_CLAMPER_UP = 0.7;
     private final double PIXEL_CLAMPER_DOWN = 0.2;
 
     private Servo clamper;
@@ -16,7 +16,7 @@ public class PixelClamper extends Subsystem {
     public PixelClamper() {
         super();
 
-        clamper = getHardwareMap().servo.get("Spatula");
+        clamper = getHardwareMap().servo.get("Lock");
     }
 
     public Command deploy() {
