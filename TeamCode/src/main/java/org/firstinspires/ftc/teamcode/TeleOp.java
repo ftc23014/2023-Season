@@ -13,11 +13,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.teleop.AssistantControls;
 import org.firstinspires.ftc.teamcode.commands.teleop.DriverControls;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Drone;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Spatula;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
@@ -48,6 +44,8 @@ public class TeleOp extends OpMode {
 
     private boolean m_teleOpEnabled = false;
 
+    // subsystems
+
     //private VisionSubsystem m_visionSubsystem;
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
     private Intake m_intakeSubsystem;
@@ -57,12 +55,20 @@ public class TeleOp extends OpMode {
     private DualLinearSlide m_linearSlideSubsystem;
     private Spatula m_spatulaSubsystem;
 
+    private PixelClamper m_pixelClamperSubsystem;
+
+    // commands
+
     private DriverControls m_driverControls;
     private AssistantControls m_assistantControls;
+
+    //end of commands/subsystems
 
     @Override
     public void init() {
         instance = this;
+
+        StartupManager.clear();
 
         //SETUP SUBSYSTEMS HERE
 
@@ -78,15 +84,27 @@ public class TeleOp extends OpMode {
 
         m_spatulaSubsystem = new Spatula();
 
-        m_driverControls = new DriverControls(gamepad1, m_mecanumDriveSubsystem);
-        m_assistantControls = new AssistantControls(gamepad2, m_intakeSubsystem, m_spatulaSubsystem, m_linearSlideSubsystem, m_droneSubsystem);
+        m_pixelClamperSubsystem = new PixelClamper();
+
+        m_driverControls = new DriverControls(
+                gamepad1,
+                m_mecanumDriveSubsystem
+        );
+
+        m_assistantControls = new AssistantControls(
+                gamepad2,
+                m_intakeSubsystem,
+                m_spatulaSubsystem,
+                m_linearSlideSubsystem,
+                m_droneSubsystem,
+                m_pixelClamperSubsystem
+        );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);
         m_intakeSubsystem.addDefaultCommand(m_assistantControls);
 
         //END SUBSYSTEM CREATION
 
-        StartupManager.clear();
         StartupManager.printChecks(telemetry);
 
         Robot.init();

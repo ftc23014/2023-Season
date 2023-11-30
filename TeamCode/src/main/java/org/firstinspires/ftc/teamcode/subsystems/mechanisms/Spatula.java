@@ -26,10 +26,10 @@ public class Spatula extends Subsystem {
     }
 
     public void setDeploy() {
-        spatula.setPosition(SPATULA_UP);
+        spatula.setPosition(SPATULA_DOWN);
     }
 
     public void setRetract() {
-        spatula.setPosition(SPATULA_DOWN);
+        spatula.setPosition(SPATULA_UP);
     }
 }

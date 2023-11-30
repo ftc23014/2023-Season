@@ -36,8 +36,27 @@ public class DualLinearSlide extends Subsystem {
         PID;
     }
 
-    private final Unit maxLinearSlideHeight = new Unit(0, Unit.Type.Centimeters);
-    private final Unit threshold = new Unit(0, Unit.Type.Centimeters);
+    public enum SlidePosition {
+        LOW(new Unit(10, Unit.Type.Centimeters)),
+        MIDDLE(new Unit(30, Unit.Type.Centimeters)),
+        HIGH(new Unit(50, Unit.Type.Centimeters));
+
+        private Unit height;
+
+        SlidePosition(Unit height) {
+            this.height = height;
+        }
+
+        public Unit getHeight() {
+            return height;
+        }
+    }
+
+    private final double encoderResolution = (((1+(46d/17d))) * (1+(46d/11d))) * 28;
+    private final Unit stringWrapRadius = new Unit(2.4, Unit.Type.Centimeters);
+
+    private final Unit maxLinearSlideHeight = new Unit(60, Unit.Type.Centimeters);
+    private final Unit threshold = new Unit(0.5, Unit.Type.Centimeters);
 
     private DcMotor leftSlideMotor;
     private DcMotor rightSlideMotor;
@@ -48,10 +67,14 @@ public class DualLinearSlide extends Subsystem {
 
     private Unit currentGoalHeight = new Unit(0, Unit.Type.Meters);
 
-    //need pid controller implemented, prob instantiate wpipidcontroller here
+    private WPIPIDController leftPIDController;
+    private WPIPIDController rightPIDController;
 
     public DualLinearSlide() {
         super();
+
+        leftPIDController = new WPIPIDController(0.4, 0.00, 0.00);
+        rightPIDController = new WPIPIDController(0.4, 0.00, 0.00);
 
         leftSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor1");
         rightSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor2");
@@ -82,7 +105,19 @@ public class DualLinearSlide extends Subsystem {
         }
 
         if (controlType == ControlType.PID) {
-            //PID stuff
+            double leftPower = leftPIDController.calculate(getLeftPosition(), currentGoalHeight.get(Unit.Type.Centimeters));
+            double rightPower = rightPIDController.calculate(getRightPosition(), currentGoalHeight.get(Unit.Type.Centimeters));
+
+            leftPower = WPIPIDController.clamp(leftPower, -0.5, 0.5);
+            rightPower = WPIPIDController.clamp(rightPower, -0.5, 0.5);
+
+            //if we're going in different directions, stop since this can break the linear slide
+            if (Math.signum(rightPower) != Math.signum(leftPower)) {
+                leftPower = 0;
+                rightPower = 0;
+            }
+
+            internalSetDualPower(leftPower, rightPower);
         }
     }
 
@@ -96,6 +131,15 @@ public class DualLinearSlide extends Subsystem {
 
     public ControlType getMode() {
         return controlType;
+    }
+
+    public void returnToZero() {
+        setPosition(Unit.zero());
+    }
+
+    public void stop() {
+        controlType = ControlType.MANUAL;
+        setPower(0);
     }
 
     /**
@@ -149,6 +193,17 @@ public class DualLinearSlide extends Subsystem {
         rightSlideMotor.setPower(-p);
     }
 
+    /**
+     * Sets the power of the linear slide. This is an internal function, and should not be used outside this class.
+     * WARNING: different power values should rarely be used, as this will cause the linear slide to move unevenly.
+     * @param left the power to set the left motor to, [-1, 1]
+     * @param right the power to set the right motor to, [-1, 1]. This should be the same as left, this will be inverted.
+     */
+    private void internalSetDualPower(double left, double right) {
+        leftSlideMotor.setPower(left);
+        rightSlideMotor.setPower(-right);
+    }
+
     @Override
     public void onDisable() {
         setPower(0);
@@ -156,11 +211,17 @@ public class DualLinearSlide extends Subsystem {
 
 
     public double getLeftPosition() {
-        return leftSlideMotor.getCurrentPosition();
+        //convert the encoder ticks to centimeters
+        return leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public double getRightPosition() {
-        return rightSlideMotor.getCurrentPosition();
+        //convert the encoder ticks to centimeters
+        return rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+    }
+
+    public boolean isZeroed() {
+        return getLeftPosition() < threshold.get(Unit.Type.Centimeters) && getRightPosition() < threshold.get(Unit.Type.Centimeters);
     }
 
     /**

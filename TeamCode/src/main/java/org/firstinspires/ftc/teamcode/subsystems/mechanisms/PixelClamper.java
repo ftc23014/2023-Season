@@ -5,16 +5,18 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
-public class Drone extends Subsystem {
-    private final double Drone_Shoot = 1;
-    private final double Drone_Load = 0.4;
+public class PixelClamper extends Subsystem {
 
-    private Servo drone;
+    //TODO: adjust
+    private final double PIXEL_CLAMPER_UP = 0.8;
+    private final double PIXEL_CLAMPER_DOWN = 0.2;
 
-    public Drone() {
+    private Servo clamper;
+
+    public PixelClamper() {
         super();
 
-        //drone = getHardwareMap().servo.get("Drone");
+        clamper = getHardwareMap().servo.get("Spatula");
     }
 
     public Command deploy() {
@@ -26,10 +28,10 @@ public class Drone extends Subsystem {
     }
 
     public void setDeploy() {
-        drone.setPosition(Drone_Shoot);
+        clamper.setPosition(PIXEL_CLAMPER_DOWN);
     }
 
     public void setRetract() {
-        drone.setPosition(Drone_Load);
+        clamper.setPosition(PIXEL_CLAMPER_UP);
     }
 }

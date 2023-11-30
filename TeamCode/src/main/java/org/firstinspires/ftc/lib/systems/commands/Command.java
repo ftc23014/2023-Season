@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.lib.systems.commands;
 
+import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -34,5 +37,9 @@ public class Command {
 
     public void activate() {
         Commander.activateCommand(this);
+    }
+
+    protected Telemetry telemetry() {
+        return Subsystem.telemetry();
     }
 }
