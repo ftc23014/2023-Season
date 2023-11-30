@@ -28,7 +28,6 @@ public class Drone extends Subsystem {
     public void setDeploy() {
         drone.setPosition(Drone_Shoot);
     }
-
     public void setRetract() {
         drone.setPosition(Drone_Load);
     }
