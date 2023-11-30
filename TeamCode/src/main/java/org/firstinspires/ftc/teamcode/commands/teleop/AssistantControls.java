@@ -80,6 +80,8 @@ public class AssistantControls extends Command {
             m_intakeSubsystem.intake(0.7);
         }
 
+
+
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             m_linearSlideSubsystem.setPower(gamepad2.left_stick_y / 2);
         } else if (m_linearSlideSubsystem.getMode() == DualLinearSlide.ControlType.MANUAL) {
@@ -103,6 +105,12 @@ public class AssistantControls extends Command {
                 m_spatulaSubsystem.setDeploy();
             } else {
                 m_spatulaSubsystem.setRetract();
+            }
+            if (gamepad2.dpad_down){
+                m_spatulaSubsystem.setLock();
+            }
+            else if (gamepad2.dpad_up){
+                m_spatulaSubsystem.removeLock();
             }
         }
 
