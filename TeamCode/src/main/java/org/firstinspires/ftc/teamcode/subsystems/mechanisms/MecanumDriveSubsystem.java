@@ -154,6 +154,12 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         velocityY = joyStickY * maxVelocity;
     }
 
+    public Command driveCommand(Translation2d power, Rotation2d rotate, boolean fieldRelative, boolean openLoop) {
+        return new InstantCommand(() -> {
+            drive(power, rotate, fieldRelative, openLoop);
+        });
+    }
+
     public Command driveCommand(Translation2d power, double rotate) {
         return new InstantCommand(() -> {
             driveMotors(power, rotate);

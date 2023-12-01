@@ -12,12 +12,12 @@ public class TurnToCommand extends Command {
 
     private MecanumDriveSubsystem m_driveSubsystem;
 
-    private final double maxPower = 20;
+    private final double maxPower = 1;
 
     public TurnToCommand(Rotation2d rotationGoal, MecanumDriveSubsystem driveSubsystem) {
         m_rotationGoal = rotationGoal;
-        m_rotationController = new WPIPIDController(0.1, 0, 0);
-        m_rotationController.setTolerance(2);
+        m_rotationController = new WPIPIDController(0.1, 0.01, 0.001);
+        m_rotationController.setTolerance(0.5);
 
         m_rotationController.enableContinuousInput(0, 360);
 

@@ -255,17 +255,90 @@ public class Autonomous extends OpMode {
                                     Rotation2d.fromDegrees(-90), m_driveSubsystem
                             )
                         ),
-                        m_intakeSubsystem.outtake_cmd(0.5),
+                        new WaitCommand(0.1),
+                        m_driveSubsystem.driveCommand(
+                                new Translation2d(0, 0.3),
+                                Rotation2d.zero(),
+                                false,
+                                true
+                        ),
+                        new WaitCommand(0.2),
+                        m_driveSubsystem.stop(),
+                        new WaitCommand(0.1),
+                        m_intakeSubsystem.intake_cmd(0.1),
                         new WaitCommand(0.5),
-                        m_intakeSubsystem.stop_cmd()
-//                        new IfOrSkipCommand(
-//                            () -> {
-//                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
-//                            },
-//                            new TurnToCommand(
-//                                Rotation2d.fromDegrees(90), m_driveSubsystem
-//                            )
-//                        )
+                        m_intakeSubsystem.stop_cmd(),
+                        m_driveSubsystem.driveCommand(
+                                new Translation2d(0, -0.3),
+                                Rotation2d.zero(),
+                                false,
+                                true
+                        ),
+                        new WaitCommand(0.2),
+                        m_driveSubsystem.stop(),
+                        new WaitCommand(0.1),
+                        new IfOrSkipCommand(
+                            () -> {
+                                return m_huskyLensDetection != HuskyLensDetection.RIGHT;
+                            },
+                            new TurnToCommand(
+                                Rotation2d.fromDegrees(-90), m_driveSubsystem
+                            )
+                        ),
+                        new IfOrSkipCommand(
+                            () -> {
+                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
+                            },
+                            new Trajectory(
+                                    m_driveSubsystem,
+                                    BezierSegment.loadFromResources(R.raw.to_backboard_from_place_straight)
+                            )
+                        ),
+                        new IfOrSkipCommand(
+                            () -> {
+                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                            },
+                            new Trajectory(
+                                    m_driveSubsystem,
+                                    BezierSegment.loadFromResources(R.raw.to_backboard_from_place_curved)
+                            )
+                        ),
+                        m_driveSubsystem.stop(),
+                        new WaitCommand(0.1),
+                        new IfOrSkipCommand(
+                                () -> {
+                                    return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                                },
+                                new Trajectory(
+                                        m_driveSubsystem,
+                                        BezierSegment.loadFromResources(R.raw.left_backboard_place)
+                                )
+                        ),
+                        new IfOrSkipCommand(
+                                () -> {
+                                    return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                                },
+                                new Trajectory(
+                                        m_driveSubsystem,
+                                        BezierSegment.loadFromResources(R.raw.right_backboard_place)
+                                )
+                        ),
+                        new IfOrSkipCommand(
+                                () -> {
+                                    return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
+                                },
+                                new Trajectory(
+                                        m_driveSubsystem,
+                                        BezierSegment.loadFromResources(R.raw.middle_backboard_place)
+                                )
+                        ),
+                        m_driveSubsystem.stop(),
+                        new StallStop(),
+                        m_linearSlideSubsystem.power(0.2),
+                        new WaitCommand(1.2),
+                        m_linearSlideSubsystem.power(0),
+                        new WaitCommand(0.1),
+                        m_spatulaSubsystem.deploy()
                 );
             //}
         }

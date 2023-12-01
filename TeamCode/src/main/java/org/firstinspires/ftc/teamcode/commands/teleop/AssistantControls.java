@@ -16,6 +16,8 @@ public class AssistantControls extends Command {
 
     private Gamepad gamepad2;
 
+    final private boolean k_linearSlidePIDEnabled = false;
+
     private boolean m_spatulaDeployed = false;
     private boolean m_lastSpatulaButtonState = false;
 
@@ -62,7 +64,6 @@ public class AssistantControls extends Command {
      * Y: Spatula
      * X: Pixel clamper / Lock
      *
-
      *
      *
      * DPAD: Select linear slide position selection
@@ -94,7 +95,7 @@ public class AssistantControls extends Command {
                 m_intakeSubsystem.stop();
             }
         } else {
-            m_intakeSubsystem.intake(0.7);
+            m_intakeSubsystem.intake(0.8);
         }
 
 
@@ -124,7 +125,7 @@ public class AssistantControls extends Command {
             }
         }
 
-        if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a) {
+        if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a && k_linearSlidePIDEnabled) {
             m_lastLinearSlideButtonState = gamepad2.a;
 
             if (m_linearSlideZeroed) {
@@ -200,11 +201,11 @@ public class AssistantControls extends Command {
             m_lastTelemetryUpdate = System.currentTimeMillis();
 
             //telemetry updates
-//            showSelectionTelemetry();
-//            telemetry().addLine();
-//            showComponentStates();
-//
-//            telemetry().update();
+            showSelectionTelemetry();
+            telemetry().addLine();
+            showComponentStates();
+
+            telemetry().update();
         }
     }
 
@@ -243,11 +244,12 @@ public class AssistantControls extends Command {
     }
 
     private void showComponentStates() {
-        telemetry().addLine("Spatula: " + (m_spatulaDeployed ? "Deployed" : "Retracted"));
-        telemetry().addLine("Drone Launcher: " + (m_droneLauncherDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Spatula (Y): " + (m_spatulaDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Drone Launcher (Bumpers): " + (m_droneLauncherDeployed ? "Deployed" : "Retracted"));
         //f.u = few updates
-        telemetry().addLine("Linear Slide (ignore b/c F.U): " + (m_linearSlideZeroed ? "Zeroed" : "Not Zeroed"));
-        telemetry().addLine("Pixel Clamper: " + (m_pixelClamperDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Linear Slide (A, ignore b/c F.U): " + (m_linearSlideZeroed ? "Zeroed" : "Not Zeroed"));
+        telemetry().addLine("Pixel Clamper (X): " + (m_pixelClamperDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Intake (B): doing something");
     }
 
     @Override

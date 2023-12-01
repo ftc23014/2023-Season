@@ -8,8 +8,8 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 public class PixelClamper extends Subsystem {
 
     //TODO: adjust
-    private final double PIXEL_CLAMPER_UP = 0.7;
-    private final double PIXEL_CLAMPER_DOWN = 0.2;
+    private final double PIXEL_CLAMPER_UP = 0.4;
+    private final double PIXEL_CLAMPER_DOWN = 0;
 
     private Servo clamper;
 

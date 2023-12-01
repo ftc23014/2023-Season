@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.lib.systems.commands;
 
 import org.firstinspires.ftc.lib.BooleanLambda;
+import org.firstinspires.ftc.lib.pathing.Trajectory;
 
 public class IfOrSkipCommand extends Command {
     private Command m_command;
@@ -21,6 +22,10 @@ public class IfOrSkipCommand extends Command {
         if (!m_doSkip) {
             m_command.init();
         }
+    }
+
+    public Command getCommand() {
+        return m_command;
     }
 
     @Override

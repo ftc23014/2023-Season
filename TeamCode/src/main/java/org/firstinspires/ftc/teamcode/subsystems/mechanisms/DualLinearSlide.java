@@ -8,6 +8,8 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.math.WPIPIDController;
 import org.firstinspires.ftc.lib.systems.Subsystem;
+import org.firstinspires.ftc.lib.systems.commands.Command;
+import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.subsystems.vision.BackboardDetectionPipeline;
 
 import java.util.List;
@@ -150,6 +152,10 @@ public class DualLinearSlide extends Subsystem {
         controlType = ControlType.PID;
         //constrict the height to be between 0 and the max height
         currentGoalHeight = height.clamp(Unit.zero(), maxLinearSlideHeight);
+    }
+
+    public Command power(double p) {
+        return new InstantCommand(() -> setPower(p));
     }
 
     /**
