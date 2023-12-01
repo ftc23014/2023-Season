@@ -157,7 +157,12 @@ public class Trajectory extends Command {
 
         lastExecute = currentTime;
 
-        Pair<Rotation2d, Rotation2d> rotations = m_segments[m_onSegment].angles();
+        Pair<Rotation2d, Rotation2d> rotations =
+                m_onSegment >= m_segments.length ?
+                        new Pair<>(Rotation2d.zero(), Rotation2d.zero()) :
+                        m_onPoint >= m_segments[m_onSegment].getPoints().size() ?
+                                new Pair<>(Rotation2d.zero(), Rotation2d.zero()) :
+                                m_segments[m_onSegment].angles();
 
         Rotation2d rotation_speed = new Rotation2d(
                 (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
@@ -179,7 +184,17 @@ public class Trajectory extends Command {
 
         //making an assumption that it's a four point bezier. it's the only path that exists rn so we don't have to do that much complexities.
 
-        FourPointBezier pathObject = (FourPointBezier) m_segments[m_onSegment].getPathObject();
+        FourPointBezier pathObject = m_onSegment < m_segments.length ? (FourPointBezier) m_segments[m_onSegment].getPathObject() : null;
+
+        if (pathObject == null) {
+            m_driveSubsystem.drive(
+                    Translation2d.zero(),
+                    Rotation2d.zero(),
+                    true,
+                    m_constants.getOpenLoop()
+            );
+            return;
+        }
 
         //TODO: Use odometry to calculate the real velocity.
         Unit currentRealVelocity = new Unit(0, Unit.Type.Meters);

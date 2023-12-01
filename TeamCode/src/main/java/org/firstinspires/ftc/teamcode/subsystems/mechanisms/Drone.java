@@ -14,7 +14,7 @@ public class Drone extends Subsystem {
     public Drone() {
         super();
 
-        //drone = getHardwareMap().servo.get("Drone");
+        drone = getHardwareMap().servo.get("Drone");
     }
 
     public Command deploy() {

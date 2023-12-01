@@ -16,14 +16,15 @@ public class IfOrSkipCommand extends Command {
 
     @Override
     public void init() {
-        m_doSkip = m_condition.run();
+        m_doSkip = !m_condition.run();
 
         if (!m_doSkip) {
             m_command.init();
         }
     }
 
-    public void periodic() {
+    @Override
+    public void execute() {
         if (!m_doSkip) {
             m_command.execute();
         }

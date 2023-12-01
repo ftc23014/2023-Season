@@ -212,12 +212,12 @@ public class DualLinearSlide extends Subsystem {
 
     public double getLeftPosition() {
         //convert the encoder ticks to centimeters
-        return leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return 1;//leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public double getRightPosition() {
         //convert the encoder ticks to centimeters
-        return rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return 1;//rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public boolean isZeroed() {

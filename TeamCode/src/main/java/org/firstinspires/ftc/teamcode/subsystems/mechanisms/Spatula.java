@@ -6,8 +6,8 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 public class Spatula extends Subsystem {
-    private final double SPATULA_UP = 2;
-    private final double SPATULA_DOWN = 0.5;
+    private final double SPATULA_UP = 0.387;
+    private final double SPATULA_DOWN = 0.97;
 
     private Servo spatula;
 
@@ -15,6 +15,10 @@ public class Spatula extends Subsystem {
         super();
 
         spatula = getHardwareMap().servo.get("Spatula");
+    }
+
+    public void setPosition(double position) {
+        spatula.setPosition(position);
     }
 
     public Command deploy() {
@@ -26,10 +30,10 @@ public class Spatula extends Subsystem {
     }
 
     public void setDeploy() {
-        spatula.setPosition(SPATULA_DOWN);
+        spatula.setPosition(SPATULA_UP);
     }
 
     public void setRetract() {
-        spatula.setPosition(SPATULA_UP);
+        spatula.setPosition(SPATULA_DOWN);
     }
 }

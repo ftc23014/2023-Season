@@ -34,6 +34,22 @@ public class Rotation2d {
         return Math.toDegrees(m_radians);
     }
 
+
+    //returns between 0 and 360
+    public double getAbsoluteDegrees() {
+        double degrees = getDegrees();
+
+        while (degrees < 0) {
+            degrees += 360;
+        }
+
+        while (degrees > 360) {
+            degrees -= 360;
+        }
+
+        return degrees;
+    }
+
     public Rotation2d rotateBy(Rotation2d other) {
         return new Rotation2d(m_radians + other.getRadians());
     }

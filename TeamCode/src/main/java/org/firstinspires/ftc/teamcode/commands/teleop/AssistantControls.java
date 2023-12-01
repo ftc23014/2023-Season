@@ -60,7 +60,7 @@ public class AssistantControls extends Command {
      *    If linear slide is in automatic, will flip between zeroed and PID set.
      * B: Intake
      * Y: Spatula
-     * X: Pixel clamper
+     * X: Pixel clamper / Lock
      *
 
      *
@@ -68,8 +68,25 @@ public class AssistantControls extends Command {
      * DPAD: Select linear slide position selection
      */
 
+    private double position = 0;
+
     @Override
     public void execute() {
+
+//        if (Math.abs(gamepad2.right_stick_y) > 0.05) {
+//            position += gamepad2.right_stick_y / 100;
+//            m_spatulaSubsystem.setPosition(position < 0 ? 1 + (position % 1) : position % 1);
+//            telemetry().addLine("Position: " + position);
+//            telemetry().update();
+//        }
+
+//        if (gamepad2.right_bumper) {
+//            position = 1;
+//            m_spatulaSubsystem.setPosition(position);
+//            telemetry().addLine("Position: " + position);
+//            telemetry().update();
+//        }
+
         if (!gamepad2.b) {
             if (Math.abs(gamepad2.right_stick_y) > 0.05) {
                 m_intakeSubsystem.intake(gamepad2.right_stick_y);
@@ -79,7 +96,6 @@ public class AssistantControls extends Command {
         } else {
             m_intakeSubsystem.intake(0.7);
         }
-
 
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
@@ -147,16 +163,16 @@ public class AssistantControls extends Command {
 
         //selection controls
         if (m_lastDpadDownState != gamepad2.dpad_down && gamepad2.dpad_down) {
-            m_selectedRow++;
-            if (m_selectedRow > 2) {
-                m_selectedRow = 2;
+            m_selectedRow--;
+            if (m_selectedRow < 0) {
+                m_selectedRow = 0;
             }
         }
 
         if (m_lastDpadUpState != gamepad2.dpad_up && gamepad2.dpad_up) {
-            m_selectedRow--;
-            if (m_selectedRow < 0) {
-                m_selectedRow = 0;
+            m_selectedRow++;
+            if (m_selectedRow > 2) {
+                m_selectedRow = 2;
             }
         }
 
@@ -184,11 +200,11 @@ public class AssistantControls extends Command {
             m_lastTelemetryUpdate = System.currentTimeMillis();
 
             //telemetry updates
-            showSelectionTelemetry();
-            telemetry().addLine();
-            showComponentStates();
-
-            telemetry().update();
+//            showSelectionTelemetry();
+//            telemetry().addLine();
+//            showComponentStates();
+//
+//            telemetry().update();
         }
     }
 
@@ -198,14 +214,24 @@ public class AssistantControls extends Command {
         String bottomRow = "|";
 
         for (int i = 0; i < 3; i++) {
-            if (i == m_selectedRow) {
-                if (m_selectedColumn == 2) {
+            if (i == m_selectedColumn) {
+                if (m_selectedRow == 2) {
                     topRow += "X|";
-                } else if (m_selectedColumn == 1) {
+                    middleRow += " |";
+                    bottomRow += " |";
+                } else if (m_selectedRow == 1) {
                     middleRow += "X|";
-                } else if (m_selectedColumn == 0) {
+                    topRow += " |";
+                    bottomRow += " |";
+                } else if (m_selectedRow == 0) {
                     bottomRow += "X|";
+                    topRow += " |";
+                    middleRow += " |";
                 }
+            } else {
+                topRow += "  |";
+                middleRow += "  |";
+                bottomRow += "  |";
             }
         }
 

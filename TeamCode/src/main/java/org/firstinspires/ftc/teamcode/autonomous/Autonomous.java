@@ -17,6 +17,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Spatula;
@@ -108,6 +109,7 @@ public class Autonomous extends OpMode {
     private HuskyLensDetection m_huskyLensDetection;
     private Intake m_intakeSubsystem;
     private Spatula m_spatulaSubsystem;
+    private DualLinearSlide m_linearSlideSubsystem;
 
     private boolean m_autonomousEnabled;
 
@@ -135,11 +137,14 @@ public class Autonomous extends OpMode {
         m_sensorConeHuskyLensSubsystem = new SensorConeHuskyLensSubsystem();
         m_intakeSubsystem = new Intake();
         m_spatulaSubsystem = new Spatula();
+        m_linearSlideSubsystem = new DualLinearSlide();
 
         Robot.init();
         Subsystems.onInit();
 
         generateAuto();
+
+        telemetry().update();
     }
 
     public void generateAuto() {
@@ -205,55 +210,67 @@ public class Autonomous extends OpMode {
                     m_driveSubsystem.stop()
             );
         } else if (m_autonomousMode == AutonomousMode.FULL_AUTO) {
-            if (m_pathSelectionFlag == PathSelectionFlags.ONE) {
+            //if (m_pathSelectionFlag == PathSelectionFlags.ONE) {
+                //m_huskyLensDetection = HuskyLensDetection.MIDDLE;
+
                 auto = new PlannedAuto(
                         constants,
                         new InstantCommand(() -> {
                             telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
                         }),
+                        new WaitCommand(0.1),
                         new HuskyDetectCommand(
                                 m_sensorConeHuskyLensSubsystem,
-                                0.5,
+                                1,
                                 (int detected) -> {
+                                    if (detected == -2) {
+                                        telemetry().addLine("ERROR WITH HUSKY?");
+                                    }
+
                                     m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+                                    telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+                                    telemetry.update();
                                 }
                         ),
+                        //new StallStop(), //for debugging.
                         new WaitCommand(0.2),
                         new Trajectory(
                             m_driveSubsystem,
                             BezierSegment.loadFromResources(R.raw.one_middle)
                         ),
+                        new WaitCommand(0.1),
+                        m_driveSubsystem.stop(),
+                        new WaitCommand(0.1),
                         new IfOrSkipCommand(() -> {
                                 return m_huskyLensDetection == HuskyLensDetection.LEFT;
                             },
                             new TurnToCommand(
-                                    Rotation2d.fromDegrees(90)
+                                    Rotation2d.fromDegrees(90), m_driveSubsystem
                             )
                         ),
                         new IfOrSkipCommand(() -> {
                                 return m_huskyLensDetection == HuskyLensDetection.RIGHT;
                             },
                             new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90)
+                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
                             )
                         ),
                         m_intakeSubsystem.outtake_cmd(0.5),
                         new WaitCommand(0.5),
-                        m_intakeSubsystem.stop_cmd(),
-                        new IfOrSkipCommand(
-                            () -> {
-                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
-                            },
-                            new TurnToCommand(
-                                Rotation2d.fromDegrees(90)
-                            )
-                        )
+                        m_intakeSubsystem.stop_cmd()
+//                        new IfOrSkipCommand(
+//                            () -> {
+//                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
+//                            },
+//                            new TurnToCommand(
+//                                Rotation2d.fromDegrees(90), m_driveSubsystem
+//                            )
+//                        )
                 );
-            }
+            //}
         }
 
         telemetry().addLine("Autonomous Generated!");
-        telemetry().update();
     }
 
     @Override

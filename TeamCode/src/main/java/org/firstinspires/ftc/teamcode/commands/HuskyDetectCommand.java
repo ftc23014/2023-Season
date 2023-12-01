@@ -48,16 +48,26 @@ public class HuskyDetectCommand extends Command {
                     detectedTheMost = 1;
                 }
 
+                if (mostDetections == 0) {
+                    detectedTheMost = -2;
+                }
+
+                m_huskyLensDetect.setDetecting(false);
+
                 m_onFinish.run(
                         detectedTheMost
                 );
+
+                m_timer.cancel();
             }
         };
 
         m_timer.schedule(ttask, m_detectionTime);
+
+        m_huskyLensDetect.setDetecting(true);
     }
 
-    public void periodic() {
+    public void execute() {
         if (m_huskyLensDetect.hasDetected()) {
             if (m_huskyLensDetect.getLastDetection() == -1) {
                 m_leftCount++;
