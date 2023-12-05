@@ -184,8 +184,8 @@ public class Autonomous extends OpMode {
                     new WaitCommand(0.5),
                     m_driveSubsystem.driveCommand(
                             m_side == StartingSide.BLUE ?
-                                    new Translation2d(-0.5, 0)
-                                    : new Translation2d(0.5, 0)
+                                    new Translation2d(0.5, 0)
+                                    : new Translation2d(-0.5, 0)
                             , 0),
                     new WaitCommand(2),
                     m_driveSubsystem.stop()
@@ -237,7 +237,7 @@ public class Autonomous extends OpMode {
                         new Trajectory(
                             m_driveSubsystem,
                             BezierSegment.loadFromResources(R.raw.one_middle)
-                        ),
+                        ).runFlippedX(m_side == StartingSide.RED),
                         new WaitCommand(0.1),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
@@ -265,7 +265,7 @@ public class Autonomous extends OpMode {
                         new WaitCommand(0.2),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        m_intakeSubsystem.intake_cmd(0.1),
+                        m_intakeSubsystem.intake_cmd(0.2),
                         new WaitCommand(0.5),
                         m_intakeSubsystem.stop_cmd(),
                         m_driveSubsystem.driveCommand(
@@ -276,6 +276,7 @@ public class Autonomous extends OpMode {
                         ),
                         new WaitCommand(0.2),
                         m_driveSubsystem.stop(),
+                        new StallStop(), //DON'T CONTINUE
                         new WaitCommand(0.1),
                         new IfOrSkipCommand(
                             () -> {

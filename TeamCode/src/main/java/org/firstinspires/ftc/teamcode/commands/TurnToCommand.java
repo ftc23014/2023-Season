@@ -16,8 +16,8 @@ public class TurnToCommand extends Command {
 
     public TurnToCommand(Rotation2d rotationGoal, MecanumDriveSubsystem driveSubsystem) {
         m_rotationGoal = rotationGoal;
-        m_rotationController = new WPIPIDController(0.1, 0.01, 0.001);
-        m_rotationController.setTolerance(0.5);
+        m_rotationController = new WPIPIDController(0.005, 0, 0);
+        m_rotationController.setTolerance(2);
 
         m_rotationController.enableContinuousInput(0, 360);
 
@@ -28,9 +28,9 @@ public class TurnToCommand extends Command {
     public void execute() {
         double power = m_rotationController.calculate(m_driveSubsystem.getAngle().getAbsoluteDegrees(), m_rotationGoal.getAbsoluteDegrees());
 
-        if (Math.abs(power) > maxPower) {
-            power = Math.signum(power) * maxPower;
-        }
+//        if (Math.abs(power) > maxPower) {
+//            power = Math.signum(power) * maxPower;
+//        }
 
         telemetry().addLine("TTPower: " + power + ", CURRENT: " + m_driveSubsystem.getAngle().getAbsoluteDegrees() + ", GOAL: " + m_rotationGoal.getAbsoluteDegrees() + ", ERROR: " + m_rotationController.getPositionError());
 
@@ -41,7 +41,7 @@ public class TurnToCommand extends Command {
                 true
         );
 
-        telemetry().update();
+        //telemetry().update();
     }
 
     @Override

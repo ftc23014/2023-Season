@@ -44,12 +44,19 @@ public class Trajectory extends Command {
 
     private boolean hasBeenExecuted = false;
 
+    private boolean runFlippedX = false;
+
     public Trajectory(DriveSubsystem driveSubsystem, Segment... segments) {
         super();
 
         this.m_driveSubsystem = driveSubsystem;
         m_segments = segments;
         m_driveMode = DriveMode.InstantChange;
+    }
+
+    public Trajectory runFlippedX(boolean flipIt) {
+        this.runFlippedX = flipIt;
+        return this;
     }
 
     public void generate() {
@@ -151,7 +158,16 @@ public class Trajectory extends Command {
 
         Translation2d velocities = (
                 velocity.isZero() ? nextVelocity : velocity
-        ).rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / m_constants.getDeltaTime());
+        );
+
+        if (runFlippedX) {
+            velocities = new Translation2d(
+                    -velocities.getX(),
+                    velocities.getY()
+            );
+        }
+
+        velocities = velocities.rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / m_constants.getDeltaTime());
 
         //Autonomous.getTelemetry().addLine("v: " + velocities.toString());
 

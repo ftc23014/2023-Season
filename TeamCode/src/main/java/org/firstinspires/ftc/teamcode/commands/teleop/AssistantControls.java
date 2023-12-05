@@ -95,7 +95,7 @@ public class AssistantControls extends Command {
                 m_intakeSubsystem.stop();
             }
         } else {
-            m_intakeSubsystem.intake(0.8);
+            m_intakeSubsystem.intake(0.6);
         }
 
 
@@ -123,6 +123,11 @@ public class AssistantControls extends Command {
             } else {
                 m_spatulaSubsystem.setRetract();
             }
+        }
+
+        //TODO: remove
+        if (gamepad2.a) {
+            m_intakeSubsystem.outtake(1);
         }
 
         if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a && k_linearSlidePIDEnabled) {

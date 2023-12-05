@@ -6,7 +6,7 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 public class Spatula extends Subsystem {
-    private final double SPATULA_UP = 0.387;
+    private final double SPATULA_UP = 0.377;
     private final double SPATULA_DOWN = 0.97;
 
     private Servo spatula;

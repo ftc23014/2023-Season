@@ -14,7 +14,6 @@ public class RedBackstageAutonomous extends OpMode  {
     @Override
     public void init() {
         Autonomous.setAutonomous(Autonomous.AutonomousMode.BASIC_AUTO, Autonomous.StartingSide.RED, this).init();
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distance");
     }
 
     @Override
@@ -30,10 +29,6 @@ public class RedBackstageAutonomous extends OpMode  {
     @Override
     public void loop() {
         Autonomous.getInstance().loop();
-
-        if (distanceSensor.getDistance(DistanceUnit.CM) < 15) {
-            Autonomous.getInstance().m_driveSubsystem.stop_motors();
-        }
     }
 
     @Override
