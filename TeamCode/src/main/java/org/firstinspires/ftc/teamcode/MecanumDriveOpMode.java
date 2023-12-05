@@ -12,17 +12,17 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsyste
 public class MecanumDriveOpMode extends OpMode {
 
     private MecanumDriveSubsystem mecanumDriveSubsystem;
-    private LinearSlideSubsystem linearSlideSubsystem;
+    //private LinearSlideSubsystem linearSlideSubsystem;
 
-    private IntakeSubsystem intakeSubsystem;
+    //private IntakeSubsystem intakeSubsystem;
 
     @Override
     public void init() {
         mecanumDriveSubsystem = new MecanumDriveSubsystem();
-        intakeSubsystem = new IntakeSubsystem();
-        intakeSubsystem.setGamepad(gamepad1);
-        linearSlideSubsystem = new LinearSlideSubsystem();
-        linearSlideSubsystem.setGamepad(gamepad1);
+//        intakeSubsystem = new IntakeSubsystem();
+//        intakeSubsystem.setGamepad(gamepad1);
+//        linearSlideSubsystem = new LinearSlideSubsystem();
+//        linearSlideSubsystem.setGamepad(gamepad1);
 
         Robot.init();
 

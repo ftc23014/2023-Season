@@ -152,6 +152,16 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         // Calculate velocity based on joystick inputs
         velocityX = joyStickX * maxVelocity;
         velocityY = joyStickY * maxVelocity;
+
+
+
+        telemetry().addData("odo X:", odometry.getPosition().getX());
+        telemetry().addData("odo Y:", odometry.getPosition().getY());
+
+        telemetry().addData("odo position:", odometry.getRotation().getDegrees());
+        telemetry().addData("front left pos: ", frontLeft.getCurrentPosition());
+        telemetry().addData("back right pos: ", backRight.getCurrentPosition());
+        telemetry().addData("front right pos: ", frontRight.getCurrentPosition());
     }
 
     public Command driveCommand(Translation2d power, Rotation2d rotate, boolean fieldRelative, boolean openLoop) {
@@ -240,6 +250,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 //        telemetry().addData("Joystick Y", joyStickY);
 //        telemetry().addData("Velocity X (m/s)", velocityX);
 //        telemetry().addData("Velocity Y (m/s)", velocityY);
+        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) backRight.getCurrentPosition(), (double) frontRight.getCurrentPosition());
     }
 
     @Replay(name="expected_motion_replay")
