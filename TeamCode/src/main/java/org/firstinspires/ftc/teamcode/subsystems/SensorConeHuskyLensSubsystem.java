@@ -98,12 +98,12 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
     }
 
     private static int locateBlockPlacement(int blockX) {
-        if (blockX < 100) { // if block is between 0-100 pixels
+        if (blockX <= 105) { // if block is between 0-100 pixels
             return -1;
-        } else if (blockX > 100 && blockX < 250) { // if block is between 100-250 pixels
+        } else if (blockX > 105 && blockX <= 210) { // if block is between 100-250 pixels
             return 0;
         } else { // else
             return 1;
-        }
     }
+}
 }

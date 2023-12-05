@@ -71,7 +71,9 @@ public class Autonomous extends OpMode {
     public enum AutonomousMode {
         TESTING,
         BASIC_AUTO,
-        FULL_AUTO;
+        FULL_AUTO,
+        GOOFY,
+        RIGHT_TO_LEFT;
     }
 
     public enum StartingSide {
@@ -107,9 +109,9 @@ public class Autonomous extends OpMode {
     private PathSelectionFlags m_pathSelectionFlag;
 
     private HuskyLensDetection m_huskyLensDetection;
-    private Intake m_intakeSubsystem;
-    private Spatula m_spatulaSubsystem;
-    private DualLinearSlide m_linearSlideSubsystem;
+   // private Intake m_intakeSubsystem;
+    //private Spatula m_spatulaSubsystem;
+    //private DualLinearSlide m_linearSlideSubsystem;
 
     private boolean m_autonomousEnabled;
 
@@ -126,7 +128,7 @@ public class Autonomous extends OpMode {
     }
 
     private PlannedAuto auto;
-    
+
     private AtomicInteger m_detectedConePosition = new AtomicInteger(0);
 
     @Override
@@ -135,9 +137,9 @@ public class Autonomous extends OpMode {
 
         m_driveSubsystem = new MecanumDriveSubsystem();
         m_sensorConeHuskyLensSubsystem = new SensorConeHuskyLensSubsystem();
-        m_intakeSubsystem = new Intake();
-        m_spatulaSubsystem = new Spatula();
-        m_linearSlideSubsystem = new DualLinearSlide();
+       // m_intakeSubsystem = new Intake();
+       // m_spatulaSubsystem = new Spatula();
+        //m_linearSlideSubsystem = new DualLinearSlide();
 
         Robot.init();
         Subsystems.onInit();
@@ -209,7 +211,33 @@ public class Autonomous extends OpMode {
                     }),
                     m_driveSubsystem.stop()
             );
-        } else if (m_autonomousMode == AutonomousMode.FULL_AUTO) {
+        } else if (m_autonomousMode == AutonomousMode.GOOFY) {
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                    }),
+                    new WaitCommand(0.1),
+                    new Trajectory(
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.goofy_right_left_test)
+                    )
+            );
+        } else if (m_autonomousMode == AutonomousMode.RIGHT_TO_LEFT) {
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                    }),
+                    new WaitCommand(0.1),
+                    new Trajectory(
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.blue_right_to_backdrop)
+                    )
+            );
+        }
+
+        else if (m_autonomousMode == AutonomousMode.FULL_AUTO) {
             //if (m_pathSelectionFlag == PathSelectionFlags.ONE) {
                 //m_huskyLensDetection = HuskyLensDetection.MIDDLE;
 
@@ -265,9 +293,9 @@ public class Autonomous extends OpMode {
                         new WaitCommand(0.2),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        m_intakeSubsystem.intake_cmd(0.2),
+                        //m_intakeSubsystem.intake_cmd(0.2),
                         new WaitCommand(0.5),
-                        m_intakeSubsystem.stop_cmd(),
+                        //m_intakeSubsystem.stop_cmd(),
                         m_driveSubsystem.driveCommand(
                                 new Translation2d(0, -0.3),
                                 Rotation2d.zero(),
@@ -335,11 +363,11 @@ public class Autonomous extends OpMode {
                         ),
                         m_driveSubsystem.stop(),
                         new StallStop(),
-                        m_linearSlideSubsystem.power(0.2),
+                        //m_linearSlideSubsystem.power(0.2),
                         new WaitCommand(1.2),
-                        m_linearSlideSubsystem.power(0),
-                        new WaitCommand(0.1),
-                        m_spatulaSubsystem.deploy()
+                        //m_linearSlideSubsystem.power(0),
+                        new WaitCommand(0.1)
+                      //  m_spatulaSubsystem.deploy()
                 );
             //}
         }
