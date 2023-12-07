@@ -72,6 +72,9 @@ public class Autonomous extends OpMode {
         TESTING,
         BASIC_AUTO,
         FULL_AUTO,
+
+        WING,
+
         GOOFY,
         RIGHT_TO_LEFT;
     }
@@ -207,7 +210,7 @@ public class Autonomous extends OpMode {
                             BezierSegment.loadFromResources(R.raw.testing)
                     ),
                     new InstantCommand(() -> {
-                        telemetry().addLine("Finished!");
+                        telemetry.addLine("Finished!");
                     }),
                     m_driveSubsystem.stop()
             );
@@ -223,6 +226,18 @@ public class Autonomous extends OpMode {
                             BezierSegment.loadFromResources(R.raw.goofy_right_left_test)
                     )
             );
+        }    else if (m_autonomousMode == AutonomousMode.WING) {
+                auto = new PlannedAuto(
+                        constants,
+                        new InstantCommand(() -> {
+                            telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                        }),
+                        new WaitCommand(0.1),
+                        new Trajectory(
+                                m_driveSubsystem,
+                                BezierSegment.loadFromResources(R.raw.backboard_wing)
+                        )
+                );
         } else if (m_autonomousMode == AutonomousMode.RIGHT_TO_LEFT) {
             auto = new PlannedAuto(
                     constants,
