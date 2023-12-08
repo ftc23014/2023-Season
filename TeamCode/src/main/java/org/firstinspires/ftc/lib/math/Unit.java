@@ -2,15 +2,17 @@ package org.firstinspires.ftc.lib.math;
 
 public class Unit {
     public enum Type {
-        Inches(2.54),
-        Feet(30.48),
-        Centimeters(1),
-        Meters(100);
+        Inches(2.54, "in"),
+        Feet(30.48, "ft"),
+        Centimeters(1, "cm"),
+        Meters(100, "m");
 
         private final double conversion_to_cm;
+        private final String symbol;
 
-        Type(double conversion_to_cm) {
+        Type(double conversion_to_cm, String symbol) {
             this.conversion_to_cm = conversion_to_cm;
+            this.symbol = symbol;
         }
 
         public double convert_to_cm(double value) {
@@ -40,5 +42,10 @@ public class Unit {
 
     public Unit clamp(Unit min, Unit max) {
         return new Unit(Math.max(min.get(type), Math.min(max.get(type), get(type))), type);
+    }
+
+    @Override
+    public String toString() {
+        return value + type.symbol;
     }
 }

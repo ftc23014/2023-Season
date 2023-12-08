@@ -300,33 +300,32 @@ public class Autonomous extends OpMode {
                         ),
                         new WaitCommand(0.1),
                         m_driveSubsystem.driveCommand(
-                                new Translation2d(0, 0.3),
-                                Rotation2d.zero(),
-                                false,
-                                true
-                        ),
-                        new WaitCommand(0.2),
-                        m_driveSubsystem.stop(),
-                        new WaitCommand(0.1),
-                        //m_intakeSubsystem.intake_cmd(0.2),
-                        new WaitCommand(0.5),
-                        //m_intakeSubsystem.stop_cmd(),
-                        m_driveSubsystem.driveCommand(
                                 new Translation2d(0, -0.3),
                                 Rotation2d.zero(),
                                 false,
                                 true
                         ),
-                        new WaitCommand(0.2),
+                        new WaitCommand(0.5),
                         m_driveSubsystem.stop(),
-                        new StallStop(), //DON'T CONTINUE
+                        new WaitCommand(0.1),
+                        //m_intakeSubsystem.intake_cmd(0.2),
+                        new WaitCommand(0.3),
+                        //m_intakeSubsystem.stop_cmd(),
+                        m_driveSubsystem.driveCommand(
+                                new Translation2d(0, 0.3),
+                                Rotation2d.zero(),
+                                false,
+                                true
+                        ),
+                        new WaitCommand(0.5),
+                        m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
                         new IfOrSkipCommand(
                             () -> {
                                 return m_huskyLensDetection != HuskyLensDetection.RIGHT;
                             },
                             new TurnToCommand(
-                                Rotation2d.fromDegrees(-90), m_driveSubsystem
+                                Rotation2d.fromDegrees(90), m_driveSubsystem
                             )
                         ),
                         new IfOrSkipCommand(
@@ -349,6 +348,7 @@ public class Autonomous extends OpMode {
                         ),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
+                        new StallStop(),
                         new IfOrSkipCommand(
                                 () -> {
                                     return m_huskyLensDetection == HuskyLensDetection.LEFT;

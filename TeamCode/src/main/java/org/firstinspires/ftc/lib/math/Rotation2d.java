@@ -18,6 +18,10 @@ public class Rotation2d {
         this.m_radians = radians;
     }
 
+    public Rotation2d(double x, double y) {
+        this(Math.atan2(y, x));
+    }
+
     public Rotation2d() {
         this(0);
     }

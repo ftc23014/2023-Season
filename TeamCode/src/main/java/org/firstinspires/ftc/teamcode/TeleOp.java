@@ -48,14 +48,14 @@ public class TeleOp extends OpMode {
 
     //private VisionSubsystem m_visionSubsystem;
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
-    //private Intake m_intakeSubsystem;
+    private Intake m_intakeSubsystem;
 
-    //private Drone m_droneSubsystem;
+    private Drone m_droneSubsystem;
 
-    //private DualLinearSlide m_linearSlideSubsystem;
-    //private Spatula m_spatulaSubsystem;
+    private DualLinearSlide m_linearSlideSubsystem;
+    private Spatula m_spatulaSubsystem;
 
-    //private PixelClamper m_pixelClamperSubsystem;
+    private PixelClamper m_pixelClamperSubsystem;
 
     // commands
 
@@ -81,7 +81,7 @@ public class TeleOp extends OpMode {
 
         //m_droneSubsystem = new Drone();
 
-        //m_linearSlideSubsystem = new DualLinearSlide();
+        m_linearSlideSubsystem = new DualLinearSlide();
 
         //m_spatulaSubsystem = new Spatula();
 
@@ -93,16 +93,16 @@ public class TeleOp extends OpMode {
         );
 
         m_assistantControls = new AssistantControls(
-                gamepad2
+                gamepad2,
 //                m_intakeSubsystem,
 //                m_spatulaSubsystem,
-//                m_linearSlideSubsystem,
+                m_linearSlideSubsystem
 //                m_droneSubsystem,
 //                m_pixelClamperSubsystem
         );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);
-        //m_intakeSubsystem.addDefaultCommand(m_assistantControls);
+        m_linearSlideSubsystem.addDefaultCommand(m_assistantControls);
 
         //END SUBSYSTEM CREATION
 

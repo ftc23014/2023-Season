@@ -13,6 +13,7 @@ public class TurnToCommand extends Command {
     private MecanumDriveSubsystem m_driveSubsystem;
 
     private final double maxPower = 1;
+    private final double min_power = 0.2;
 
     public TurnToCommand(Rotation2d rotationGoal, MecanumDriveSubsystem driveSubsystem) {
         m_rotationGoal = rotationGoal;
@@ -33,6 +34,10 @@ public class TurnToCommand extends Command {
 //        }
 
         telemetry().addLine("TTPower: " + power + ", CURRENT: " + m_driveSubsystem.getAngle().getAbsoluteDegrees() + ", GOAL: " + m_rotationGoal.getAbsoluteDegrees() + ", ERROR: " + m_rotationController.getPositionError());
+
+        if (Math.abs(power) < min_power) {
+            power = Math.signum(power) * min_power;
+        }
 
         m_driveSubsystem.drive(
                 new Translation2d(0,0),
