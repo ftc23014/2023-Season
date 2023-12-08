@@ -6,7 +6,7 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
-public class Hang extends Subsystem {
+public class Hang extends Subsystem { // test
     private DcMotor hangMotor;
 
     public Hang() {
