@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Goofy Auto", group = "Testing", preselectTeleOp="Main TeleOp")
-public class GoofyAutonomous extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueLeftAuto", group = "Full", preselectTeleOp="Main TeleOp")
+public class BlueLeftAuto extends OpMode {
     @Override
     public void init() {
-        Autonomous.setAutonomous(Autonomous.AutonomousMode.GOOFY, Autonomous.StartingSide.BLUE, this).init();
+        Autonomous.setAutonomous(Autonomous.AutonomousMode.BLUE_LEFT_AUTO, Autonomous.StartingSide.BLUE, this).init();
     }
 
     @Override

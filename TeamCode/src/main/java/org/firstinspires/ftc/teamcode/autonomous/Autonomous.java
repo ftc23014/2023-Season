@@ -72,8 +72,9 @@ public class Autonomous extends OpMode {
         TESTING,
         BASIC_AUTO,
         FULL_AUTO,
-        GOOFY,
-        RIGHT_TO_LEFT;
+        BLUE_LEFT_AUTO,
+
+        BLUE_RIGHT_AUTO;
     }
 
     public enum StartingSide {
@@ -211,32 +212,100 @@ public class Autonomous extends OpMode {
                     }),
                     m_driveSubsystem.stop()
             );
-        } else if (m_autonomousMode == AutonomousMode.GOOFY) {
+        } else if (m_autonomousMode == AutonomousMode.BLUE_LEFT_AUTO) {
             auto = new PlannedAuto(
                     constants,
                     new InstantCommand(() -> {
                         telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
                     }),
                     new WaitCommand(0.1),
-                    new Trajectory(
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.goofy_right_left_test)
-                    )
-            );
-        } else if (m_autonomousMode == AutonomousMode.RIGHT_TO_LEFT) {
-            auto = new PlannedAuto(
-                    constants,
-                    new InstantCommand(() -> {
-                        telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
-                    }),
-                    new WaitCommand(0.1),
-                    new Trajectory(
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.blue_right_to_backdrop)
-                    )
-            );
-        }
+                    // start huskylens detection procedure
+//                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
+//                            m_sensorConeHuskyLensSubsystem,
+//                            1,
+//                            (int detected) -> {
+//                                if (detected == -2) {
+//                                    telemetry().addLine("ERROR WITH HUSKY?");
+//                                }
+//
+//                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+//                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+//                                telemetry.update();
+//                            }
+//                    ),
+//                    new WaitCommand(0.2),
+//                    new Trajectory( // go towards middle of all three tapes
+//                            m_driveSubsystem,
+//                            BezierSegment.loadFromResources(R.raw.one_middle)
+//                    ).runFlippedX(m_side == StartingSide.RED),
+//                    new WaitCommand(0.1),
+//                    m_driveSubsystem.stop(),
+//                    new WaitCommand(0.1),
+//                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
+//                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
+//                    },
+//                            new TurnToCommand(
+//                                    Rotation2d.fromDegrees(90), m_driveSubsystem
+//                            )
+//                    ),
+//                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
+//                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+//                    },
+//                            new TurnToCommand(
+//                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
+//                            )
+//                    ), // otherwise just stay facing middle
+//                    new WaitCommand(0.1),
+//                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+//                            new Translation2d(0, 0.3),
+//                            Rotation2d.zero(),
+//                            false,
+//                            true
+//                    ),
+//                    new WaitCommand(0.2),
+//                    m_driveSubsystem.stop(),
+//                    new WaitCommand(0.1),
+//                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
+//                    new WaitCommand(0.5),
+//                    //m_intakeSubsystem.stop_cmd(),
+//                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+//                            new Translation2d(0, -0.3),
+//                            Rotation2d.zero(),
+//                            false,
+//                            true
+//                    ),
+//                    new WaitCommand(0.2),
+//                    m_driveSubsystem.stop(),
 
+                    // end huskylens detection procedure
+                    new Trajectory( // go towards backboard
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.blue_left_step_one)
+                    ),
+                    new WaitCommand(0.1),
+                    // TODO: add linear slide placing code
+                    new Trajectory( // go towards stack of white pixels
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.blue_left_step_two)
+                    ),
+                    new WaitCommand(0.1),
+                    // TODO: add intake code
+                    new Trajectory( // go back to backboard
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.blue_left_step_three)
+                    ),
+                    new WaitCommand(0.1)
+                    // TODO: figure out how many cycles we can do during auto
+
+
+            );
+        } //else if (m_autonomousMode == AutonomousMode.BLUE_RIGHT_AUTO) {
+//        auto = new PlannedAuto(
+//                constants,
+//
+//                )
+//
+//    }
         else if (m_autonomousMode == AutonomousMode.FULL_AUTO) {
             //if (m_pathSelectionFlag == PathSelectionFlags.ONE) {
                 //m_huskyLensDetection = HuskyLensDetection.MIDDLE;
@@ -247,7 +316,7 @@ public class Autonomous extends OpMode {
                             telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
                         }),
                         new WaitCommand(0.1),
-                        new HuskyDetectCommand(
+                        new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
                                 m_sensorConeHuskyLensSubsystem,
                                 1,
                                 (int detected) -> {
@@ -260,16 +329,15 @@ public class Autonomous extends OpMode {
                                     telemetry.update();
                                 }
                         ),
-                        //new StallStop(), //for debugging.
                         new WaitCommand(0.2),
-                        new Trajectory(
+                        new Trajectory( // go towards middle of all three tapes
                             m_driveSubsystem,
                             BezierSegment.loadFromResources(R.raw.one_middle)
                         ).runFlippedX(m_side == StartingSide.RED),
                         new WaitCommand(0.1),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        new IfOrSkipCommand(() -> {
+                        new IfOrSkipCommand(() -> { // if left tape is detected, turn towards
                                 return m_huskyLensDetection == HuskyLensDetection.LEFT;
                             },
                             new TurnToCommand(
