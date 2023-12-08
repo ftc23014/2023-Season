@@ -84,27 +84,31 @@ public class DualLinearSlide extends Subsystem {
 
     @Override
     public void periodic() {
-        if (direction == Direction.DOWN) {
-            //stop if less than the threshold
-            if (
-                    getLeftPosition() < threshold.get(Unit.Type.Centimeters)
-                            || getRightPosition() < threshold.get(Unit.Type.Centimeters)
-            ) {
-                setPower(0);
-                direction = Direction.NONE;
-                controlType = ControlType.MANUAL;
-            }
-        } else if (direction == Direction.UP) {
-            //stop if we're near the top
-            if (
-                    getLeftPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
-                            || getRightPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
-            ) {
-                setPower(0);
-                direction = Direction.NONE;
-                controlType = ControlType.MANUAL;
-            }
-        }
+//        if (direction == Direction.DOWN) {
+//            //stop if less than the threshold
+//            if (
+//                    getLeftPosition() < threshold.get(Unit.Type.Centimeters)
+//                            || getRightPosition() < threshold.get(Unit.Type.Centimeters)
+//            ) {
+//                setPower(0);
+//                direction = Direction.NONE;
+//                controlType = ControlType.MANUAL;
+//            }
+//        } else if (direction == Direction.UP) {
+//            //stop if we're near the top
+//            if (
+//                    getLeftPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
+//                            || getRightPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
+//            ) {
+//                setPower(0);
+//                direction = Direction.NONE;
+//                controlType = ControlType.MANUAL;
+//            }
+//        }
+
+//        telemetry().addLine("Left Position: " + getLeftPosition());
+//        telemetry().addLine("Right Position: " + getRightPosition());
+//        telemetry().update();
 
         if (controlType == ControlType.PID) {
             double leftPower = leftPIDController.calculate(getLeftPosition(), currentGoalHeight.get(Unit.Type.Centimeters));
@@ -218,12 +222,12 @@ public class DualLinearSlide extends Subsystem {
 
     public double getLeftPosition() {
         //convert the encoder ticks to centimeters
-        return 1;//leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public double getRightPosition() {
         //convert the encoder ticks to centimeters
-        return 1;//rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public boolean isZeroed() {

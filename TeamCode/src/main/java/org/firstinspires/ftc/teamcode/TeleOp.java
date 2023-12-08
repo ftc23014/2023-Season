@@ -6,12 +6,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.lib.math.Rotation2d;
+import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.teleop.AssistantControls;
 import org.firstinspires.ftc.teamcode.commands.teleop.DriverControls;
-import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main TeleOp")
 public class TeleOp extends OpMode {
@@ -45,16 +48,14 @@ public class TeleOp extends OpMode {
 
     //private VisionSubsystem m_visionSubsystem;
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
-    //private Intake m_intakeSubsystem;
+    private Intake m_intakeSubsystem;
 
-    //private Drone m_droneSubsystem;
+    private Drone m_droneSubsystem;
 
     private DualLinearSlide m_linearSlideSubsystem;
-    //private Spatula m_spatulaSubsystem;
+    private Spatula m_spatulaSubsystem;
 
-    //private PixelClamper m_pixelClamperSubsystem;
-
-    private Hang m_hangSubsystem;
+    private PixelClamper m_pixelClamperSubsystem;
 
     // commands
 
@@ -86,8 +87,6 @@ public class TeleOp extends OpMode {
 
         //m_pixelClamperSubsystem = new PixelClamper();
 
-        m_hangSubsystem = new Hang();
-
         m_driverControls = new DriverControls(
                 gamepad1,
                 m_mecanumDriveSubsystem
@@ -95,7 +94,6 @@ public class TeleOp extends OpMode {
 
         m_assistantControls = new AssistantControls(
                 gamepad2,
-                m_hangSubsystem,
 //                m_intakeSubsystem,
 //                m_spatulaSubsystem,
                 m_linearSlideSubsystem
@@ -104,8 +102,7 @@ public class TeleOp extends OpMode {
         );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);
-        //m_intakeSubsystem.addDefaultCommand(m_assistantControls);
-        m_hangSubsystem.addDefaultCommand(m_assistantControls);
+        m_linearSlideSubsystem.addDefaultCommand(m_assistantControls);
 
         //END SUBSYSTEM CREATION
 
@@ -156,5 +153,3 @@ public class TeleOp extends OpMode {
         Subsystems.onDisable();
     }
 }
-
-

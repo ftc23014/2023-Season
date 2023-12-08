@@ -64,4 +64,28 @@ public class Pose2d {
                 m_rotation.rotateBy(other.m_rotation)
         );
     }
+
+    public Pose2d exp(double dx, double dy, double dw) {
+        double sinTheta = Math.sin(dw);
+        double cosTheta = Math.cos(dw);
+
+        double s, c;
+
+        if (Math.abs(dw) < 1E-9) {
+            s= 1.0 - 1.0 / 6.0 * dw * dw;
+            c = 0.5 * dw;
+        } else {
+            s = sinTheta / dw;
+            c = (1.0 - cosTheta) / dw;
+        }
+
+        Translation2d transform = new Translation2d(
+                dx * s - dy * c,
+                dx * c + dy * s
+        );
+
+        Rotation2d rotation = new Rotation2d(cosTheta, sinTheta);
+
+        return transformBy(new Pose2d(transform, rotation));
+    }
 }

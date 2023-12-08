@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
+import org.firstinspires.ftc.lib.odometry.MecanumOdometry;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
+
+import java.util.Arrays;
 
 public class DriverControls extends Command {
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
@@ -48,6 +51,25 @@ public class DriverControls extends Command {
         } else {
             m_turnToCommand.execute();
         }
+
+        MecanumOdometry odometry = m_mecanumDriveSubsystem.getOdometry();
+
+        telemetry().addLine("odo X:" + odometry.getPosition().getX());
+        telemetry().addLine("odo Y:" + odometry.getPosition().getY());
+
+        telemetry().addLine("odo rotation:" + odometry.getRotation().getDegrees());
+        telemetry().addLine("left: " +
+                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[0]));
+        telemetry().addLine("right: " +
+                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[1]));
+        telemetry().addLine("center: " +
+                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[2]));
+//        telemetry().addData("front left pos: ", frontLeft.getCurrentPosition());
+//        telemetry().addData("back right pos: ", backRight.getCurrentPosition());
+//        telemetry().addData("front right pos: ", frontRight.getCurrentPosition());
+
+        telemetry().update();
+
     }
 
     @Override

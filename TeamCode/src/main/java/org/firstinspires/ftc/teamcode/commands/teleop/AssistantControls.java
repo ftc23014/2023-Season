@@ -2,21 +2,17 @@ package org.firstinspires.ftc.teamcode.commands.teleop;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.lib.systems.commands.Command;
-import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
 
 public class AssistantControls extends Command {
-//    private Intake m_intakeSubsystem;
-//    private Spatula m_spatulaSubsystem;
-//
-//    private Drone m_droneSubsystem;
-    private DualLinearSlide m_linearSlideSubsystem;
-//
-//    private DualLinearSlide m_linearSlideSubsystem;
-//
-//    private PixelClamper m_pixelClamperSubsystem;
+  //  private Intake m_intakeSubsystem;
+   // private Spatula m_spatulaSubsystem;
 
-    private Hang m_hangSubsystem;
+   // private Drone m_droneSubsystem;
+
+    private DualLinearSlide m_linearSlideSubsystem;
+
+   // private PixelClamper m_pixelClamperSubsystem;
 
     private Gamepad gamepad2;
 
@@ -39,8 +35,6 @@ public class AssistantControls extends Command {
     private boolean m_lastDpadLeftState = false;
     private boolean m_lastDpadRightState = false;
 
-    private int m_lastHangState = 0;
-
     // bottom to top
     private int m_selectedRow = 0;
     // Left to right
@@ -48,11 +42,10 @@ public class AssistantControls extends Command {
 
     private long m_lastTelemetryUpdate = 0;
 
-    public AssistantControls(Gamepad gamepad2, Hang hang, DualLinearSlide linearSlide){ //, Intake intake, Spatula spatula, DualLinearSlide linearSlide, Drone drone, PixelClamper pixelClamper) {
+    public AssistantControls(Gamepad gamepad2, /*Intake intake, Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone, PixelClamper pixelClamper*/) {
         super();
 
         this.gamepad2 = gamepad2;
-        m_hangSubsystem = hang;
 //        m_intakeSubsystem = intake;
 //        m_spatulaSubsystem = spatula;
         m_linearSlideSubsystem = linearSlide;
@@ -81,62 +74,62 @@ public class AssistantControls extends Command {
     @Override
     public void execute() {
 
-//        if (Math.abs(gamepad2.right_stick_y) > 0.05) {
-//            position += gamepad2.right_stick_y / 100;
-//            m_spatulaSubsystem.setPosition(position < 0 ? 1 + (position % 1) : position % 1);
-//            telemetry().addLine("Position: " + position);
-//            telemetry().update();
-//        }
+        if (Math.abs(gamepad2.right_stick_y) > 0.05) {
+            position += gamepad2.right_stick_y / 100;
+            //m_spatulaSubsystem.setPosition(position < 0 ? 1 + (position % 1) : position % 1);
+            telemetry().addLine("Position: " + position);
+            telemetry().update();
+        }
 
-//        if (gamepad2.right_bumper) {
-//            position = 1;
-//            m_spatulaSubsystem.setPosition(position);
-//            telemetry().addLine("Position: " + position);
-//            telemetry().update();
-//        }
+        if (gamepad2.right_bumper) {
+            position = 1;
+            //m_spatulaSubsystem.setPosition(position);
+            telemetry().addLine("Position: " + position);
+            telemetry().update();
+        }
 
-//        if (!gamepad2.b) {
-//            if (Math.abs(gamepad2.right_stick_y) > 0.05) {
-//                m_intakeSubsystem.intake(gamepad2.right_stick_y);
-//            } else {
-//                m_intakeSubsystem.stop();
-//            }
-//        } else {
-//            m_intakeSubsystem.intake(0.6);
-//        }
+        if (!gamepad2.b) {
+            if (Math.abs(gamepad2.right_stick_y) > 0.05) {
+                //m_intakeSubsystem.intake(gamepad2.right_stick_y);
+            } else {
+                //m_intakeSubsystem.stop();
+            }
+        } else {
+            //m_intakeSubsystem.intake(0.6);
+        }
 
-//
+
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             m_linearSlideSubsystem.setPower(gamepad2.left_stick_y / 2);
         } else if (m_linearSlideSubsystem.getMode() == DualLinearSlide.ControlType.MANUAL) {
             m_linearSlideSubsystem.setPower(0);
         }
-//
-//        if (m_lastDroneLauncherButtonState != gamepad2.left_bumper && gamepad2.left_bumper && gamepad2.right_bumper) {
-//            m_droneLauncherDeployed = !m_spatulaDeployed;
-//
-//            if (m_droneLauncherDeployed) {
-//                m_droneSubsystem.setDeploy();
-//            } else {
-//                m_droneSubsystem.setRetract();
-//            }
-//        }
-//
-//        if (m_lastSpatulaButtonState != gamepad2.y && gamepad2.y) {
-//            m_spatulaDeployed = !m_spatulaDeployed;
-//
-//            if (m_spatulaDeployed) {
-//                m_spatulaSubsystem.setDeploy();
-//            } else {
-//                m_spatulaSubsystem.setRetract();
-//            }
-//        }
-//
-//        //TODO: remove
-//        if (gamepad2.a) {
-//            m_intakeSubsystem.outtake(1);
-//        }
-//
+
+        if (m_lastDroneLauncherButtonState != gamepad2.left_bumper && gamepad2.left_bumper && gamepad2.right_bumper) {
+            m_droneLauncherDeployed = !m_spatulaDeployed;
+
+            if (m_droneLauncherDeployed) {
+                //m_droneSubsystem.setDeploy();
+            } else {
+                //m_droneSubsystem.setRetract();
+            }
+        }
+
+        if (m_lastSpatulaButtonState != gamepad2.y && gamepad2.y) {
+            m_spatulaDeployed = !m_spatulaDeployed;
+
+            if (m_spatulaDeployed) {
+                //m_spatulaSubsystem.setDeploy();
+            } else {
+                //m_spatulaSubsystem.setRetract();
+            }
+        }
+
+        //TODO: remove
+        if (gamepad2.a) {
+            //m_intakeSubsystem.outtake(1);
+        }
+
         if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a && k_linearSlidePIDEnabled) {
             m_lastLinearSlideButtonState = gamepad2.a;
 
@@ -158,33 +151,21 @@ public class AssistantControls extends Command {
                 m_linearSlideSubsystem.setPosition(position.getHeight());
             }
         }
-//
-//        if (m_lastPixelClamperButtonState != gamepad2.x && gamepad2.x) {
-//            m_pixelClamperDeployed = !m_pixelClamperDeployed;
-//
-//            if (m_pixelClamperDeployed) {
-//                m_pixelClamperSubsystem.setDeploy();
-//            } else {
-//                m_pixelClamperSubsystem.setRetract();
-//            }
-//        }
 
+        if (m_lastPixelClamperButtonState != gamepad2.x && gamepad2.x) {
+            m_pixelClamperDeployed = !m_pixelClamperDeployed;
 
-
+            if (m_pixelClamperDeployed) {
+                //m_pixelClamperSubsystem.setDeploy();
+            } else {
+                //m_pixelClamperSubsystem.setRetract();
+            }
+        }
 
         m_lastDroneLauncherButtonState = gamepad2.left_bumper;
         m_lastSpatulaButtonState = gamepad2.b;
         m_lastLinearSlideButtonState = gamepad2.a;
         m_lastPixelClamperButtonState = gamepad2.x;
-//        m_lastHangState = gamepad2.right_trigger > 0.1 ? 1 : gamepad2.left_trigger > 0.1 ? -1 : 0; //
-//
-//        if (m_lastHangState == 1 ) {
-//            m_hangSubsystem.hangUp(1);
-//        } else if (m_lastHangState == -1) {
-//            m_hangSubsystem.hangDown(1);
-//        } else {
-//            m_hangSubsystem.stop();
-//        }
 
         //selection controls
         if (m_lastDpadDownState != gamepad2.dpad_down && gamepad2.dpad_down) {
@@ -225,11 +206,11 @@ public class AssistantControls extends Command {
             m_lastTelemetryUpdate = System.currentTimeMillis();
 
             //telemetry updates
-            showSelectionTelemetry();
-            telemetry().addLine();
-            showComponentStates();
+//            showSelectionTelemetry();
+//            telemetry().addLine();
+//            showComponentStates();
 
-            telemetry().update();
+            //telemetry().update();
         }
     }
 

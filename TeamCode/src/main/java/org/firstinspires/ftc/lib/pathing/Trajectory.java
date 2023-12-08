@@ -180,11 +180,13 @@ public class Trajectory extends Command {
                                 new Pair<>(Rotation2d.zero(), Rotation2d.zero()) :
                                 m_segments[m_onSegment].angles();
 
-        Rotation2d rotation_speed = new Rotation2d(
-                (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
-        );
-
-        rotation_speed = Rotation2d.zero();
+        Rotation2d rotation_speed
+//                = new Rotation2d(
+//                (rotations.snd.getRadians() - rotations.fst.getRadians()) / (m_segments[m_onSegment].getPoints().size())
+//        );
+//
+//        rotation_speed
+                = Rotation2d.zero();
 
         if (!m_constants.usePhysicsCalculations()) {
             m_driveSubsystem.drive(

@@ -32,6 +32,13 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
     public static Unit maxVelocity = new Unit((312d / 60d) * 0.1d * Math.PI, Unit.Type.Meters);
 
+    /**
+     * PORTS:
+     * Front Left: 2 (left encoder)
+     * Front Right: 1 (back encoder)
+     * Back Left: 3
+     * Back Right: 0 (right encoder)
+     * */
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -152,16 +159,6 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         // Calculate velocity based on joystick inputs
         velocityX = joyStickX * maxVelocity;
         velocityY = joyStickY * maxVelocity;
-
-
-
-        telemetry().addData("odo X:", odometry.getPosition().getX());
-        telemetry().addData("odo Y:", odometry.getPosition().getY());
-
-        telemetry().addData("odo position:", odometry.getRotation().getDegrees());
-        telemetry().addData("front left pos: ", frontLeft.getCurrentPosition());
-        telemetry().addData("back right pos: ", backRight.getCurrentPosition());
-        telemetry().addData("front right pos: ", frontRight.getCurrentPosition());
     }
 
     public Command driveCommand(Translation2d power, Rotation2d rotate, boolean fieldRelative, boolean openLoop) {
@@ -226,6 +223,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         );
     }
 
+    public MecanumOdometry getOdometry() {
+        return odometry;
+    }
+
     /**
      * Gets the angle of the robot relative to the field orientation.
      * @return The angle of the robot relative to the field orientation.
@@ -250,7 +251,18 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 //        telemetry().addData("Joystick Y", joyStickY);
 //        telemetry().addData("Velocity X (m/s)", velocityX);
 //        telemetry().addData("Velocity Y (m/s)", velocityY);
-        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) backRight.getCurrentPosition(), (double) frontRight.getCurrentPosition());
+        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) -backRight.getCurrentPosition(), (double) frontRight.getCurrentPosition());
+    }
+
+    /**
+     * @return [left, right, back]
+     * */
+    public double[] getOdoPositions() {
+        return new double[] {
+                frontLeft.getCurrentPosition(),
+                backRight.getCurrentPosition(),
+                frontRight.getCurrentPosition()
+        };
     }
 
     @Replay(name="expected_motion_replay")
