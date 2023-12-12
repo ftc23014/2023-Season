@@ -40,8 +40,8 @@ public class DualLinearSlide extends Subsystem {
 
     public enum SlidePosition {
         LOW(new Unit(10, Unit.Type.Centimeters)),
-        MIDDLE(new Unit(30, Unit.Type.Centimeters)),
-        HIGH(new Unit(50, Unit.Type.Centimeters));
+        MIDDLE(new Unit(20, Unit.Type.Centimeters)),
+        HIGH(new Unit(30, Unit.Type.Centimeters));
 
         private Unit height;
 
@@ -57,7 +57,7 @@ public class DualLinearSlide extends Subsystem {
     private final double encoderResolution = (((1+(46d/17d))) * (1+(46d/11d))) * 28;
     private final Unit stringWrapRadius = new Unit(2.4, Unit.Type.Centimeters);
 
-    private final Unit maxLinearSlideHeight = new Unit(60, Unit.Type.Centimeters);
+    private final Unit maxLinearSlideHeight = new Unit(30, Unit.Type.Centimeters);
     private final Unit threshold = new Unit(0.5, Unit.Type.Centimeters);
 
     private DcMotor leftSlideMotor;
@@ -75,8 +75,11 @@ public class DualLinearSlide extends Subsystem {
     public DualLinearSlide() {
         super();
 
-        leftPIDController = new WPIPIDController(0.4, 0.00, 0.00);
-        rightPIDController = new WPIPIDController(0.4, 0.00, 0.00);
+        leftPIDController = new WPIPIDController(0.05, 0.00, 0.00);
+        rightPIDController = new WPIPIDController(0.05, 0.00, 0.00);
+
+        leftPIDController.setTolerance(0.05);
+        rightPIDController.setTolerance(0.05);
 
         leftSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor1");
         rightSlideMotor = getHardwareMap().dcMotor.get("Linear_Motor2");
@@ -114,8 +117,18 @@ public class DualLinearSlide extends Subsystem {
             double leftPower = leftPIDController.calculate(getLeftPosition(), currentGoalHeight.get(Unit.Type.Centimeters));
             double rightPower = rightPIDController.calculate(getRightPosition(), currentGoalHeight.get(Unit.Type.Centimeters));
 
-            leftPower = WPIPIDController.clamp(leftPower, -0.5, 0.5);
-            rightPower = WPIPIDController.clamp(rightPower, -0.5, 0.5);
+            leftPower = WPIPIDController.clamp(leftPower, -1, 1);
+            rightPower = WPIPIDController.clamp(rightPower, -1, 1);
+
+            final double min_power = 0.2;
+
+            if (Math.abs(leftPower) < min_power) {
+                leftPower = min_power * Math.signum(leftPower);
+            }
+
+            if (Math.abs(rightPower) < min_power) {
+                rightPower = min_power * Math.signum(rightPower);
+            }
 
             //if we're going in different directions, stop since this can break the linear slide
             if (Math.signum(rightPower) != Math.signum(leftPower)) {
@@ -124,6 +137,11 @@ public class DualLinearSlide extends Subsystem {
             }
 
             internalSetDualPower(leftPower, rightPower);
+
+            if (leftPIDController.atSetpoint() || rightPIDController.atSetpoint()) {
+                controlType = ControlType.MANUAL;
+                setPower(0);
+            }
         }
     }
 
@@ -170,17 +188,17 @@ public class DualLinearSlide extends Subsystem {
         controlType = ControlType.MANUAL;
 
         //also check if we're going to go past the max height or below threshold
-        if (p > 0) {
-            if (getLeftPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
-                    || getRightPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)) {
-                p = 0;
-            }
-        } else if (p < 0) {
-            if (getLeftPosition() < threshold.get(Unit.Type.Centimeters)
-                    || getRightPosition() < threshold.get(Unit.Type.Centimeters)) {
-                p = 0;
-            }
-        }
+//        if (p > 0) {
+//            if (getLeftPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)
+//                    || getRightPosition() > maxLinearSlideHeight.get(Unit.Type.Centimeters) - threshold.get(Unit.Type.Centimeters)) {
+//                p = 0;
+//            }
+//        } else if (p < 0) {
+//            if (getLeftPosition() < threshold.get(Unit.Type.Centimeters)
+//                    || getRightPosition() < threshold.get(Unit.Type.Centimeters)) {
+//                p = 0;
+//            }
+//        }
 
         //constrict the power to be between -1 and 1
         internalSetPower(WPIPIDController.clamp(p, -1, 1));
@@ -227,7 +245,7 @@ public class DualLinearSlide extends Subsystem {
 
     public double getRightPosition() {
         //convert the encoder ticks to centimeters
-        return rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return -rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public boolean isZeroed() {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
+import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
@@ -189,9 +190,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         // set power to motors
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
-        backLeft.setPower(-backLeftPower); //back left uses gears so it needs to be reversed
+        backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
-
     }
     @Override
     public void onDisable() {
@@ -263,6 +263,18 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
                 backRight.getCurrentPosition(),
                 frontRight.getCurrentPosition()
         };
+    }
+
+    /**
+     * Returns the robot current position determined by odometry.
+     * @return The robot current position determined by odometry.
+     */
+    public Pose2d getPosition() {
+        return odometry.getPose();
+    }
+
+    public void resetPosition(Pose2d pose) {
+        odometry.reset(pose);
     }
 
     @Replay(name="expected_motion_replay")

@@ -2,7 +2,7 @@
 const fieldCanvasDOM = document.getElementById("field");
 const fieldCanvas = fieldCanvasDOM.getContext("2d");
 
-let currentPath = new ConstructedBezierPath();
+let currentPath = Object.keys(window).includes("ConstructedBezierPath") ? new ConstructedBezierPath() : null;
 
 const CURRENT_FIELD = CENTER_STAGE;
 const CURRENT_FIELD_STANDARDS = CENTER_STAGE_STANDARDS;
@@ -28,9 +28,15 @@ function draw() {
 
     drawCenterStage(ctx);
 
-    currentPath.displayCurves(ctx);
-    currentPath.displayWaypoints(ctx, mousePos);
-    currentPath.displayRobotStates(ctx);
+    if (currentPath != null) {
+        currentPath.displayCurves(ctx);
+        currentPath.displayWaypoints(ctx, mousePos);
+        currentPath.displayRobotStates(ctx);
+    }
+
+    if (Object.keys(window).includes("drawRobotCurrentPosition")) {
+        drawRobotCurrentPosition(ctx);
+    }
 
     requestAnimationFrame(draw);
 }
@@ -61,7 +67,9 @@ document.addEventListener("keyup", (e) => {
     }
 });
 
-currentPath.updateList();
+if (currentPath != null) {
+    currentPath.updateList();
+}
 
 centerStageInit();
 

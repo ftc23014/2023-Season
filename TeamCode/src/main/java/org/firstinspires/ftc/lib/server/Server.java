@@ -3,6 +3,7 @@ package org.firstinspires.ftc.lib.server;
 import org.firstinspires.ftc.lib.server.api.ApiHandler;
 import org.firstinspires.ftc.lib.server.api.CmdHandler;
 import org.firstinspires.ftc.lib.server.api.PathApi;
+import org.firstinspires.ftc.lib.server.api.RobotInfoHandler;
 import org.firstinspires.ftc.lib.server.util.FileHost;
 import org.firstinspires.ftc.lib.server.util.HTTPServer;
 import org.firstinspires.ftc.lib.server.util.Route;
@@ -47,8 +48,16 @@ public class Server {
             }
         });
 
+        m_server.addRoute(new FileHost("public/field/tracking.html") {
+            @Override
+            public String getRoute() {
+                return "/tracking";
+            }
+        });
+
         m_server.addRoute(new ApiHandler());
         m_server.addRoute(new PathApi());
         m_server.addRoute(new CmdHandler());
+        m_server.addRoute(new RobotInfoHandler());
     }
 }

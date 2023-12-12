@@ -54,21 +54,21 @@ public class DriverControls extends Command {
 
         MecanumOdometry odometry = m_mecanumDriveSubsystem.getOdometry();
 
-        telemetry().addLine("odo X:" + odometry.getPosition().getX());
-        telemetry().addLine("odo Y:" + odometry.getPosition().getY());
-
-        telemetry().addLine("odo rotation:" + odometry.getRotation().getDegrees());
-        telemetry().addLine("left: " +
-                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[0]));
-        telemetry().addLine("right: " +
-                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[1]));
-        telemetry().addLine("center: " +
-                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[2]));
+//        telemetry().addLine("odo X:" + odometry.getPosition().getX());
+//        telemetry().addLine("odo Y:" + odometry.getPosition().getY());
+//
+//        telemetry().addLine("odo rotation:" + odometry.getRotation().getDegrees());
+//        telemetry().addLine("left: " +
+//                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[0]));
+//        telemetry().addLine("right: " +
+//                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[1]));
+//        telemetry().addLine("center: " +
+//                odometry.convertFromEncoderTicks(m_mecanumDriveSubsystem.getOdoPositions()[2]));
 //        telemetry().addData("front left pos: ", frontLeft.getCurrentPosition());
 //        telemetry().addData("back right pos: ", backRight.getCurrentPosition());
 //        telemetry().addData("front right pos: ", frontRight.getCurrentPosition());
 
-        telemetry().update();
+        //telemetry().update();
 
     }
 

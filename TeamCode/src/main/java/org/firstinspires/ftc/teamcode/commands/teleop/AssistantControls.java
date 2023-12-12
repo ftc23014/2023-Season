@@ -16,7 +16,7 @@ public class AssistantControls extends Command {
 
     private Gamepad gamepad2;
 
-    final private boolean k_linearSlidePIDEnabled = false;
+    final private boolean k_linearSlidePIDEnabled = true;
 
     private boolean m_spatulaDeployed = false;
     private boolean m_lastSpatulaButtonState = false;
@@ -100,7 +100,7 @@ public class AssistantControls extends Command {
 
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
-            m_linearSlideSubsystem.setPower(gamepad2.left_stick_y / 2);
+            m_linearSlideSubsystem.setPower(gamepad2.left_stick_y * 0.9);
         } else if (m_linearSlideSubsystem.getMode() == DualLinearSlide.ControlType.MANUAL) {
             m_linearSlideSubsystem.setPower(0);
         }
@@ -125,28 +125,15 @@ public class AssistantControls extends Command {
             }
         }
 
-        //TODO: remove
-        if (gamepad2.a) {
-            //m_intakeSubsystem.outtake(1);
-        }
-
         if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a && k_linearSlidePIDEnabled) {
             m_lastLinearSlideButtonState = gamepad2.a;
 
-            if (m_linearSlideZeroed) {
-                if (m_linearSlideSubsystem.isZeroed()) {
-                    m_linearSlideZeroed = false;
-                }
-            } else {
-                if (!m_linearSlideSubsystem.isZeroed()) {
-                    m_linearSlideZeroed = true;
-                }
-            }
+            m_linearSlideZeroed = !m_linearSlideZeroed;
 
             if (m_linearSlideZeroed) {
                 m_linearSlideSubsystem.returnToZero();
             } else {
-                DualLinearSlide.SlidePosition position = DualLinearSlide.SlidePosition.values()[m_selectedColumn];
+                DualLinearSlide.SlidePosition position = DualLinearSlide.SlidePosition.values()[m_selectedRow];
 
                 m_linearSlideSubsystem.setPosition(position.getHeight());
             }
@@ -206,11 +193,11 @@ public class AssistantControls extends Command {
             m_lastTelemetryUpdate = System.currentTimeMillis();
 
             //telemetry updates
-//            showSelectionTelemetry();
-//            telemetry().addLine();
-//            showComponentStates();
+            showSelectionTelemetry();
+            telemetry().addLine();
+            showComponentStates();
 
-            //telemetry().update();
+            telemetry().update();
         }
     }
 

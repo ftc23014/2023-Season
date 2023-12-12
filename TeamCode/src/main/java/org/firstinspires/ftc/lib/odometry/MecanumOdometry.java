@@ -1,12 +1,23 @@
 package org.firstinspires.ftc.lib.odometry;
 
+import com.sun.tools.javac.util.Pair;
 import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 
+import java.util.ArrayList;
+
 public class MecanumOdometry {
     private static MecanumOdometry instance;
+
+    public static boolean hasInstance() {
+        return instance != null;
+    }
+
+    public static MecanumOdometry getInstance() {
+        return instance;
+    }
 
     private Pose2d pose;
     
@@ -38,6 +49,8 @@ public class MecanumOdometry {
 
     private Unit m_trackwidth = new Unit(34.5d, Unit.Type.Centimeters);
     private Unit m_forwardOffset = new Unit(10d, Unit.Type.Centimeters);
+
+    private ArrayList<Pair<Pose2d, Long>> m_lastPositions = new ArrayList<>();
 
     /**
      * Creates a new MecanumOdometry instance.
@@ -101,6 +114,49 @@ public class MecanumOdometry {
         double dy = deltaCenter - (m_forwardOffset.get(Unit.Type.Meters) * dw);
 
         pose = pose.exp(dx, dy, dw);
+
+        m_lastPositions.add(
+                new Pair<>(pose, System.currentTimeMillis())
+        );
+
+        if (m_lastPositions.size() > 5) {
+            m_lastPositions.remove(0);
+        }
+    }
+
+    public Unit getVelocity() {
+        //first form a circle from the last 3 points
+        Pose2d p1 = m_lastPositions.get(0).fst;
+        long t1 = m_lastPositions.get(0).snd;
+        Pose2d p2 = m_lastPositions.get(1).fst;
+        long t2 = m_lastPositions.get(1).snd;
+        Pose2d p3 = m_lastPositions.get(2).fst;
+        long t3 = m_lastPositions.get(2).snd;
+
+        double r = Math.sqrt(
+                Math.pow(p1.getX() - p2.getX(), 2) +
+                        Math.pow(p1.getY() - p2.getY(), 2)
+        );
+
+        double s = Math.sqrt(
+                Math.pow(p2.getX() - p3.getX(), 2) +
+                        Math.pow(p2.getY() - p3.getY(), 2)
+        );
+
+        double d = Math.sqrt(
+                Math.pow(p1.getX() - p3.getX(), 2) +
+                        Math.pow(p1.getY() - p3.getY(), 2)
+        );
+
+        double theta = Math.acos(
+                (Math.pow(r, 2) + Math.pow(s, 2) - Math.pow(d, 2)) / (2 * r * s)
+        );
+
+        double angularVelocity = theta / (t3 - t1);
+
+        double linearVelocity = r * angularVelocity;
+
+        return new Unit(linearVelocity, Unit.Type.Meters);
     }
 
     public Unit convertFromEncoderTicks(double ticks) {
