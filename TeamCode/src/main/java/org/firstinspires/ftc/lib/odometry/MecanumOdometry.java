@@ -126,37 +126,14 @@ public class MecanumOdometry {
 
     public Unit getVelocity() {
         //first form a circle from the last 3 points
-        Pose2d p1 = m_lastPositions.get(0).fst;
-        long t1 = m_lastPositions.get(0).snd;
-        Pose2d p2 = m_lastPositions.get(1).fst;
-        long t2 = m_lastPositions.get(1).snd;
-        Pose2d p3 = m_lastPositions.get(2).fst;
-        long t3 = m_lastPositions.get(2).snd;
+        Pose2d p1 = m_lastPositions.get(1).fst;
+        long deltaTime1 = m_lastPositions.get(1).snd - m_lastPositions.get(0).snd;
+        Pose2d p2 = m_lastPositions.get(2).fst;
+        long timestamp2 = m_lastPositions.get(2).snd - m_lastPositions.get(1).snd;
+        Pose2d p3 = m_lastPositions.get(3).fst;
+        long timestamp3 = m_lastPositions.get(3).snd - m_lastPositions.get(2).snd;
 
-        double r = Math.sqrt(
-                Math.pow(p1.getX() - p2.getX(), 2) +
-                        Math.pow(p1.getY() - p2.getY(), 2)
-        );
-
-        double s = Math.sqrt(
-                Math.pow(p2.getX() - p3.getX(), 2) +
-                        Math.pow(p2.getY() - p3.getY(), 2)
-        );
-
-        double d = Math.sqrt(
-                Math.pow(p1.getX() - p3.getX(), 2) +
-                        Math.pow(p1.getY() - p3.getY(), 2)
-        );
-
-        double theta = Math.acos(
-                (Math.pow(r, 2) + Math.pow(s, 2) - Math.pow(d, 2)) / (2 * r * s)
-        );
-
-        double angularVelocity = theta / (t3 - t1);
-
-        double linearVelocity = r * angularVelocity;
-
-        return new Unit(linearVelocity, Unit.Type.Meters);
+        return Unit.zero();
     }
 
     public Unit convertFromEncoderTicks(double ticks) {

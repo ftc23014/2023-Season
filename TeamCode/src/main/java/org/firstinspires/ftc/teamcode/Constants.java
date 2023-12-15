@@ -16,7 +16,7 @@ public class Constants {
                 1d / 32d
         );
 
-        public static final boolean usePhysicsCalculations = true;
+        public static final boolean usePhysicsCalculations = false;
     }
 
 }

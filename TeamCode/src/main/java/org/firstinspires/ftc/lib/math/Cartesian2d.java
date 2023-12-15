@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.lib.math;
 
+import androidx.annotation.NonNull;
+
 public class Cartesian2d {
     private Rotation2d m_rotation;
     private double m_r;
@@ -77,5 +79,11 @@ public class Cartesian2d {
      */
     public Translation2d toTranslation2d() {
         return new Translation2d(getX(), getY());
+    }
+
+
+    @Override
+    public String toString() {
+        return "Cartesian2d(" + m_rotation.getDegrees() + "°, " + m_r + ")";
     }
 }

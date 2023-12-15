@@ -60,6 +60,7 @@ public class RobotInfoHandler extends Route {
         position.addProperty("x", currentPosition.getX());
         position.addProperty("y", currentPosition.getY());
         position.addProperty("rotation", currentPosition.getRotation().getDegrees());
+        position.addProperty("has_instance", MecanumOdometry.hasInstance());
 
         JsonObject visionPos = new JsonObject();
 

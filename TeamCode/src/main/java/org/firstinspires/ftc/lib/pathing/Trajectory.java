@@ -198,16 +198,6 @@ public class Trajectory extends Command {
 //        rotation_speed
                 = Rotation2d.zero();
 
-        if (!m_constants.usePhysicsCalculations()) {
-            m_driveSubsystem.drive(
-                    velocities,
-                    rotation_speed,
-                    true,
-                    m_constants.getOpenLoop()
-            );
-            return;
-        }
-
         double currentPathTValue = velocity.getAttribute("t");
 
         //making an assumption that it's a four point bezier. it's the only path that exists rn so we don't have to do that much complexities.
@@ -241,6 +231,21 @@ public class Trajectory extends Command {
                 m_constants.getMass(), //kg
                 m_constants.getDeltaTime()
         );
+
+        telemetry().addLine("centripetal force: " + centripetalForce);
+        telemetry().addLine("current velocity: " + currentRealVelocity.toString());
+        telemetry().addLine("new motion direction: " + newMotionDirection.toString());
+        telemetry().update();
+
+        if (!m_constants.usePhysicsCalculations()) {
+            m_driveSubsystem.drive(
+                    velocities,
+                    rotation_speed,
+                    true,
+                    m_constants.getOpenLoop()
+            );
+            return;
+        }
 
         //convert the new motion direction to a translation2d (velocities that we can use to drive the robot
         Translation2d motionValues = newMotionDirection.toTranslation2d();
