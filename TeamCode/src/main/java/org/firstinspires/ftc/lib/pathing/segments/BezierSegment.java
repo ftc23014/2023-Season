@@ -261,6 +261,11 @@ public class BezierSegment extends Segment {
         return this.m_bezier;
     }
 
+    @Override
+    public boolean finishedGeneration() {
+        return !m_bezier.getPoints().isEmpty();
+    }
+
     public void saveToFile(File file, boolean overrideFile) {
         if (file.exists()) {
             if (!overrideFile) {

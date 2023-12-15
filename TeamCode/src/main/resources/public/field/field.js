@@ -2,7 +2,7 @@
 const fieldCanvasDOM = document.getElementById("field");
 const fieldCanvas = fieldCanvasDOM.getContext("2d");
 
-let currentPath = Object.keys(window).includes("ConstructedBezierPath") ? new ConstructedBezierPath() : null;
+let currentPath = window.location.href.includes("field") ? new ConstructedBezierPath() : null;
 
 const CURRENT_FIELD = CENTER_STAGE;
 const CURRENT_FIELD_STANDARDS = CENTER_STAGE_STANDARDS;

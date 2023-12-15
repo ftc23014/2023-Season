@@ -18,6 +18,8 @@ public abstract class Segment {
 
     public abstract void generate();
 
+    public abstract boolean finishedGeneration();
+
     public abstract void setConstants(AutonomousConstants constants);
 
     public abstract Pair<Rotation2d, Rotation2d> angles();

@@ -213,6 +213,15 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         return m_imu.getVelocity();
     }
 
+    public Unit getOdoVelocity() {
+        return odometry.getVelocity();
+    }
+
+    @Override
+    public Unit getVelocity() {
+        return getOdoVelocity();
+    }
+
     /**
      * Gets the real angle of the robot, relative to 0° being the starting angle.
      * @return The real angle of the robot.

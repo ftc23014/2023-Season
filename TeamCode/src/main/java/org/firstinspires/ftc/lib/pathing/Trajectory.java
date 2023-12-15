@@ -59,6 +59,16 @@ public class Trajectory extends Command {
         return this;
     }
 
+    public boolean finishedGenerating() {
+        for (Segment seg : m_segments) {
+            if (!seg.finishedGeneration()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public void generate() {
         for (Segment seg : m_segments) {
             seg.generate();
@@ -214,8 +224,7 @@ public class Trajectory extends Command {
             return;
         }
 
-        //TODO: Use odometry to calculate the real velocity.
-        Unit currentRealVelocity = new Unit(0, Unit.Type.Meters);
+        Unit currentRealVelocity = m_driveSubsystem.getVelocity();
 
         //get the centripetal force at the current point.
         double centripetalForce = pathObject.centripetalForce(

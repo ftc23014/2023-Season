@@ -8,6 +8,7 @@ import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.auto.PlannedAuto;
 import org.firstinspires.ftc.lib.math.*;
 import org.firstinspires.ftc.lib.systems.commands.*;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.commands.HuskyDetectCommand;
 import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
@@ -151,16 +152,9 @@ public class Autonomous extends OpMode {
     }
 
     public void generateAuto() {
-        AutonomousConstants constants = new AutonomousConstants(
-                new Unit(1, Unit.Type.Meters),
-                new Unit(0.1, Unit.Type.Meters),
-                new Unit(0.5, Unit.Type.Meters),
-                6,
-                new PIDController(0.4, 0.00, 0.00),
-                1d/32d
-        );
+        AutonomousConstants constants = Constants.Autonomous.autonomousConstants;
 
-        constants.setUsePhysicsCalculations(false);
+        constants.setUsePhysicsCalculations(Constants.Autonomous.usePhysicsCalculations);
 
         //NEGATIVE is left,
         //POSITIVE is right
@@ -205,7 +199,7 @@ public class Autonomous extends OpMode {
                     new WaitCommand(1),
                     new Trajectory(
                             m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.testing)
+                            BezierSegment.loadFromResources(R.raw.all_the_way_thru)
                     ),
                     new InstantCommand(() -> {
                         telemetry().addLine("Finished!");
