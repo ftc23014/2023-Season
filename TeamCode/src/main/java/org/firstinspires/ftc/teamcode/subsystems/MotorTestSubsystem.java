@@ -38,7 +38,7 @@ public class MotorTestSubsystem extends Subsystem {
     @Override
     public void periodic() {
 
-        if (gamepad.x && servo.getPosition() >= 0.399 && servo.getPosition() <= 0.401) {
+        if (gamepad.x && servo.getPosition() >= 0.399 && servo.getPosition() <= 0.401) { // servo is not always exactly provided value
             servo.setPosition(0.6);
         } else if (gamepad.x && servo.getPosition() >= 0.599 && servo.getPosition() <= 0.601) {
             servo.setPosition(0.4);
