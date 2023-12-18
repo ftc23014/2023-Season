@@ -214,62 +214,62 @@ public class Autonomous extends OpMode {
                     }),
                     new WaitCommand(0.1),
                     // start huskylens detection procedure
-//                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
-//                            m_sensorConeHuskyLensSubsystem,
-//                            1,
-//                            (int detected) -> {
-//                                if (detected == -2) {
-//                                    telemetry().addLine("ERROR WITH HUSKY?");
-//                                }
-//
-//                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
-//                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
-//                                telemetry.update();
-//                            }
-//                    ),
-//                    new WaitCommand(0.2),
-//                    new Trajectory( // go towards middle of all three tapes
-//                            m_driveSubsystem,
-//                            BezierSegment.loadFromResources(R.raw.one_middle)
-//                    ).runFlippedX(m_side == StartingSide.RED),
-//                    new WaitCommand(0.1),
-//                    m_driveSubsystem.stop(),
-//                    new WaitCommand(0.1),
-//                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
-//                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
-//                    },
-//                            new TurnToCommand(
-//                                    Rotation2d.fromDegrees(90), m_driveSubsystem
-//                            )
-//                    ),
-//                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
-//                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
-//                    },
-//                            new TurnToCommand(
-//                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-//                            )
-//                    ), // otherwise just stay facing middle
-//                    new WaitCommand(0.1),
-//                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
-//                            new Translation2d(0, 0.3),
-//                            Rotation2d.zero(),
-//                            false,
-//                            true
-//                    ),
-//                    new WaitCommand(0.2),
-//                    m_driveSubsystem.stop(),
-//                    new WaitCommand(0.1),
-//                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
-//                    new WaitCommand(0.5),
-//                    //m_intakeSubsystem.stop_cmd(),
-//                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-//                            new Translation2d(0, -0.3),
-//                            Rotation2d.zero(),
-//                            false,
-//                            true
-//                    ),
-//                    new WaitCommand(0.2),
-//                    m_driveSubsystem.stop(),
+                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
+                            m_sensorConeHuskyLensSubsystem,
+                            1,
+                            (int detected) -> {
+                                if (detected == -2) {
+                                    telemetry().addLine("ERROR WITH HUSKY?");
+                                }
+
+                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+                                telemetry.update();
+                            }
+                    ),
+                    new WaitCommand(0.2),
+                    new Trajectory( // go towards middle of all three tapes
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.one_middle)
+                    ).runFlippedX(m_side == StartingSide.RED),
+                    new WaitCommand(0.1),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                    },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(90), m_driveSubsystem
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                    },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
+                            )
+                    ), // otherwise just stay facing middle
+                    new WaitCommand(0.1),
+                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                            new Translation2d(0, 0.3),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
+                    new WaitCommand(0.5),
+                    //m_intakeSubsystem.stop_cmd(),
+                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                            new Translation2d(0, -0.3),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
 
                     // end huskylens detection procedure
                     new Trajectory( // go towards backboard
@@ -301,62 +301,62 @@ public class Autonomous extends OpMode {
                     }),
                     new WaitCommand(0.1),
                     // start huskylens detection procedure
-//                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
-//                            m_sensorConeHuskyLensSubsystem,
-//                            1,
-//                            (int detected) -> {
-//                                if (detected == -2) {
-//                                    telemetry().addLine("ERROR WITH HUSKY?");
-//                                }
-//
-//                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
-//                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
-//                                telemetry.update();
-//                            }
-//                    ),
-//                    new WaitCommand(0.2),
-//                    new Trajectory( // go towards middle of all three tapes
-//                            m_driveSubsystem,
-//                            BezierSegment.loadFromResources(R.raw.one_middle)
-//                    ).runFlippedX(m_side == StartingSide.RED),
-//                    new WaitCommand(0.1),
-//                    m_driveSubsystem.stop(),
-//                    new WaitCommand(0.1),
-//                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
-//                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
-//                    },
-//                            new TurnToCommand(
-//                                    Rotation2d.fromDegrees(90), m_driveSubsystem
-//                            )
-//                    ),
-//                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
-//                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
-//                    },
-//                            new TurnToCommand(
-//                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-//                            )
-//                    ), // otherwise just stay facing middle
-//                    new WaitCommand(0.1),
-//                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
-//                            new Translation2d(0, 0.3),
-//                            Rotation2d.zero(),
-//                            false,
-//                            true
-//                    ),
-//                    new WaitCommand(0.2),
-//                    m_driveSubsystem.stop(),
-//                    new WaitCommand(0.1),
-//                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
-//                    new WaitCommand(0.5),
-//                    //m_intakeSubsystem.stop_cmd(),
-//                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-//                            new Translation2d(0, -0.3),
-//                            Rotation2d.zero(),
-//                            false,
-//                            true
-//                    ),
-//                    new WaitCommand(0.2),
-//                    m_driveSubsystem.stop(),
+                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
+                            m_sensorConeHuskyLensSubsystem,
+                            1,
+                            (int detected) -> {
+                                if (detected == -2) {
+                                    telemetry().addLine("ERROR WITH HUSKY?");
+                                }
+
+                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+                                telemetry.update();
+                            }
+                    ),
+                    new WaitCommand(0.2),
+                    new Trajectory( // go towards middle of all three tapes
+                            m_driveSubsystem,
+                            BezierSegment.loadFromResources(R.raw.one_middle)
+                    ).runFlippedX(m_side == StartingSide.RED),
+                    new WaitCommand(0.1),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                    },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(90), m_driveSubsystem
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                    },
+                            new TurnToCommand(
+                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
+                            )
+                    ), // otherwise just stay facing middle
+                    new WaitCommand(0.1),
+                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                            new Translation2d(0, 0.3),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
+                    new WaitCommand(0.5),
+                    //m_intakeSubsystem.stop_cmd(),
+                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                            new Translation2d(0, -0.3),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
 
                     // end huskylens detection procedure
                     new Trajectory( // go towards white pixel stack

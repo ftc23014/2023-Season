@@ -6,7 +6,6 @@ public class WaitCommand extends Command {
 
     public WaitCommand(double seconds) {
         super();
-
         this.seconds = seconds;
     }
 
