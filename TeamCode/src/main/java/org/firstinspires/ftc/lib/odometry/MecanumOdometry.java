@@ -125,6 +125,35 @@ public class MecanumOdometry {
     }
 
     public Unit getVelocity() {
+        return getVelocityAndAcceleration().fst;
+    }
+
+    public Pair<Unit, Unit> getVelocityAndAcceleration() {
+        return getVelocityAndAcceleration(true);
+    }
+
+    public Pair<Unit, Unit> getVelocityAndAcceleration(boolean useAverage) {
+        Pose2d p1 = m_lastPositions.get(1).fst;
+        long deltaTime1 = m_lastPositions.get(1).snd - m_lastPositions.get(0).snd;
+        Pose2d p2 = m_lastPositions.get(2).fst;
+        long deltaTime2 = m_lastPositions.get(2).snd - m_lastPositions.get(1).snd;
+        Pose2d p3 = m_lastPositions.get(3).fst;
+        long timestamp3 = m_lastPositions.get(3).snd - m_lastPositions.get(2).snd;
+
+        double d1 = p1.getPosition().distance(p2.getPosition()) / (deltaTime1 / 1000d);
+        double d2 = p2.getPosition().distance(p3.getPosition()) / (deltaTime2 / 1000d);
+
+        //TODO: check if the acceleration is actually accurate lol
+        double a1 = (d2 - d1) / ((deltaTime2 - deltaTime1) / 1000d);
+
+        return new Pair<Unit, Unit>(
+                new Unit(useAverage ? ((d1 + d2) / 2d) : d1, Unit.Type.Meters),
+                new Unit(a1, Unit.Type.Meters)
+        );
+    }
+
+    //TODO: work on for driving correction + more natural driving
+    public float getIntertia() {
         //first form a circle from the last 3 points
         Pose2d p1 = m_lastPositions.get(1).fst;
         long deltaTime1 = m_lastPositions.get(1).snd - m_lastPositions.get(0).snd;
@@ -133,7 +162,7 @@ public class MecanumOdometry {
         Pose2d p3 = m_lastPositions.get(3).fst;
         long timestamp3 = m_lastPositions.get(3).snd - m_lastPositions.get(2).snd;
 
-        return Unit.zero();
+        return 0;
     }
 
     public Unit convertFromEncoderTicks(double ticks) {
