@@ -3,6 +3,7 @@ package org.firstinspires.ftc.lib.auto;
 import org.firstinspires.ftc.lib.pathing.Trajectory;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.IfOrSkipCommand;
+import org.firstinspires.ftc.lib.systems.commands.ParallelCommand;
 import org.firstinspires.ftc.lib.systems.commands.SequentialCommand;
 
 public class PlannedAuto {
@@ -31,6 +32,17 @@ public class PlannedAuto {
                     Trajectory traj = ((Trajectory) ((IfOrSkipCommand) command).getCommand());
                     traj.setConstants(constants);
                     traj.generate();
+                }
+            }
+
+            if (command instanceof ParallelCommand) {
+                Command[] cmds = ((ParallelCommand) command).getCommands();
+                for (Command cmd : cmds) {
+                    if (cmd instanceof Trajectory) {
+                        Trajectory traj = (Trajectory) cmd;
+                        traj.setConstants(constants);
+                        traj.generate();
+                    }
                 }
             }
         }

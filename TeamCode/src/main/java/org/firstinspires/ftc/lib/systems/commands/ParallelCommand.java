@@ -35,4 +35,8 @@ public class ParallelCommand extends Command {
         }
         return true;
     }
+
+    public Command[] getCommands() {
+        return commands.toArray(new Command[0]);
+    }
 }
