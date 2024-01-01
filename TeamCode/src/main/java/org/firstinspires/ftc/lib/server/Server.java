@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.lib.server;
 
+import org.firstinspires.ftc.lib.replay.log.writers.WebWriter;
 import org.firstinspires.ftc.lib.server.api.ApiHandler;
 import org.firstinspires.ftc.lib.server.api.CmdHandler;
 import org.firstinspires.ftc.lib.server.api.PathApi;
@@ -55,9 +56,24 @@ public class Server {
             }
         });
 
+        m_server.addRoute(new FileHost("public/log/log.html") {
+            @Override
+            public String getRoute() {
+                return "/log";
+            }
+        });
+
+        m_server.addRoute(new FileHost("public/autoeditor/autoeditor.html") {
+            @Override
+            public String getRoute() {
+                return "/autoeditor";
+            }
+        });
+
         m_server.addRoute(new ApiHandler());
         m_server.addRoute(new PathApi());
         m_server.addRoute(new CmdHandler());
         m_server.addRoute(new RobotInfoHandler());
+        m_server.addRoute(new WebWriter.Endpoint());
     }
 }

@@ -1,0 +1,53 @@
+
+@font-face {
+    font-family: "system-ui";
+    font-style: normal;
+    font-weight: 300;
+    src: local("Menlo-Regular");
+}
+
+/*
+menu color: rgb(41, 43, 48)
+*/
+
+#top {
+    background-color: rgb(41, 43, 48);
+    width: 100%;
+    padding-left: 20px;
+    padding-top: 15px;
+    height: 50px;
+}
+
+h3 {
+    color: rgb(221, 223, 226);
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+    margin: 0;
+    padding-top: 5px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background-color: rgb(30,31,34);
+    color: rgb(180, 182, 188);
+    font-family: "system-ui";
+    overflow-x: hidden;
+}
+
+#logs {
+    overflow-y: scroll;
+    overflow-x: auto;
+    height: calc(100vh - 55px);
+}
+
+#logs p {
+    padding-left: 10px;
+    margin: 0px;
+    padding-top: 8px;
+}
+
+a {
+    color: aqua;
+}
