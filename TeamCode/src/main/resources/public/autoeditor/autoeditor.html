@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autonomous Editor</title>
+    <link rel="stylesheet" href="/public/autoeditor/autoeditor.css">
+</head>
+<body>
+<div id="editing-container">
+    <div id="editor-numbers">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+    </div>
+    <div id="editor">
+        <textarea id="editing" spellcheck="false" oninput="update(this.value); sync_scroll(this);" onscroll="sync_scroll(this);" onkeydown="check_tab(this, event);"></textarea>
+        <pre id="highlighting" aria-hidden="true">
+          <code class="language-auto" id="highlighting-content"></code>
+        </pre>
+    </div>
+</div>
+<script src="/public/autoeditor/autoeditor.js"></script>
+</body>
+</html>
