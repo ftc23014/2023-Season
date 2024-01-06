@@ -13,7 +13,6 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 
 
 public class MotorTestSubsystem extends Subsystem {
-    DcMotor motor;
     Gamepad gamepad;
     Servo servo;
     public void setGamepad(Gamepad gamepad) {
@@ -25,7 +24,6 @@ public class MotorTestSubsystem extends Subsystem {
     public void init() {
 
 
-        motor = getHardwareMap().dcMotor.get("intake_motor");
         servo = getHardwareMap().servo.get("Lock");
 
 
@@ -38,28 +36,14 @@ public class MotorTestSubsystem extends Subsystem {
     @Override
     public void periodic() {
 
-        if (gamepad.left_stick_y > 0.0) {
-            servo.setPosition(servo.getPosition() + 0.1);
-        } else if (gamepad.left_stick_y < 0.0) {
-            servo.setPosition(servo.getPosition() - 0.1);
-        }
 
-        if (gamepad.x) {
-            servo.setPosition(0.6);
+        if (gamepad.left_stick_y > 0.02) {
+            servo.setPosition(gamepad.left_stick_y);
+        } else if (gamepad.left_stick_y < -0.02) {
+            servo.setPosition(-gamepad.left_stick_y);
         }
 
         telemetry().addData("Servo pos:", servo.getPosition());
-
-        if (gamepad.a) {
-            motor.setPower(1);
-        }
-        else if (gamepad.b) {
-            motor.setPower(-1);
-        }
-        else {
-            motor.setPower(0);
-
-        }
 
 
 
@@ -67,7 +51,6 @@ public class MotorTestSubsystem extends Subsystem {
 
     @Override
     public void onDisable() {
-        motor.setPower(0);
         servo.setPosition(0.0);
     }
 }

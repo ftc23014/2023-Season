@@ -76,7 +76,7 @@ public class TeleOp extends OpMode {
 
         //m_visionSubsystem =  new VisionSubsystem();
 
-        //m_intakeSubsystem = new Intake();
+        m_intakeSubsystem = new Intake();
 
         //m_droneSubsystem = new Drone();
 
@@ -93,7 +93,7 @@ public class TeleOp extends OpMode {
 
         m_assistantControls = new AssistantControls(
                 gamepad2,
-//                m_intakeSubsystem,
+                m_intakeSubsystem,
 //                m_spatulaSubsystem,
                 m_linearSlideSubsystem,
 //                m_droneSubsystem,

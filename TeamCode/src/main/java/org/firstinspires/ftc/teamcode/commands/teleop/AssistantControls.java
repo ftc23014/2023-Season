@@ -5,7 +5,7 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
 
 public class AssistantControls extends Command {
-  //  private Intake m_intakeSubsystem;
+   private Intake m_intakeSubsystem;
    // private Spatula m_spatulaSubsystem;
 
    // private Drone m_droneSubsystem;
@@ -24,6 +24,11 @@ public class AssistantControls extends Command {
     private boolean m_droneLauncherDeployed = false;
     private boolean m_lastDroneLauncherButtonState = false;
 
+    private boolean m_intakeDeployed = false;
+    private boolean m_lastIntakeDeployedState = false;
+
+    private boolean m_intakeRunning = false;
+    private boolean m_lastIntakeRunningState = false;
 
     private boolean m_hangDeployed = false;
     private boolean m_lastHangState = false;
@@ -43,11 +48,11 @@ public class AssistantControls extends Command {
 
     private long m_lastTelemetryUpdate = 0;
 
-    public AssistantControls(Gamepad gamepad2, /*Intake intake, Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone*/, Hang hang) {
+    public AssistantControls(Gamepad gamepad2, Intake intake,/* Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone*/, Hang hang) {
         super();
 
         this.gamepad2 = gamepad2;
-//        m_intakeSubsystem = intake;
+        m_intakeSubsystem = intake;
 //        m_spatulaSubsystem = spatula;
         m_linearSlideSubsystem = linearSlide;
 //        m_droneSubsystem = drone;
@@ -61,10 +66,11 @@ public class AssistantControls extends Command {
      *
      * A: Toggle linear slide. If linear slide is in manual, will be retracting.
      *    If linear slide is in automatic, will flip between zeroed and PID set.
-     * B: Intake
+     * B: Deploy Intake
      * Y: Spatula
      * X: Hang
-     *
+     * Right Trigger: Intake
+     * Left Trigger: Outtake
      *
      *
      * DPAD: Select linear slide position selection
@@ -84,21 +90,22 @@ public class AssistantControls extends Command {
 
         if (gamepad2.right_bumper) {
             position = 1;
-            //m_spatulaSubsystem.setPosition(position);
+            //m_spatulaSubsystem.setPosition(position)
             telemetry().addLine("Position: " + position);
             telemetry().update();
         }
 
-        if (!gamepad2.b) {
-            if (Math.abs(gamepad2.right_stick_y) > 0.05) {
-                //m_intakeSubsystem.intake(gamepad2.right_stick_y);
-            } else {
-                //m_intakeSubsystem.stop();
-            }
+        if (gamepad2.right_bumper) {
+            telemetry().addLine("intaking!");
+            m_intakeSubsystem.deploy_kicker_func();
+            m_intakeSubsystem.intake_boot_kicker_func();
+        } else if (gamepad2.left_bumper) {
+            telemetry().addLine("outtaking!");
+            m_intakeSubsystem.deploy_kicker_func();
+            m_intakeSubsystem.outtake_boot_kicker_func();
         } else {
-            //m_intakeSubsystem.intake(0.6);
+            m_intakeSubsystem.retract_kicker_func();
         }
-
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             m_linearSlideSubsystem.setPower(gamepad2.left_stick_y * 0.9);

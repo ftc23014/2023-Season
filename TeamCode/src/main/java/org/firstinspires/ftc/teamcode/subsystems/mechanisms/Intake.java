@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.TeleOp;
 
 public class Intake extends Subsystem {
-    /**
-     * TODO:
-     * intake
-     * move motor
-     * yeah idk
-     */
 
-    private DcMotor intakeMotor;
+    private CRServo bootKickerServo;
+    private Servo deployKickerServo;
+    private CRServo compliantWheelsServo;
+
 
     public Intake() {
         super();
@@ -22,23 +21,43 @@ public class Intake extends Subsystem {
 
     @Override
     public void init() {
-        intakeMotor = getHardwareMap().get(DcMotor.class, "intake_motor");
+        bootKickerServo = getHardwareMap().get(CRServo.class, "boot_kicker");
+        deployKickerServo = getHardwareMap().get(Servo.class, "deploy_kicker");
+        compliantWheelsServo = getHardwareMap().get(CRServo.class, "compliant_wheels");
     }
 
-    public Command intake_cmd(double power) {
-        return new InstantCommand(() -> intake(power));
+    public Command deploy_kicker() {
+        return new InstantCommand(() -> deploy_kicker_func());
     }
 
-    public void intake(double power) {
-        intakeMotor.setPower(-power);
+    public void deploy_kicker_func() {
+        deployKickerServo.setPosition(0.4/* deploy position */);
     }
 
-    public Command outtake_cmd(final double power) {
-        return new InstantCommand(() -> outtake(power));
+    public Command retract_kicker() {
+        return new InstantCommand(() -> deploy_kicker_func());
     }
 
-    public void outtake(double power) {
-        intake(-power);
+    public void retract_kicker_func() {
+        deployKickerServo.setPosition(0/* retract position */);
+    }
+
+    public Command intake_boot_kicker() {
+        return new InstantCommand(() -> intake_boot_kicker_func());
+    }
+
+    public void intake_boot_kicker_func() {
+        bootKickerServo.setPower(1);
+        compliantWheelsServo.setPower(0.5);
+    }
+
+    public Command outtake_boot_kicker() {
+        return new InstantCommand(() -> outtake_boot_kicker_func());
+    }
+
+    public void outtake_boot_kicker_func() {
+        bootKickerServo.setPower(-1);
+        compliantWheelsServo.setPower(-1);
     }
 
     public Command stop_cmd() {
@@ -46,19 +65,10 @@ public class Intake extends Subsystem {
     }
 
     public void stop() {
-        intake(0);
+        retract_kicker();
     }
 
     @Override
     public void periodic() {
-//        if (TeleOp.hasInstance()) {
-//            if (gamepad().right_bumper) {
-//                intake(1);
-//            } else if (gamepad().left_bumper) {
-//                intake(-1);
-//            } else {
-//                stop();
-//            }
-//        }
     }
 }
