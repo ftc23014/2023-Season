@@ -18,10 +18,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Spatula;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

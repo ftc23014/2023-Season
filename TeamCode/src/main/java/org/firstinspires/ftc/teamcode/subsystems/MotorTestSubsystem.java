@@ -42,14 +42,10 @@ public class MotorTestSubsystem extends Subsystem {
 
         if (gamepad.left_stick_y > 0.02) {
             servo1.setPosition(gamepad.left_stick_y);
-        } else if (gamepad.left_stick_y < -0.02) {
-            servo1.setPosition(-gamepad.left_stick_y);
         }
 
         if (gamepad.right_stick_y > 0.02) {
             servo2.setPosition(gamepad.right_stick_y);
-        } else if (gamepad.right_stick_y < -0.02) {
-            servo2.setPosition(-gamepad().left_stick_y);
         }
 
 
