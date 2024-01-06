@@ -54,8 +54,7 @@ public class TeleOp extends OpMode {
 
     private DualLinearSlide m_linearSlideSubsystem;
     private Spatula m_spatulaSubsystem;
-
-    private PixelClamper m_pixelClamperSubsystem;
+    private Hang m_hangSubsystem;
 
     // commands
 
@@ -85,7 +84,7 @@ public class TeleOp extends OpMode {
 
         //m_spatulaSubsystem = new Spatula();
 
-        //m_pixelClamperSubsystem = new PixelClamper();
+        m_hangSubsystem = new Hang();
 
         m_driverControls = new DriverControls(
                 gamepad1,
@@ -96,9 +95,9 @@ public class TeleOp extends OpMode {
                 gamepad2,
 //                m_intakeSubsystem,
 //                m_spatulaSubsystem,
-                m_linearSlideSubsystem
+                m_linearSlideSubsystem,
 //                m_droneSubsystem,
-//                m_pixelClamperSubsystem
+                m_hangSubsystem
         );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);

@@ -18,7 +18,7 @@ public class Hang extends Subsystem { // test
         hangMotor = getHardwareMap().dcMotor.get("hangMotor");
     }
 
-    public Command hangUpCommand(double power) {
+    public Command setDeploy(double power) {
         return new InstantCommand(() -> hangUp(power));
     }
 
@@ -26,7 +26,7 @@ public class Hang extends Subsystem { // test
         hangMotor.setPower(-power);
     }
 
-    public Command hangDownCommand(double power) {
+    public Command setRetract(double power) {
         return new InstantCommand(() -> hangDown(power));
     }
 

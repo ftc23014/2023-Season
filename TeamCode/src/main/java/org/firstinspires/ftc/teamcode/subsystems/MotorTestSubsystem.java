@@ -38,10 +38,14 @@ public class MotorTestSubsystem extends Subsystem {
     @Override
     public void periodic() {
 
-        if (gamepad.x && servo.getPosition() >= 0.399 && servo.getPosition() <= 0.401) { // servo is not always exactly provided value
+        if (gamepad.left_stick_y > 0.0) {
+            servo.setPosition(servo.getPosition() + 0.1);
+        } else if (gamepad.left_stick_y < 0.0) {
+            servo.setPosition(servo.getPosition() - 0.1);
+        }
+
+        if (gamepad.x) {
             servo.setPosition(0.6);
-        } else if (gamepad.x && servo.getPosition() >= 0.599 && servo.getPosition() <= 0.601) {
-            servo.setPosition(0.4);
         }
 
         telemetry().addData("Servo pos:", servo.getPosition());
@@ -64,5 +68,6 @@ public class MotorTestSubsystem extends Subsystem {
     @Override
     public void onDisable() {
         motor.setPower(0);
+        servo.setPosition(0.0);
     }
 }

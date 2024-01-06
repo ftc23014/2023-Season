@@ -12,7 +12,7 @@ public class AssistantControls extends Command {
 
     private DualLinearSlide m_linearSlideSubsystem;
 
-   // private PixelClamper m_pixelClamperSubsystem;
+    private Hang m_hangSubsystem;
 
     private Gamepad gamepad2;
 
@@ -24,8 +24,9 @@ public class AssistantControls extends Command {
     private boolean m_droneLauncherDeployed = false;
     private boolean m_lastDroneLauncherButtonState = false;
 
-    private boolean m_pixelClamperDeployed = false;
-    private boolean m_lastPixelClamperButtonState = false;
+
+    private boolean m_hangDeployed = false;
+    private boolean m_lastHangState = false;
 
     private boolean m_linearSlideZeroed = true;
     private boolean m_lastLinearSlideButtonState = false;
@@ -42,7 +43,7 @@ public class AssistantControls extends Command {
 
     private long m_lastTelemetryUpdate = 0;
 
-    public AssistantControls(Gamepad gamepad2, /*Intake intake, Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone, PixelClamper pixelClamper*/) {
+    public AssistantControls(Gamepad gamepad2, /*Intake intake, Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone*/, Hang hang) {
         super();
 
         this.gamepad2 = gamepad2;
@@ -50,7 +51,7 @@ public class AssistantControls extends Command {
 //        m_spatulaSubsystem = spatula;
         m_linearSlideSubsystem = linearSlide;
 //        m_droneSubsystem = drone;
-//        m_pixelClamperSubsystem = pixelClamper;
+        m_hangSubsystem = hang;
     }
 
     /**
@@ -62,7 +63,7 @@ public class AssistantControls extends Command {
      *    If linear slide is in automatic, will flip between zeroed and PID set.
      * B: Intake
      * Y: Spatula
-     * X: Pixel clamper / Lock
+     * X: Hang
      *
      *
      *
@@ -139,20 +140,20 @@ public class AssistantControls extends Command {
             }
         }
 
-        if (m_lastPixelClamperButtonState != gamepad2.x && gamepad2.x) {
-            m_pixelClamperDeployed = !m_pixelClamperDeployed;
+        if (m_lastHangState != gamepad2.x && gamepad2.x) {
+            m_lastHangState = !m_hangDeployed;
 
-            if (m_pixelClamperDeployed) {
-                //m_pixelClamperSubsystem.setDeploy();
+            if (m_hangDeployed) {
+                m_hangSubsystem.setDeploy(1);
             } else {
-                //m_pixelClamperSubsystem.setRetract();
+                m_hangSubsystem.setRetract(1);
             }
         }
 
         m_lastDroneLauncherButtonState = gamepad2.left_bumper;
         m_lastSpatulaButtonState = gamepad2.b;
         m_lastLinearSlideButtonState = gamepad2.a;
-        m_lastPixelClamperButtonState = gamepad2.x;
+        m_lastHangState = gamepad2.x;
 
         //selection controls
         if (m_lastDpadDownState != gamepad2.dpad_down && gamepad2.dpad_down) {
@@ -240,7 +241,7 @@ public class AssistantControls extends Command {
         telemetry().addLine("Drone Launcher (Bumpers): " + (m_droneLauncherDeployed ? "Deployed" : "Retracted"));
         //f.u = few updates
         telemetry().addLine("Linear Slide (A, ignore b/c F.U): " + (m_linearSlideZeroed ? "Zeroed" : "Not Zeroed"));
-        telemetry().addLine("Pixel Clamper (X): " + (m_pixelClamperDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Pixel Clamper (X): " + (m_hangDeployed ? "Deployed" : "Retracted"));
         telemetry().addLine("Intake (B): doing something");
     }
 
