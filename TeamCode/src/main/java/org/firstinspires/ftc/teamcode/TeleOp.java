@@ -53,7 +53,6 @@ public class TeleOp extends OpMode {
     private Drone m_droneSubsystem;
 
     private DualLinearSlide m_linearSlideSubsystem;
-    private Spatula m_spatulaSubsystem;
     private Hang m_hangSubsystem;
 
     // commands
