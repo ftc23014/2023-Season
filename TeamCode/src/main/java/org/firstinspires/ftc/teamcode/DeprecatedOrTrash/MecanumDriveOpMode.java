@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.DeprecatedOrTrash;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;

@@ -61,9 +61,7 @@ public class TeleOp extends OpMode {
     private DriverControls m_driverControls;
     private AssistantControls m_assistantControls;
 
-
     //end of commands/subsystems
-
     @Override
     public void init() {
         instance = this;

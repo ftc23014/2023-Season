@@ -14,7 +14,9 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 
 public class MotorTestSubsystem extends Subsystem {
     Gamepad gamepad;
-    Servo servo;
+
+    Servo servo1;
+    Servo servo2;
     public void setGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
     }
@@ -24,7 +26,8 @@ public class MotorTestSubsystem extends Subsystem {
     public void init() {
 
 
-        servo = getHardwareMap().servo.get("Lock");
+        servo1 = getHardwareMap().servo.get("Lock");
+        servo2 = getHardwareMap().servo.get("boot_kicker");
 
 
 
@@ -38,12 +41,20 @@ public class MotorTestSubsystem extends Subsystem {
 
 
         if (gamepad.left_stick_y > 0.02) {
-            servo.setPosition(gamepad.left_stick_y);
+            servo1.setPosition(gamepad.left_stick_y);
         } else if (gamepad.left_stick_y < -0.02) {
-            servo.setPosition(-gamepad.left_stick_y);
+            servo1.setPosition(-gamepad.left_stick_y);
         }
 
-        telemetry().addData("Servo pos:", servo.getPosition());
+        if (gamepad.right_stick_y > 0.02) {
+            servo2.setPosition(gamepad.right_stick_y);
+        } else if (gamepad.right_stick_y < -0.02) {
+            servo2.setPosition(-gamepad().left_stick_y);
+        }
+
+
+        telemetry().addData("Servo1 pos:", servo1.getPosition());
+        telemetry().addData("Servo2 pos:", servo2.getPosition());
 
 
 
@@ -51,6 +62,7 @@ public class MotorTestSubsystem extends Subsystem {
 
     @Override
     public void onDisable() {
-        servo.setPosition(0.0);
+        servo1.setPosition(0.0);
+        servo2.setPosition(0.0);
     }
 }
