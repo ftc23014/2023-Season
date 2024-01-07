@@ -28,6 +28,10 @@ public class Unit {
         return new Unit(0, Type.Centimeters);
     }
 
+    public static double convert(double n, Type t1, Type t2) {
+        return new Unit(n, t1).get(t2);
+    }
+
     private final double value;
     private final Type type;
 

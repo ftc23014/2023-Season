@@ -12,6 +12,18 @@ public class Translation2d {
         return new Translation2d(0,0);
     }
 
+    public static Translation2d average(Translation2d ...poses) {
+        double x = 0;
+        double y = 0;
+
+        for (Translation2d pose : poses) {
+            x += pose.getX();
+            y += pose.getY();
+        }
+
+        return new Translation2d(x / poses.length, y / poses.length);
+    }
+
     public Translation2d(double x, double y) {
         this.m_x = x;
         this.m_y = y;
@@ -95,6 +107,17 @@ public class Translation2d {
 
     public Translation2d copy() {
         return new Translation2d(m_x, m_y);
+    }
+
+    public Translation2d convertTo(Unit.Type from, Unit.Type to) {
+        return new Translation2d(
+                Unit.convert(m_x, from, to),
+                Unit.convert(m_y, from, to)
+        );
+    }
+
+    public Cartesian2d toCartesian2d() {
+        return new Cartesian2d(m_x, m_y);
     }
 
     @Override

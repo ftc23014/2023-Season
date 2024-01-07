@@ -9,7 +9,7 @@ import org.firstinspires.ftc.lib.math.Unit;
  */
 public class CenterStageField extends Field {
 
-    private static final Unit tile = new Unit(23d + ((double) 1 /8), Unit.Type.Inches);
+    private static final Unit tile = new Unit(23d + ((double) 1d/8), Unit.Type.Inches);
     private static final Unit fieldWidth = new Unit(tile.get(Unit.Type.Inches) * 6, Unit.Type.Inches);
     private static final Unit fieldHeight = new Unit(tile.get(Unit.Type.Inches) * 6, Unit.Type.Inches);
 
