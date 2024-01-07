@@ -12,4 +12,8 @@ public class DriveSubsystem extends Subsystem {
     public Unit getVelocity() {
         return Unit.zero();
     }
+
+    public Translation2d getVelocity2d() {
+        return Translation2d.zero();
+    }
 }

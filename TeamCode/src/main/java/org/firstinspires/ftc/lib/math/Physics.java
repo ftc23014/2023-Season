@@ -4,34 +4,27 @@ public class Physics {
     /***
      * Calculates the motion of the robot given the parameters accounting for centripetal force
      * @param centripetalForce The centripetal force of the robot (in N)
-     * @param velocity The velocity of the robot (in m/s)
-     * @param desiredDirection The desired direction of the robot
-     * @param mass The mass of the robot (in kg)
-     * @param deltaTime The change in time
+     * @param desiredVelocity The desired velocity of the robot (in m/s)
      * @return The motion of the robot as a {@link Cartesian2d} acting as a vector.
      */
-    public static Cartesian2d calculateRobotMotion(double centripetalForce, double velocity, Rotation2d desiredDirection, double mass, double deltaTime) {
-        // Calculate acceleration
-        double accelerationMagnitude = centripetalForce / mass;
+    public static Translation2d calculateRobotMotion(double centripetalForce, Translation2d desiredVelocity) {
+        Cartesian2d desiredVelocityVector = desiredVelocity.toCartesian2d();
+        Cartesian2d centripetalForceVector = new Cartesian2d(
+            Rotation2d.fromRadians(desiredVelocityVector.getRadius() + (centripetalForce > 0 ? Math.PI / 2 : -Math.PI / 2)),
+            Math.abs(centripetalForce)
+        );
 
-        // Decompose velocity into components
-        double vx = velocity * Math.cos(desiredDirection.getRadians());
-        double vy = velocity * Math.sin(desiredDirection.getRadians());
+        Translation2d newNormForce = new Translation2d(
+            centripetalForceVector.getRadius(),
+            desiredVelocityVector.getRadius() * Math.sin(desiredVelocityVector.getRotation().getRadians() - centripetalForceVector.getRotation().getRadians())
+        );
 
-        // Calculate change in velocity
-        double deltaVx = accelerationMagnitude * deltaTime;
-        double deltaVy = 0.0; // Assuming centripetal force does not affect vertical velocity
+        double magnitude = newNormForce.norm();
+        double angle = Math.atan2(newNormForce.getY(), newNormForce.getX());
 
-        // Calculate new velocity components
-        double vxNew = vx + deltaVx;
-        double vyNew = vy + deltaVy;
-
-        // Calculate new direction
-        double thetaNew = Math.atan2(vyNew, vxNew);
-
-        // Calculate new magnitude
-        double velocityNew = Math.sqrt(vxNew * vxNew + vyNew * vyNew);
-
-        return new Cartesian2d(Rotation2d.fromRadians(thetaNew), velocityNew);
+        return new Translation2d(
+            magnitude * Math.cos(angle + centripetalForceVector.getRotation().getRadians()),
+            magnitude * Math.sin(angle + centripetalForceVector.getRotation().getRadians())
+        );
     }
 }

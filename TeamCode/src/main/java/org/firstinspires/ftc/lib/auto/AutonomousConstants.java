@@ -19,6 +19,8 @@ public class AutonomousConstants {
 
     private boolean use_physics_calculations = true;
 
+    private double centripetalForceMultiplier = 1d;
+
     /**
      * Create a new constant profile for autonomous.
      * @param max_speed The max speed of the robot, in [unit] per second.
@@ -35,6 +37,15 @@ public class AutonomousConstants {
         this.m_controller = controller;
         this.DELTA_TIME = delta_time;
         this.min_speed = min_speed;
+    }
+
+    public void setPID(PIDController pid) {
+        this.m_controller = pid;
+    }
+
+    public AutonomousConstants setCentripetalForceMultiplier(double n) {
+        this.centripetalForceMultiplier = n;
+        return this;
     }
 
     /**
