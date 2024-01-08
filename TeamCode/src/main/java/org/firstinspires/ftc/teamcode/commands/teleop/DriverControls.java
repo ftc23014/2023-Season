@@ -7,6 +7,7 @@ import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.odometry.MecanumOdometry;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
 import java.util.Arrays;
@@ -14,15 +15,16 @@ import java.util.Arrays;
 public class DriverControls extends Command {
     private MecanumDriveSubsystem m_mecanumDriveSubsystem;
     private Gamepad gamepad1;
-
+    private Intake m_intakeSubsystem;
     private TurnToCommand m_turnToCommand;
 
-    public DriverControls(Gamepad gamepad1, MecanumDriveSubsystem driveSubsystem) {
+    public DriverControls(Gamepad gamepad1, MecanumDriveSubsystem driveSubsystem, Intake intake) {
         super();
 
         this.gamepad1 = gamepad1;
 
         m_mecanumDriveSubsystem = driveSubsystem;
+        m_intakeSubsystem = intake;
 
         m_turnToCommand = new TurnToCommand(Rotation2d.fromDegrees(90), m_mecanumDriveSubsystem);
     }
@@ -34,6 +36,15 @@ public class DriverControls extends Command {
 
     @Override
     public void execute() {
+
+        if (gamepad1.right_bumper) {
+            m_intakeSubsystem.intake_boot_kicker_func();
+        } else if (gamepad1.left_bumper) {
+            m_intakeSubsystem.outtake_boot_kicker_func();
+        } else {
+            m_intakeSubsystem.retract_kicker_func();
+        }
+
         if (!gamepad1.b) {
             if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || Math.abs(gamepad1.right_stick_x) > 0.05) {
                 m_mecanumDriveSubsystem.drive(

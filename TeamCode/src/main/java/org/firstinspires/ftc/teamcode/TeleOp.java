@@ -54,6 +54,7 @@ public class TeleOp extends OpMode {
 
     private DualLinearSlide m_linearSlideSubsystem;
     private Hang m_hangSubsystem;
+    private Bucket m_bucketSubsystem;
 
     // commands
 
@@ -83,18 +84,21 @@ public class TeleOp extends OpMode {
 
         m_hangSubsystem = new Hang();
 
+        m_bucketSubsystem = new Bucket();
+
         m_driverControls = new DriverControls(
                 gamepad1,
-                m_mecanumDriveSubsystem
+                m_mecanumDriveSubsystem,
+                m_intakeSubsystem
         );
 
         m_assistantControls = new AssistantControls(
                 gamepad2,
-                m_intakeSubsystem,
 //                m_spatulaSubsystem,
                 m_linearSlideSubsystem,
 //                m_droneSubsystem,
-                m_hangSubsystem
+                m_hangSubsystem,
+                m_bucketSubsystem
         );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
-public class Hang extends Subsystem { // test
+public class Hang extends Subsystem {
     private DcMotor hangMotor;
 
     public Hang() {
@@ -18,20 +18,20 @@ public class Hang extends Subsystem { // test
         hangMotor = getHardwareMap().dcMotor.get("hangMotor");
     }
 
-    public Command setDeploy(double power) {
-        return new InstantCommand(() -> hangUp(power));
+    public Command setDeploy() {
+        return new InstantCommand(this::hangUp);
     }
 
-    public void hangUp(double power) {
-        hangMotor.setPower(-power);
+    public void hangUp() {
+        hangMotor.setPower(1);
     }
 
-    public Command setRetract(double power) {
-        return new InstantCommand(() -> hangDown(power));
+    public Command setRetract() {
+        return new InstantCommand(this::hangDown);
     }
 
-    public void hangDown(double power) {
-        hangMotor.setPower(-power);
+    public void hangDown() {
+        hangMotor.setPower(-1);
     }
 
     public Command stopCommand() {

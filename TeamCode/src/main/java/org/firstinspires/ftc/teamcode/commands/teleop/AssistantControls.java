@@ -5,8 +5,7 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
 
 public class AssistantControls extends Command {
-   private Intake m_intakeSubsystem;
-   // private Spatula m_spatulaSubsystem;
+
 
    // private Drone m_droneSubsystem;
 
@@ -14,24 +13,22 @@ public class AssistantControls extends Command {
 
     private Hang m_hangSubsystem;
 
+    private Bucket m_bucketSubsystem;
+
     private Gamepad gamepad2;
 
     final private boolean k_linearSlidePIDEnabled = true;
 
-    private boolean m_spatulaDeployed = false;
-    private boolean m_lastSpatulaButtonState = false;
 
     private boolean m_droneLauncherDeployed = false;
     private boolean m_lastDroneLauncherButtonState = false;
 
-    private boolean m_intakeDeployed = false;
-    private boolean m_lastIntakeDeployedState = false;
-
-    private boolean m_intakeRunning = false;
-    private boolean m_lastIntakeRunningState = false;
 
     private boolean m_hangDeployed = false;
     private boolean m_lastHangState = false;
+
+    private boolean m_bucketDeployed = false;
+    private boolean m_lastBucketState = false;
 
     private boolean m_linearSlideZeroed = true;
     private boolean m_lastLinearSlideButtonState = false;
@@ -48,15 +45,14 @@ public class AssistantControls extends Command {
 
     private long m_lastTelemetryUpdate = 0;
 
-    public AssistantControls(Gamepad gamepad2, Intake intake,/* Spatula spatula,*/ DualLinearSlide linearSlide /*Drone drone*/, Hang hang) {
+    public AssistantControls(Gamepad gamepad2, DualLinearSlide linearSlide /*Drone drone*/, Hang hang, Bucket bucket) {
         super();
 
         this.gamepad2 = gamepad2;
-        m_intakeSubsystem = intake;
-//        m_spatulaSubsystem = spatula;
         m_linearSlideSubsystem = linearSlide;
 //        m_droneSubsystem = drone;
         m_hangSubsystem = hang;
+        m_bucketSubsystem = bucket;
     }
 
     /**
@@ -66,11 +62,9 @@ public class AssistantControls extends Command {
      *
      * A: Toggle linear slide. If linear slide is in manual, will be retracting.
      *    If linear slide is in automatic, will flip between zeroed and PID set.
-     * B: Deploy Intake
-     * Y: Spatula
+     * B: Flip & Push Bucket
+     * Y:
      * X: Hang
-     * Right Trigger: Intake
-     * Left Trigger: Outtake
      *
      *
      * DPAD: Select linear slide position selection
@@ -83,29 +77,16 @@ public class AssistantControls extends Command {
 
         if (Math.abs(gamepad2.right_stick_y) > 0.05) {
             position += gamepad2.right_stick_y / 100;
-            //m_spatulaSubsystem.setPosition(position < 0 ? 1 + (position % 1) : position % 1);
             telemetry().addLine("Position: " + position);
             telemetry().update();
         }
 
         if (gamepad2.right_bumper) {
             position = 1;
-            //m_spatulaSubsystem.setPosition(position)
             telemetry().addLine("Position: " + position);
             telemetry().update();
         }
 
-        if (gamepad2.right_bumper) {
-            telemetry().addLine("intaking!");
-            m_intakeSubsystem.deploy_kicker_func();
-            m_intakeSubsystem.intake_boot_kicker_func();
-        } else if (gamepad2.left_bumper) {
-            telemetry().addLine("outtaking!");
-            m_intakeSubsystem.deploy_kicker_func();
-            m_intakeSubsystem.outtake_boot_kicker_func();
-        } else {
-            m_intakeSubsystem.retract_kicker_func();
-        }
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             m_linearSlideSubsystem.setPower(gamepad2.left_stick_y * 0.9);
@@ -114,7 +95,7 @@ public class AssistantControls extends Command {
         }
 
         if (m_lastDroneLauncherButtonState != gamepad2.left_bumper && gamepad2.left_bumper && gamepad2.right_bumper) {
-            m_droneLauncherDeployed = !m_spatulaDeployed;
+            m_droneLauncherDeployed = !m_droneLauncherDeployed;
 
             if (m_droneLauncherDeployed) {
                 //m_droneSubsystem.setDeploy();
@@ -123,13 +104,13 @@ public class AssistantControls extends Command {
             }
         }
 
-        if (m_lastSpatulaButtonState != gamepad2.y && gamepad2.y) {
-            m_spatulaDeployed = !m_spatulaDeployed;
+        if (m_lastBucketState != gamepad2.b && gamepad2.b) {
+            m_bucketDeployed = !m_bucketDeployed;
 
-            if (m_spatulaDeployed) {
-                //m_spatulaSubsystem.setDeploy();
+            if (m_bucketDeployed) {
+                m_bucketSubsystem.setDeploy();
             } else {
-                //m_spatulaSubsystem.setRetract();
+                m_bucketSubsystem.setRetract();
             }
         }
 
@@ -151,14 +132,14 @@ public class AssistantControls extends Command {
             m_lastHangState = !m_hangDeployed;
 
             if (m_hangDeployed) {
-                m_hangSubsystem.setDeploy(1);
+                m_hangSubsystem.setDeploy();
             } else {
-                m_hangSubsystem.setRetract(1);
+                m_hangSubsystem.setRetract();
             }
         }
 
         m_lastDroneLauncherButtonState = gamepad2.left_bumper;
-        m_lastSpatulaButtonState = gamepad2.b;
+        m_lastBucketState = gamepad2.b;
         m_lastLinearSlideButtonState = gamepad2.a;
         m_lastHangState = gamepad2.x;
 
@@ -244,12 +225,10 @@ public class AssistantControls extends Command {
     }
 
     private void showComponentStates() {
-        telemetry().addLine("Spatula (Y): " + (m_spatulaDeployed ? "Deployed" : "Retracted"));
+        telemetry().addLine("Bucket (B): " + (m_bucketDeployed ? "Deployed" : "Retracted"));
         telemetry().addLine("Drone Launcher (Bumpers): " + (m_droneLauncherDeployed ? "Deployed" : "Retracted"));
-        //f.u = few updates
         telemetry().addLine("Linear Slide (A, ignore b/c F.U): " + (m_linearSlideZeroed ? "Zeroed" : "Not Zeroed"));
         telemetry().addLine("Pixel Clamper (X): " + (m_hangDeployed ? "Deployed" : "Retracted"));
-        telemetry().addLine("Intake (B): doing something");
     }
 
     @Override

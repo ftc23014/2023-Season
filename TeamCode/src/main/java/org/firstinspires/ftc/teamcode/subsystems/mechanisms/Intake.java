@@ -27,7 +27,7 @@ public class Intake extends Subsystem {
     }
 
     public Command deploy_kicker() {
-        return new InstantCommand(() -> deploy_kicker_func());
+        return new InstantCommand(this::deploy_kicker_func);
     }
 
     public void deploy_kicker_func() {
@@ -35,7 +35,7 @@ public class Intake extends Subsystem {
     }
 
     public Command retract_kicker() {
-        return new InstantCommand(() -> deploy_kicker_func());
+        return new InstantCommand(this::retract_kicker_func);
     }
 
     public void retract_kicker_func() {
@@ -43,7 +43,7 @@ public class Intake extends Subsystem {
     }
 
     public Command intake_boot_kicker() {
-        return new InstantCommand(() -> intake_boot_kicker_func());
+        return new InstantCommand(this::intake_boot_kicker_func);
     }
 
     public void intake_boot_kicker_func() {
@@ -52,7 +52,7 @@ public class Intake extends Subsystem {
     }
 
     public Command outtake_boot_kicker() {
-        return new InstantCommand(() -> outtake_boot_kicker_func());
+        return new InstantCommand(this::outtake_boot_kicker_func);
     }
 
     public void outtake_boot_kicker_func() {

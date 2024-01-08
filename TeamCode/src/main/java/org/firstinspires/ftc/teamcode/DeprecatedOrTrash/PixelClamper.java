@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
+package org.firstinspires.ftc.teamcode.DeprecatedOrTrash;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.lib.systems.Subsystem;
