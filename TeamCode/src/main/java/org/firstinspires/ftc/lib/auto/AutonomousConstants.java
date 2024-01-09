@@ -127,4 +127,8 @@ public class AutonomousConstants {
     public double getDeltaTime() {
         return DELTA_TIME;
     }
+
+    public double getCentripetalForceMultiplier() {
+        return this.centripetalForceMultiplier;
+    }
 }

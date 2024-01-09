@@ -8,18 +8,31 @@ public class Physics {
      * @return The motion of the robot as a {@link Cartesian2d} acting as a vector.
      */
     public static Translation2d calculateRobotMotion(double centripetalForce, Translation2d desiredVelocity) {
+        if (desiredVelocity.isZero()) {
+            return Translation2d.zero();
+        }
+
+        double desiredForce = desiredVelocity.norm();
+
         Cartesian2d desiredVelocityVector = desiredVelocity.toCartesian2d();
         Cartesian2d centripetalForceVector = new Cartesian2d(
-            Rotation2d.fromRadians(desiredVelocityVector.getRadius() + (centripetalForce > 0 ? Math.PI / 2 : -Math.PI / 2)),
-            Math.abs(centripetalForce)
+            Rotation2d.fromRadians(desiredVelocityVector.getRotation().getRadians() - (Math.PI / 2)),
+            centripetalForce
+        );
+
+        Translation2d centForce = new Translation2d(
+            centripetalForceVector.getRadius() * Math.cos(0),
+            centripetalForceVector.getRadius() * Math.sin(0)
         );
 
         Translation2d newNormForce = new Translation2d(
-            centripetalForceVector.getRadius(),
-            desiredVelocityVector.getRadius() * Math.sin(desiredVelocityVector.getRotation().getRadians() - centripetalForceVector.getRotation().getRadians())
+            centForce.getX(),
+         desiredForce * Math.sin(
+                    desiredVelocityVector.getRotation().getRadians() - centripetalForceVector.getRotation().getRadians()
+            )
         );
 
-        double magnitude = newNormForce.norm();
+        double magnitude = Math.sqrt(Math.pow(newNormForce.getX(), 2) + Math.pow(newNormForce.getY(), 2));
         double angle = Math.atan2(newNormForce.getY(), newNormForce.getX());
 
         return new Translation2d(

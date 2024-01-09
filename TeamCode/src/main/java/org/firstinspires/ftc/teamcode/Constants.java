@@ -17,8 +17,8 @@ public class Constants {
                 1d / 32d
         );
 
-        public static final boolean usePhysicsCalculations = true;
-        public static final double centripetalForceMultiplier = 1d;
+        public static final boolean usePhysicsCalculations = false;
+        public static final double centripetalForceMultiplier = -0.5d;
     }
 
 }

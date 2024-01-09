@@ -226,7 +226,7 @@ public class Trajectory extends Command {
 
         Unit currentRealVelocity = m_driveSubsystem.getVelocity();
 
-        double centripetalForceMultiplier = 1;
+        double centripetalForceMultiplier = m_constants.getCentripetalForceMultiplier();
 
         //get the centripetal force at the current point.
         double centripetalForce = pathObject.centripetalForce(
@@ -237,7 +237,7 @@ public class Trajectory extends Command {
 
         //calculate the new motion direction and magnitude using the centripetal force.
         Translation2d newMotionDirection = Physics.calculateRobotMotion(
-                0,//centripetalForce * centripetalForceMultiplier,
+                centripetalForce * centripetalForceMultiplier,
                 velocities.rotateBy(Rotation2d.fromDegrees(90))
         );
 
