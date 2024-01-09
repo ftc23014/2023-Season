@@ -80,8 +80,6 @@ public class TeleOp extends OpMode {
 
         m_linearSlideSubsystem = new DualLinearSlide();
 
-        //m_spatulaSubsystem = new Spatula();
-
         m_hangSubsystem = new Hang();
 
         m_bucketSubsystem = new Bucket();
@@ -94,7 +92,6 @@ public class TeleOp extends OpMode {
 
         m_assistantControls = new AssistantControls(
                 gamepad2,
-//                m_spatulaSubsystem,
                 m_linearSlideSubsystem,
 //                m_droneSubsystem,
                 m_hangSubsystem,

@@ -26,8 +26,8 @@ public class MotorTestSubsystem extends Subsystem {
     public void init() {
 
 
-        servo1 = getHardwareMap().servo.get("Lock");
-        servo2 = getHardwareMap().servo.get("boot_kicker");
+        servo1 = getHardwareMap().servo.get("bucket_pusher");
+        servo2 = getHardwareMap().servo.get("bucket_flipper");
 
 
 

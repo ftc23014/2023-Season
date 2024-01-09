@@ -25,8 +25,8 @@ public class Bucket extends Subsystem {
     }
 
     public void deploy() {
-        bucketFlipperServo.setPosition(1 /* flipped servo position*/);
-        bucketPusherServo.setPosition(1 /* pushed bucket position */);
+        bucketFlipperServo.setPosition(0.7246 /* flipped servo position*/);
+        bucketPusherServo.setPosition(0.9082 /* pushed bucket position */);
     }
 
     public Command setRetract() {
@@ -34,8 +34,8 @@ public class Bucket extends Subsystem {
     }
 
     public void retract() {
-        bucketFlipperServo.setPosition(0);
-        bucketPusherServo.setPosition(0);
+        bucketFlipperServo.setPosition(0.0233);
+        bucketPusherServo.setPosition(0.0566);
     }
 
     public Command stopCommand() {
