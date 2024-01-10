@@ -13,6 +13,7 @@ public class Intake extends Subsystem {
     private CRServo bootKickerServo;
     private Servo deployKickerServo;
     private CRServo compliantWheelsServo;
+    private CRServo bootKicker2Servo;
 
 
     public Intake() {
@@ -24,6 +25,7 @@ public class Intake extends Subsystem {
         bootKickerServo = getHardwareMap().get(CRServo.class, "boot_kicker");
         deployKickerServo = getHardwareMap().get(Servo.class, "deploy_kicker");
         compliantWheelsServo = getHardwareMap().get(CRServo.class, "compliant_wheels");
+        bootKicker2Servo = getHardwareMap().get(CRServo.class, "boot_kicker2");
     }
 
     public Command deploy_kicker() {
@@ -47,7 +49,8 @@ public class Intake extends Subsystem {
     }
 
     public void intake_boot_kicker_func() {
-        bootKickerServo.setPower(0.8);
+        bootKickerServo.setPower(1);
+        bootKicker2Servo.setPower(1);
         compliantWheelsServo.setPower(1);
     }
 
@@ -56,7 +59,8 @@ public class Intake extends Subsystem {
     }
 
     public void outtake_boot_kicker_func() {
-        bootKickerServo.setPower(-0.8);
+        bootKickerServo.setPower(-1);
+        bootKicker2Servo.setPower(-1);
         compliantWheelsServo.setPower(-1);
     }
 
@@ -66,6 +70,7 @@ public class Intake extends Subsystem {
 
     public void stop() {
         bootKickerServo.setPower(0);
+        bootKicker2Servo.setPower(0);
         compliantWheelsServo.setPower(0);
     }
 
