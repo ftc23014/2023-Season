@@ -24,7 +24,7 @@ public class AprilTagAutoMove extends Command {
 
     private final VisionSubsystem v_subsystem;
 
-    private Trajectory trajectory;
+    private DriveToEncoderPosition trajectory;
     private TurnToCommand turnToCommand;
 
     private Side side;
@@ -99,11 +99,6 @@ public class AprilTagAutoMove extends Command {
                 .25d
         );
 
-        BezierSegment path = VisionSubsystem.pathToTarget(
-            tagPos,
-            VisionSubsystem.PathMakingStrategy.HORIZ_CURVE
-        );
-
         //System.out.println("generating path going from " + tagPos + " to " + path.getPathObject().getWaypoints()[3]);
 
         turnToCommand = new TurnToCommand(
@@ -113,24 +108,23 @@ public class AprilTagAutoMove extends Command {
 
         turnToCommand.init();
 
-        trajectory = new Trajectory(MecanumDriveSubsystem.instance(), path);
-
-        AutonomousConstants cs = Constants.Autonomous.autonomousConstants;
-
-        cs.setPID(new WPIPIDController(
-                cs.getPID().getPID()[0],
-                cs.getPID().getPID()[1],
-                cs.getPID().getPID()[2]
-        ));
-
-        cs.setUsePhysicsCalculations(Constants.Autonomous.usePhysicsCalculations);
-
-        trajectory.setConstants(cs);
-
-        trajectory.generate();
+        trajectory = new DriveToEncoderPosition(
+            tagPos,
+            new PIDController(
+                    0.4,
+                    0,
+                    0
+            ),
+            new PIDController(
+                    0.4,
+                    0,
+                    0
+            ),
+            new Unit(3, Unit.Type.Centimeters)
+        );
     }
 
-    boolean stillGenerating = true;
+    boolean startedTrajectoryYet = true;
 
     @Override
     public void execute() {
@@ -141,12 +135,8 @@ public class AprilTagAutoMove extends Command {
             return;
         }
 
-        if (!trajectory.finishedGenerating() && stillGenerating) {
-            return;
-        }
-
-        if (stillGenerating) {
-            stillGenerating = false;
+        if (startedTrajectoryYet) {
+            startedTrajectoryYet = false;
             trajectory.init();
         }
 
