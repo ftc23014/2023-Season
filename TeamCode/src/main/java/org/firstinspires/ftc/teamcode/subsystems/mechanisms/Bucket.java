@@ -35,7 +35,7 @@ public class Bucket extends Subsystem {
 
     public void retract() {
         bucketFlipperServo.setPosition(0.0233);
-        bucketPusherServo.setPosition(0.0566);
+        bucketPusherServo.setPosition(0.52);
     }
 
     public Command stopCommand() {

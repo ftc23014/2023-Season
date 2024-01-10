@@ -31,7 +31,7 @@ public class Intake extends Subsystem {
     }
 
     public void deploy_kicker_func() {
-        deployKickerServo.setPosition(0.4/* deploy position */);
+        deployKickerServo.setPosition(1/* deploy position */);
     }
 
     public Command retract_kicker() {
@@ -39,7 +39,7 @@ public class Intake extends Subsystem {
     }
 
     public void retract_kicker_func() {
-        deployKickerServo.setPosition(0/* retract position */);
+        deployKickerServo.setPosition(0.575/* retract position */);
     }
 
     public Command intake_boot_kicker() {
@@ -47,8 +47,8 @@ public class Intake extends Subsystem {
     }
 
     public void intake_boot_kicker_func() {
-        bootKickerServo.setPower(1);
-        compliantWheelsServo.setPower(0.5);
+        bootKickerServo.setPower(0.8);
+        compliantWheelsServo.setPower(1);
     }
 
     public Command outtake_boot_kicker() {
@@ -56,7 +56,7 @@ public class Intake extends Subsystem {
     }
 
     public void outtake_boot_kicker_func() {
-        bootKickerServo.setPower(-1);
+        bootKickerServo.setPower(-0.8);
         compliantWheelsServo.setPower(-1);
     }
 
@@ -65,7 +65,8 @@ public class Intake extends Subsystem {
     }
 
     public void stop() {
-        retract_kicker();
+        bootKickerServo.setPower(0);
+        compliantWheelsServo.setPower(0);
     }
 
     @Override

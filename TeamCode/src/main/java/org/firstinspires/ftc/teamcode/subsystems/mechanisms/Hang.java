@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.lib.systems.commands.Command;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 public class Hang extends Subsystem {
     private DcMotor hangMotor;
+    private Servo hangServo;
 
     public Hang() {
         super();
@@ -15,7 +17,8 @@ public class Hang extends Subsystem {
 
     @Override
     public void init() {
-        hangMotor = getHardwareMap().dcMotor.get("hangMotor");
+        hangMotor = getHardwareMap().dcMotor.get("hang_motor");
+        hangServo = getHardwareMap().servo.get("hang_servo");
     }
 
     public Command setDeploy() {
@@ -24,6 +27,7 @@ public class Hang extends Subsystem {
 
     public void hangUp() {
         hangMotor.setPower(1);
+        hangServo.setPosition(0.4);
     }
 
     public Command setRetract() {
@@ -32,6 +36,7 @@ public class Hang extends Subsystem {
 
     public void hangDown() {
         hangMotor.setPower(-1);
+        hangServo.setPosition(0.63);
     }
 
     public Command stopCommand() {
@@ -40,6 +45,7 @@ public class Hang extends Subsystem {
 
     public void stop() {
         hangMotor.setPower(0);
+        hangServo.setPosition(0);
     }
 
     @Override

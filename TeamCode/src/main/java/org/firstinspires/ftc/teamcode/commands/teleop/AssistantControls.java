@@ -108,9 +108,9 @@ public class AssistantControls extends Command {
             m_bucketDeployed = !m_bucketDeployed;
 
             if (m_bucketDeployed) {
-                m_bucketSubsystem.setDeploy();
+                m_bucketSubsystem.deploy();
             } else {
-                m_bucketSubsystem.setRetract();
+                m_bucketSubsystem.retract();
             }
         }
 
@@ -132,9 +132,9 @@ public class AssistantControls extends Command {
             m_lastHangState = !m_hangDeployed;
 
             if (m_hangDeployed) {
-                m_hangSubsystem.setDeploy();
+                m_hangSubsystem.hangUp();
             } else {
-                m_hangSubsystem.setRetract();
+                m_hangSubsystem.hangDown();
             }
         }
 

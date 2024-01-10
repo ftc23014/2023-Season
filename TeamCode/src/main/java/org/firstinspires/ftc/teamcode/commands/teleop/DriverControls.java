@@ -37,12 +37,18 @@ public class DriverControls extends Command {
     @Override
     public void execute() {
 
+        if (gamepad1.x) {
+            m_intakeSubsystem.deploy_kicker_func();
+        } else if (gamepad1.y) {
+            m_intakeSubsystem.retract_kicker_func();
+        }
+
         if (gamepad1.right_bumper) {
             m_intakeSubsystem.intake_boot_kicker_func();
         } else if (gamepad1.left_bumper) {
             m_intakeSubsystem.outtake_boot_kicker_func();
         } else {
-            m_intakeSubsystem.retract_kicker_func();
+            m_intakeSubsystem.stop();
         }
 
         if (!gamepad1.b) {
