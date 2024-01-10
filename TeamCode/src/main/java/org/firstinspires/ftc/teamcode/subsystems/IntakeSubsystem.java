@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.lib.systems.Subsystem;
 
-/**
- * Just an example of how to move a motor with a subsystem.
- */
 public class IntakeSubsystem extends Subsystem {
     DcMotor motor;
 
@@ -19,26 +16,11 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void init() {
-        motor = getHardwareMap().get(DcMotor.class, "intake_motor");
     }
 
     @Override
     public void periodic() {
-        if (gamepad.dpad_up) {
-            motor.setPower(1);
 
-        }
-        else if (gamepad.dpad_down) {
-            motor.setPower(-1);
-
-
-        }
-        else {
-            motor.setPower(0);
-
-
-
-        }
     }
 
     @Override

@@ -53,18 +53,15 @@ public class TeleOp extends OpMode {
     private Drone m_droneSubsystem;
 
     private DualLinearSlide m_linearSlideSubsystem;
-    private Spatula m_spatulaSubsystem;
-
-    private PixelClamper m_pixelClamperSubsystem;
+    private Hang m_hangSubsystem;
+    private Bucket m_bucketSubsystem;
 
     // commands
 
     private DriverControls m_driverControls;
     private AssistantControls m_assistantControls;
 
-
     //end of commands/subsystems
-
     @Override
     public void init() {
         instance = this;
@@ -77,28 +74,28 @@ public class TeleOp extends OpMode {
 
         m_visionSubsystem =  new VisionSubsystem();
 
-        //m_intakeSubsystem = new Intake();
+        m_intakeSubsystem = new Intake();
 
         //m_droneSubsystem = new Drone();
 
         m_linearSlideSubsystem = new DualLinearSlide();
 
-        //m_spatulaSubsystem = new Spatula();
+        m_hangSubsystem = new Hang();
 
-        //m_pixelClamperSubsystem = new PixelClamper();
+        m_bucketSubsystem = new Bucket();
 
         m_driverControls = new DriverControls(
                 gamepad1,
-                m_mecanumDriveSubsystem
+                m_mecanumDriveSubsystem,
+                m_intakeSubsystem
         );
 
         m_assistantControls = new AssistantControls(
                 gamepad2,
-//                m_intakeSubsystem,
-//                m_spatulaSubsystem,
-                m_linearSlideSubsystem
+                m_linearSlideSubsystem,
 //                m_droneSubsystem,
-//                m_pixelClamperSubsystem
+                m_hangSubsystem,
+                m_bucketSubsystem
         );
 
         m_mecanumDriveSubsystem.addDefaultCommand(m_driverControls);

@@ -13,9 +13,10 @@ import org.firstinspires.ftc.lib.systems.Subsystem;
 
 
 public class MotorTestSubsystem extends Subsystem {
-    DcMotor motor;
     Gamepad gamepad;
-    Servo servo;
+
+    Servo servo1;
+    Servo servo2;
     public void setGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
     }
@@ -25,8 +26,8 @@ public class MotorTestSubsystem extends Subsystem {
     public void init() {
 
 
-        motor = getHardwareMap().dcMotor.get("intake_motor");
-        servo = getHardwareMap().servo.get("Lock");
+        servo1 = getHardwareMap().servo.get("bucket_pusher");
+        servo2 = getHardwareMap().servo.get("bucket_flipper");
 
 
 
@@ -38,24 +39,18 @@ public class MotorTestSubsystem extends Subsystem {
     @Override
     public void periodic() {
 
-        if (gamepad.x && servo.getPosition() >= 0.399 && servo.getPosition() <= 0.401) { // servo is not always exactly provided value
-            servo.setPosition(0.6);
-        } else if (gamepad.x && servo.getPosition() >= 0.599 && servo.getPosition() <= 0.601) {
-            servo.setPosition(0.4);
+
+        if (gamepad.left_stick_y > 0.02) {
+            servo1.setPosition(gamepad.left_stick_y);
         }
 
-        telemetry().addData("Servo pos:", servo.getPosition());
+        if (gamepad.right_stick_y > 0.02) {
+            servo2.setPosition(gamepad.right_stick_y);
+        }
 
-        if (gamepad.a) {
-            motor.setPower(1);
-        }
-        else if (gamepad.b) {
-            motor.setPower(-1);
-        }
-        else {
-            motor.setPower(0);
 
-        }
+        telemetry().addData("Servo1 pos:", servo1.getPosition());
+        telemetry().addData("Servo2 pos:", servo2.getPosition());
 
 
 
@@ -63,6 +58,7 @@ public class MotorTestSubsystem extends Subsystem {
 
     @Override
     public void onDisable() {
-        motor.setPower(0);
+        servo1.setPosition(0.0);
+        servo2.setPosition(0.0);
     }
 }
