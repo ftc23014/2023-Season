@@ -51,19 +51,19 @@ public class WebWriter extends LogWriter {
                 return new ArrayList<>();
             }
 
-            if (timestamp > (cache.get(cache.size() -1).second + cache.get(0).second) / 2) {
+            //if (timestamp > (cache.get(cache.size() -1).second + cache.get(0).second) / 2) {
                 for (int i = cache.size() - 1; i >= 0; i--) {
                     if (cache.get(i).second < timestamp) {
                         return cache.subList(i + 1, cache.size());
                     }
                 }
-            } else {
-                for (int i = 0; i < cache.size(); i++) {
-                    if (cache.get(i).second > timestamp) {
-                        return cache.subList(i + 1, cache.size());
-                    }
-                }
-            }
+//            } else {
+//                for (int i = 0; i < cache.size(); i++) {
+//                    if (cache.get(i).second > timestamp) {
+//                        return cache.subList(i + 1, cache.size());
+//                    }
+//                }
+//            }
 
             return cache;
         }

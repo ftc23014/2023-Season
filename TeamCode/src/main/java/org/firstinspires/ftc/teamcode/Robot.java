@@ -8,6 +8,7 @@ import org.firstinspires.ftc.lib.replay.log.writers.WebWriter;
 import org.firstinspires.ftc.lib.server.Server;
 import org.firstinspires.ftc.lib.simulation.Simulation;
 import org.firstinspires.ftc.lib.systems.Subsystems;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 public class Robot {
 
@@ -21,6 +22,7 @@ public class Robot {
         Field.init();
 
         if (!Simulation.inSimulation()) {
+            Server.addRoute(new VisionSubsystem.VisionPose());
             new Server();
         }
         

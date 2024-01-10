@@ -20,6 +20,7 @@ import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.StartupManager;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 import java.util.ArrayList; //Got a warning; java.util.ArrayList<java.lang.Double> ?
 
@@ -222,6 +223,14 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         return getOdoVelocity();
     }
 
+    @Override
+    public Translation2d getVelocity2d() {
+        return new Translation2d(
+                odometry.getXVelocity().get(Unit.Type.Meters),
+                odometry.getYVelocity().get(Unit.Type.Meters)
+        );
+    }
+
     /**
      * Gets the real angle of the robot, relative to 0° being the starting angle.
      * @return The real angle of the robot.
@@ -261,6 +270,19 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 //        telemetry().addData("Velocity X (m/s)", velocityX);
 //        telemetry().addData("Velocity Y (m/s)", velocityY);
         odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) -backRight.getCurrentPosition(), (double) frontRight.getCurrentPosition());
+
+        if (Math.abs(getAngle().getDegrees() - 90) < 5 || Math.abs(getAngle().getDegrees() - 270) < 5 || Math.abs(getAngle().getDegrees() + 90) < 5) {
+            if (VisionSubsystem.getInstance() != null) {
+                if (VisionSubsystem.getInstance().detecting()) {
+                    odometry.reset(
+                            new Pose2d(
+                                    VisionSubsystem.getInstance().getCurrentPosition(),
+                                    odometry.getRotation()
+                            )
+                    );
+                }
+            }
+        }
     }
 
     /**

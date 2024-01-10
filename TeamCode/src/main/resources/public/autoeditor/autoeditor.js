@@ -1,19 +1,19 @@
 
-setTimeout(() => {
-    document.getElementById("editing").innerText = `
-number detection = 0
-
-run "huskylens" {lambda(detected)}
-: set detection to detected
-
-if detection == 0
-: run parallel
-:: run "linearslides"
-:: run instant
-::: print "hello world!"
-::: print "i'm moving"`;
-    update(document.getElementById("editing").value)
-}, 1000000)
+// setTimeout(() => {
+//     document.getElementById("editing").innerText = `
+// number detection = 0
+//
+// run "huskylens" {lambda(detected)}
+// : set detection to detected
+//
+// if detection == 0
+// : run parallel
+// :: run "linearslides"
+// :: run instant
+// ::: print "hello world!"
+// ::: print "i'm moving"`;
+//     update(document.getElementById("editing").value)
+// }, 1000000)
 
 function update(text) {
     let result_element = document.querySelector("#highlighting-content");
@@ -47,21 +47,33 @@ let generator = (l) => {
     return a;
 }
 
+const datatypes = [
+    "boolean",
+    "number",
+    "string"
+]
+
+const built_in_commands = [
+    "parallel",
+    "sequential",
+]
+
 function highlight() {
     let textContent = document.getElementById("highlighting-content").innerHTML;
 
     let lines = textContent.split("\n");
 
-    const datatypes = [
-        "boolean",
-        "number",
-        "string"
-    ]
+    let compilationErrorAt = -1;
 
-    const built_in_commands = [
-        "parallel",
-        "sequential",
-    ]
+    try {
+        compile(true)
+    } catch (e) {
+        try {
+            if (e.includes("||")) {
+                compilationErrorAt = parseInt(e.split("||")[1]);
+            }
+        } catch (e) {}
+    }
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -98,6 +110,8 @@ function highlight() {
             lines[i] = line.replace("print", `え`);
         } else if (line.trim().startsWith("update")) { //updating for print to telemetry or console
             lines[i] = line.replace("update", `ふ`);
+        } else if (line.trim().startsWith("stop")) {
+            lines[i] = line.replace("stop", `げ`);
         }
 
 
@@ -166,7 +180,8 @@ function highlight() {
         lines[i] = lines[i].replace(`す`,`<span class="token important">set</span>`);
         lines[i] = lines[i].replace(`で`, `<span class="token important">if</span>`);
         lines[i] = lines[i].replace(`え`, `<span class="token important">print</span>`);
-        lines[i] = lines[i].replace(`ふ`, `<span class="token important">update</span>`)
+        lines[i] = lines[i].replace(`ふ`, `<span class="token important">update</span>`);
+        lines[i] = lines[i].replace(`げ`, `<span class="token deleted">stop</span>`)
 
         lines[i] = lines[i].replaceAll(" to ", ` <span class="token important">to</span> `);
         lines[i] = lines[i].replaceAll("lambda(", `<span class="token symbol">lambda</span>(`)
@@ -208,7 +223,11 @@ function highlight() {
             colonSTR += ":"
         }
 
-        lines[i] = `<span class="token punctuation">${colonSTR}</span>` + lines[i]
+        lines[i] = `<span class="token punctuation">${colonSTR}</span>` + lines[i];
+
+        if (compilationErrorAt === i) {
+            lines[i] = `<span class="err">${lines[i]}</span>`
+        }
     }
 
     document.getElementById("highlighting-content").innerHTML = lines.join("\n");
@@ -240,3 +259,163 @@ function check_tab(element, event) {
     }
 }
 
+
+function compile(throwOnlyLine=false) {
+    let lines = document.getElementById("editing").value.split("\n")
+    let variables = [];
+
+    let commands = { commands: [] };
+
+    let err = (i, e) => {
+        if (throwOnlyLine) throw `||${i}`;
+        throw `compilation error. \n[Line ${i}] Error compiling at line ` + (i + 1) + ", " + e;
+    }
+
+    let validOperator = (s) => {
+        return s === "==" || s === ">" || s === "<" || s === ">=" || s === "<=" || s === "!=";
+    }
+
+    let lineReading = 0;
+
+    let getObjectAt = (depth) => {
+        let obj = commands;
+        for (let i = 0; i < depth; i++) {
+            try {
+                obj = obj.commands[obj.commands.length - 1];
+            } catch (e) {
+                err(lineReading, "issue with depth, did you use an extra colon?");
+            }
+        }
+        return obj;
+    }
+
+    let parseArgs = (argLiteral="") => {
+        //remove {}
+        argLiteral = argLiteral.substring(1, argLiteral.length - 1)
+
+        let args = [];
+
+        for (let arg of argLiteral.split(",")) {
+            args.push(arg.trim());
+        }
+
+        return args;
+    }
+
+    let lastDepth = 0;
+
+    let inCommandBuilder = false;
+    let inLambda = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        lineReading = i;
+
+        if (lines[i].startsWith(`//`)) continue;
+
+        if (datatypes.includes(lines[i].split(" ")[0])) {
+            let splt = lines[i].split(" ");
+
+            if (splt.length < 3) {
+                err(i, "issue with declaring variable.")
+            }
+
+            variables.push({
+                type: splt[0],
+                name: splt[1],
+                data: lines[i].split("=")[1].trimStart()
+            })
+
+            continue;
+        }
+
+        let depth = 0;
+
+        while (lines[i].startsWith(":")) {
+            let sp = lines[i].split("");
+            sp.shift();
+            lines[i] = sp.join("");
+
+            depth++;
+        }
+
+        lines[i] = lines[i].trimStart();
+
+        if (depth < lastDepth && inLambda) {
+            inLambda = false;
+        }
+
+        let line = lines[i];
+
+        if (inLambda) {
+            const splt = line.split(" ");
+
+            if (!Object.keys(getObjectAt(depth)).includes("lambda")) {
+                err(i, "cannot use a lambda expression with this type of command!")
+            }
+
+            if (line.startsWith("set")) {
+                getObjectAt(depth).lambda.push({
+                    expression: "set",
+                    data: {
+                        setting: splt[1],
+                        value: line.split(" to ")[1]
+                    }
+                })
+            } else if (line.startsWith("print")) {
+                getObjectAt(depth).lambda.push({
+                    expression: "print",
+                    data: {
+                        msg: line.replace("print ", "")
+                    }
+                })
+            }
+
+            lastDepth = depth;
+            continue;
+        }
+
+        if (line.startsWith("run")) {
+            const args = line.split(" ").length > 2 ? parseArgs(line.split(" ")[2]) : [];
+
+            getObjectAt(depth).commands.push({
+                type: line.split(" ")[1],
+                commands: [],
+                lambda: [],
+                lambdaVariables: [],
+                args
+            })
+
+            if (args.length > 0) {
+                if (args[args.length - 1].startsWith("lambda")) {
+                    inLambda = true;
+
+                    let replc = args[args.length - 1].replace("lambda", "");
+                    getObjectAt(depth).commands[getObjectAt(depth).commands.length - 1].lambdaVariables = parseArgs(replc);
+                }
+            }
+        } else if (line.startsWith("if")) {
+            if (!validOperator(line.split(" ")[2])) {
+                err(i, "not a valid operator for a if statement!")
+            }
+
+            getObjectAt(depth).commands.push({
+                type: "if",
+                leftSide: line.split(" ")[1],
+                operator: line.split(" ")[2],
+                rightSide: line.split(" ")[3],
+                commands: [],
+            })
+        } else if (line.startsWith("stop")) {
+            getObjectAt(depth).commands.push({
+                type: "stop",
+            })
+        }
+
+        lastDepth = depth;
+    }
+
+    return {
+        variables,
+        commands
+    }
+}

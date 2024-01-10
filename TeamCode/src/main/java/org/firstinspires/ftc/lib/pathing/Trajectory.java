@@ -214,29 +214,6 @@ public class Trajectory extends Command {
             return;
         }
 
-        Unit currentRealVelocity = m_driveSubsystem.getVelocity();
-
-        //get the centripetal force at the current point.
-        double centripetalForce = pathObject.centripetalForce(
-                currentPathTValue,
-                m_constants.getMass(),
-                currentRealVelocity
-        );
-
-        //calculate the new motion direction and magnitude using the centripetal force.
-        Cartesian2d newMotionDirection = Physics.calculateRobotMotion(
-                centripetalForce,
-                currentRealVelocity.get(Unit.Type.Meters), //m/s
-                new Cartesian2d(velocities).getRotation(),
-                m_constants.getMass(), //kg
-                m_constants.getDeltaTime()
-        );
-
-        telemetry().addLine("centripetal force: " + centripetalForce);
-        telemetry().addLine("current velocity: " + currentRealVelocity.toString());
-        telemetry().addLine("new motion direction: " + newMotionDirection.toString());
-        telemetry().update();
-
         if (!m_constants.usePhysicsCalculations()) {
             m_driveSubsystem.drive(
                     velocities,
@@ -247,13 +224,32 @@ public class Trajectory extends Command {
             return;
         }
 
-        //convert the new motion direction to a translation2d (velocities that we can use to drive the robot
-        Translation2d motionValues = newMotionDirection.toTranslation2d();
+        Unit currentRealVelocity = m_driveSubsystem.getVelocity();
+
+        double centripetalForceMultiplier = m_constants.getCentripetalForceMultiplier();
+
+        //get the centripetal force at the current point.
+        double centripetalForce = pathObject.centripetalForce(
+                currentPathTValue,
+                m_constants.getMass(),
+                currentRealVelocity
+        );
+
+        //calculate the new motion direction and magnitude using the centripetal force.
+        Translation2d newMotionDirection = Physics.calculateRobotMotion(
+                centripetalForce * centripetalForceMultiplier,
+                velocities.rotateBy(Rotation2d.fromDegrees(90))
+        );
+
+        telemetry().addLine("centripetal force: " + centripetalForce);
+        telemetry().addLine("current velocity: " + currentRealVelocity.toString());
+        telemetry().addLine("new motion direction: " + newMotionDirection.toString());
+        telemetry().update();
 
         //drive the robot
         m_driveSubsystem.drive(
-                motionValues,
-                rotation_speed,
+                newMotionDirection.rotateBy(Rotation2d.fromDegrees(-90)),
+                Rotation2d.zero(),
                 true,
                 m_constants.getOpenLoop()
         );

@@ -11,7 +11,7 @@ package org.firstinspires.ftc.lib.math;
 // the WPILib BSD license file in the root directory of this project.
 
 /** Implements a PID control loop. */
-public class WPIPIDController {
+public class WPIPIDController extends PIDController {
     // Factor for "proportional" control
     private double m_kp;
 
@@ -79,6 +79,8 @@ public class WPIPIDController {
      * @param period The period between controller updates in seconds. Must be non-zero and positive.
      */
     public WPIPIDController(double kp, double ki, double kd, double period) {
+        super(kp, ki, kd);
+
         m_kp = kp;
         m_ki = ki;
         m_kd = kd;

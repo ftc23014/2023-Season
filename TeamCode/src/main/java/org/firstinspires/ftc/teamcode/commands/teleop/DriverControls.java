@@ -6,9 +6,11 @@ import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.odometry.MecanumOdometry;
 import org.firstinspires.ftc.lib.systems.commands.Command;
+import org.firstinspires.ftc.teamcode.commands.AprilTagAutoMove;
 import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 import java.util.Arrays;
 
@@ -17,6 +19,7 @@ public class DriverControls extends Command {
     private Gamepad gamepad1;
     private Intake m_intakeSubsystem;
     private TurnToCommand m_turnToCommand;
+    private AprilTagAutoMove m_aprilTagAutoMove;
 
     public DriverControls(Gamepad gamepad1, MecanumDriveSubsystem driveSubsystem, Intake intake) {
         super();
@@ -37,6 +40,7 @@ public class DriverControls extends Command {
     @Override
     public void execute() {
 
+
         if (gamepad1.x) {
             m_intakeSubsystem.deploy_kicker_func();
         } else if (gamepad1.y) {
@@ -52,6 +56,7 @@ public class DriverControls extends Command {
         }
 
         if (!gamepad1.b) {
+
             if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || Math.abs(gamepad1.right_stick_x) > 0.05) {
                 m_mecanumDriveSubsystem.drive(
                         new Translation2d(
@@ -65,8 +70,17 @@ public class DriverControls extends Command {
             } else {
                 m_mecanumDriveSubsystem.stop_motors();
             }
-        } else {
-            m_turnToCommand.execute();
+        } else if (gamepad1.b) {
+            if (!m_turnToCommand.hasFinished()) {
+                m_turnToCommand.execute();
+            }
+        } else if (gamepad1.a) {
+            if (m_aprilTagAutoMove == null) {
+                m_aprilTagAutoMove = new AprilTagAutoMove(VisionSubsystem.getInstance(), AprilTagAutoMove.Side.Red, AprilTagAutoMove.Position.Right);
+                m_aprilTagAutoMove.init();
+            } else if (!m_aprilTagAutoMove.hasFinished()) {
+                m_aprilTagAutoMove.execute();
+            }
         }
 
         MecanumOdometry odometry = m_mecanumDriveSubsystem.getOdometry();

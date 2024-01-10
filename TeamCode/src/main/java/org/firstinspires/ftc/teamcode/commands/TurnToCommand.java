@@ -18,7 +18,7 @@ public class TurnToCommand extends Command {
     public TurnToCommand(Rotation2d rotationGoal, MecanumDriveSubsystem driveSubsystem) {
         m_rotationGoal = rotationGoal;
         m_rotationController = new WPIPIDController(0.005, 0, 0);
-        m_rotationController.setTolerance(2);
+        m_rotationController.setTolerance(1.5);
 
         m_rotationController.enableContinuousInput(0, 360);
 

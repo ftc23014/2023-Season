@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.math.PIDController;
 import org.firstinspires.ftc.lib.math.Unit;
+import org.firstinspires.ftc.lib.math.WPIPIDController;
 
 public class Constants {
 
@@ -17,6 +18,7 @@ public class Constants {
         );
 
         public static final boolean usePhysicsCalculations = false;
+        public static final double centripetalForceMultiplier = -0.5d;
     }
 
 }

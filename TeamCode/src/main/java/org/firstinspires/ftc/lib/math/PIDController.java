@@ -28,8 +28,14 @@ public class PIDController {
         m_lastSetpoint = 0;
     }
 
+    public double[] getPID() {
+        return new double[] { m_kP, m_kI, m_kD };
+    }
+
     public void reset() {
         m_integral = 0;
+        m_lastSetpoint = 0;
+        m_setpoint = 0;
     }
 
     public boolean initialized() {

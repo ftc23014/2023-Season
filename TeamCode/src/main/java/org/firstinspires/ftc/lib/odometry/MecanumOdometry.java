@@ -138,7 +138,7 @@ public class MecanumOdometry {
         Pose2d p2 = m_lastPositions.get(2).fst;
         long deltaTime2 = m_lastPositions.get(2).snd - m_lastPositions.get(1).snd;
         Pose2d p3 = m_lastPositions.get(3).fst;
-        long timestamp3 = m_lastPositions.get(3).snd - m_lastPositions.get(2).snd;
+        long deltaTime3 = m_lastPositions.get(3).snd - m_lastPositions.get(2).snd;
 
         double d1 = p1.getPosition().distance(p2.getPosition()) / (deltaTime1 / 1000d);
         double d2 = p2.getPosition().distance(p3.getPosition()) / (deltaTime2 / 1000d);
@@ -150,6 +150,26 @@ public class MecanumOdometry {
                 new Unit(useAverage ? ((d1 + d2) / 2d) : d1, Unit.Type.Meters),
                 new Unit(a1, Unit.Type.Meters)
         );
+    }
+
+    public Unit getXVelocity() {
+        Pose2d p1 = m_lastPositions.get(1).fst;
+        long deltaTime1 = m_lastPositions.get(1).snd - m_lastPositions.get(0).snd;
+        Pose2d p2 = m_lastPositions.get(2).fst;
+
+        double d1 = (p1.getX() - p2.getX()) / (deltaTime1 / 1000d);
+
+        return new Unit(d1, Unit.Type.Meters);
+    }
+
+    public Unit getYVelocity() {
+        Pose2d p1 = m_lastPositions.get(1).fst;
+        long deltaTime1 = m_lastPositions.get(1).snd - m_lastPositions.get(0).snd;
+        Pose2d p2 = m_lastPositions.get(2).fst;
+
+        double d1 = (p1.getY() - p2.getY()) / (deltaTime1 / 1000d);
+
+        return new Unit(d1, Unit.Type.Meters);
     }
 
     //TODO: work on for driving correction + more natural driving

@@ -184,9 +184,8 @@ public class FourPointBezier {
      * @return The centripetal force of the Bézier curve at t in kg/m (N)
      */
     public double centripetalForce(double t, double mass_in_kg, Unit velocity_at_t) {
-        double r = 1/kappa(t);
-
-        return mass_in_kg * (pow(velocity_at_t.get(Unit.Type.Meters), 2) / r);
+        // F_C = m*v^2/r, r = 1/kappa, so we can simplify it to F_C = m*v^2*kappa
+        return mass_in_kg * (pow(velocity_at_t.get(Unit.Type.Meters), 2) * kappa(t));
     }
 
     /***

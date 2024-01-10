@@ -1,24 +1,95 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import fi.iki.elonen.NanoHTTPD;
+import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
+import org.firstinspires.ftc.lib.math.Unit;
 import org.firstinspires.ftc.lib.pathing.Waypoint;
 import org.firstinspires.ftc.lib.pathing.segments.BezierSegment;
+import org.firstinspires.ftc.lib.server.api.ApiHandler;
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.TeleOp;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.openftc.apriltag.AprilTagPose;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VisionSubsystem extends Subsystem {
+
+    private static VisionSubsystem instance;
+
+    public static VisionSubsystem getInstance() {
+        return instance;
+    }
+
+    public static class VisionPose extends ApiHandler {
+        @Override
+        public String getRoute() {
+            return "/api/vision_pose";
+        }
+
+        @Override
+        public boolean exactMatch() {
+            return false;
+        }
+
+        @Override
+        public NanoHTTPD.Response getResponse(NanoHTTPD.IHTTPSession session) {
+            Gson gson = new Gson();
+            JsonObject obj = new JsonObject();
+
+            obj.addProperty("x", instance.getCurrentPosition().getX());
+            obj.addProperty("y", instance.getCurrentPosition().getY());
+            obj.addProperty("yaw", instance.getCurrentRotation().getDegrees());
+
+            JsonArray detections = new JsonArray();
+
+            for (AprilTagDetection detection : instance.currentDetections) {
+                JsonObject detectionObj = new JsonObject();
+                detectionObj.addProperty("id", detection.id);
+                detectionObj.addProperty(
+                        "x",
+                        Unit.convert(detection.ftcPose.x, Unit.Type.Inches, Unit.Type.Meters)
+                );
+                detectionObj.addProperty(
+                        "y",
+                        Unit.convert(detection.ftcPose.y, Unit.Type.Inches, Unit.Type.Meters)
+                );
+                detectionObj.addProperty(
+                        "real_x",
+                        Unit.convert(
+                                -AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(detection.id).fieldPosition.getData()[1] + (0.5 * Field.field.getWidth().get(Unit.Type.Inches)),
+                                Unit.Type.Inches, Unit.Type.Meters
+                        )
+                );
+                detectionObj.addProperty(
+                        "real_y",
+                        Unit.convert(
+                                -AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(detection.id).fieldPosition.getData()[0] + (0.5 * Field.field.getHeight().get(Unit.Type.Inches)),
+                                Unit.Type.Inches, Unit.Type.Meters
+                        )
+                );
+                detectionObj.addProperty("yaw", detection.ftcPose.yaw);
+                detections.add(detectionObj);
+            }
+
+            obj.add("detections", detections);
+
+            return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", gson.toJson(obj));
+        }
+    }
 
     public static enum PathMakingStrategy {
         BETWEEN,
@@ -43,6 +114,8 @@ public class VisionSubsystem extends Subsystem {
     private Translation2d currentPose;
     private Rotation2d currentRotation;
 
+    private List<AprilTagDetection> currentDetections = new ArrayList<>();
+
     @Override
     public void init() {
         aprilTag = new AprilTagProcessor.Builder()
@@ -59,6 +132,8 @@ public class VisionSubsystem extends Subsystem {
                 .setCamera(getHardwareMap().get(WebcamName.class, "Webcam 1"))
                 .addProcessors(aprilTag)
                 .build();
+
+        instance = this;
     }
 
     @Override
@@ -90,8 +165,8 @@ public class VisionSubsystem extends Subsystem {
 
     boolean verbose = false;
 
-    public BezierSegment pathToTarget(Translation2d target, PathMakingStrategy strat) {
-        Translation2d currentPos = getCurrentPosition();
+    public static BezierSegment pathToTarget(Translation2d target, PathMakingStrategy strat) {
+        Translation2d currentPos = instance.getCurrentPosition();
 
         Translation2d controlpoint1;
         Translation2d controlpoint2;
@@ -133,12 +208,12 @@ public class VisionSubsystem extends Subsystem {
                 new Waypoint(
                         controlpoint1,
                         Rotation2d.zero(),
-                        Waypoint.Type.HARD
+                        Waypoint.Type.SOFT
                 ),
                 new Waypoint(
                         controlpoint2,
                         Rotation2d.zero(),
-                        Waypoint.Type.HARD
+                        Waypoint.Type.SOFT
                 ),
                 new Waypoint(
                         target,
@@ -147,26 +222,53 @@ public class VisionSubsystem extends Subsystem {
                 )
         );
 
-        if (verbose) {
+        if (instance.verbose) {
             System.out.println("Generated path: " + path.toString());
         }
 
         return path;
     }
 
+    public static Translation2d convertTagFieldPosition(VectorF vec) {
+        return new Translation2d(
+                -vec.getData()[1] + (0.5 * Field.field.getWidth().get(Unit.Type.Inches)),
+                -vec.getData()[0] + (0.5 * Field.field.getHeight().get(Unit.Type.Inches))
+        );
+    }
+
     private void updatePose() {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        currentDetections = aprilTag.getDetections();
+
+        Translation2d[] detections = new Translation2d[currentDetections.size()];
 
         if (!currentDetections.isEmpty()) {
-            currentPose = new Translation2d(
-                    currentDetections.get(0).ftcPose.x,
-                    currentDetections.get(0).ftcPose.y
-            );
+            int i = 0;
+            for (AprilTagDetection detection : currentDetections) {
+                AprilTagMetadata tag = AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(detection.id);
+                AprilTagPoseFtc pose = detection.ftcPose;
 
-            currentRotation = Rotation2d.fromDegrees(
-                    currentDetections.get(0).ftcPose.yaw
-            );
+                //use the tag data and the pose data to calculate the robot's position
+                Translation2d tagRelPos = convertTagFieldPosition(tag.fieldPosition);
+
+                detections[i] = new Translation2d(
+                        Unit.convert(tagRelPos.getX() - pose.x, Unit.Type.Inches, Unit.Type.Meters),
+                        Unit.convert(tagRelPos.getY() + pose.y, Unit.Type.Inches, Unit.Type.Meters) + (0.2d)
+                );
+
+                //fix later?
+                currentRotation = Rotation2d.fromDegrees(
+                        pose.yaw
+                );
+
+                i++;
+            }
+
+            currentPose = Translation2d.average(detections);
         }
+    }
+
+    public boolean detecting() {
+        return !currentDetections.isEmpty();
     }
 
     public Pose2d getCurrentPose() {

@@ -152,6 +152,7 @@ public class Autonomous extends OpMode {
         AutonomousConstants constants = Constants.Autonomous.autonomousConstants;
 
         constants.setUsePhysicsCalculations(Constants.Autonomous.usePhysicsCalculations);
+        constants.setCentripetalForceMultiplier(Constants.Autonomous.centripetalForceMultiplier);
 
         //NEGATIVE is left,
         //POSITIVE is right
