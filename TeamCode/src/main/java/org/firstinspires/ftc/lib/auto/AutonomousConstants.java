@@ -17,7 +17,7 @@ public class AutonomousConstants {
 
     private boolean open_loop_drive = true;
 
-    private boolean use_physics_calculations = true;
+    private boolean use_physics_calculations = false;
 
     private double centripetalForceMultiplier = 1d;
 

@@ -64,6 +64,15 @@ public class Intake extends Subsystem {
         compliantWheelsServo.setPower(-1);
     }
 
+    public Command outtake_auto() {
+        return new InstantCommand(this::outtake_auto_func);
+    }
+
+    public void outtake_auto_func() {
+        bootKickerServo.setPower(-0.15);
+        bootKicker2Servo.setPower(-0.15);
+    }
+
     public Command stop_cmd() {
         return new InstantCommand(this::stop);
     }

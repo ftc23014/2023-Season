@@ -18,6 +18,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -108,7 +109,7 @@ public class Autonomous extends OpMode {
     private PathSelectionFlags m_pathSelectionFlag;
 
     private HuskyLensDetection m_huskyLensDetection;
-   // private Intake m_intakeSubsystem;
+    private Intake m_intakeSubsystem;
     //private Spatula m_spatulaSubsystem;
     //private DualLinearSlide m_linearSlideSubsystem;
 
@@ -136,7 +137,7 @@ public class Autonomous extends OpMode {
 
         m_driveSubsystem = new MecanumDriveSubsystem();
         m_sensorConeHuskyLensSubsystem = new SensorConeHuskyLensSubsystem();
-       // m_intakeSubsystem = new Intake();
+        m_intakeSubsystem = new Intake();
        // m_spatulaSubsystem = new Spatula();
         //m_linearSlideSubsystem = new DualLinearSlide();
 
@@ -236,39 +237,160 @@ public class Autonomous extends OpMode {
                     new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.LEFT;
                     },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(90), m_driveSubsystem
+                            new SequentialCommand(
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(-1.5, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(1.5, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(90), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(4, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny back from the tape
+                                            new Translation2d(0, 0.5),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop()
+
+
                             )
                     ),
-                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
+                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.RIGHT;
                     },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-                            )
-                    ), // otherwise just stay facing middle
-                    new WaitCommand(0.1),
-                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
-                            new Translation2d(0, 0.3),
-                            Rotation2d.zero(),
-                            false,
-                            true
-                    ),
-                    new WaitCommand(0.2),
-                    m_driveSubsystem.stop(),
-                    new WaitCommand(0.1),
-                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
-                    new WaitCommand(0.5),
-                    //m_intakeSubsystem.stop_cmd(),
-                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-                            new Translation2d(0, -0.3),
-                            Rotation2d.zero(),
-                            false,
-                            true
-                    ),
-                    new WaitCommand(0.2),
-                    m_driveSubsystem.stop(),
+                            new SequentialCommand(
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(0, 0.7),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(0.75, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(-0.75, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(-90), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(-4, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(0, 0.3),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop()
 
+                            )
+                    ),
+
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
+                    },
+                            new SequentialCommand(
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(0, -0.2),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
+                                            new Translation2d(0, 0.2),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive a tiny back from the tape
+                                            new Translation2d(0, 0.5),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop()
+
+                            )),
+                    // otherwise just stay facing middle
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    m_intakeSubsystem.deploy_kicker(),
+                    new WaitCommand(0.1),
+                    m_intakeSubsystem.outtake_auto(),
+                    new WaitCommand(5),
+                    m_intakeSubsystem.stop_cmd(),
+//                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+//                            new Translation2d(0, -0.3),
+//                            Rotation2d.zero(),
+//                            false,
+//                            true
+//                    ),
+                    new WaitCommand(0.2),
+                    m_driveSubsystem.stop(),
+                    new StallStop(),
                     // end huskylens detection procedure
                     new Trajectory( // go towards backboard
                             m_driveSubsystem,
@@ -320,33 +442,12 @@ public class Autonomous extends OpMode {
                     new WaitCommand(0.1),
                     m_driveSubsystem.stop(),
                     new WaitCommand(0.1),
-                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
-                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
-                    },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(90), m_driveSubsystem
-                            )
-                    ),
-                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
-                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
-                    },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-                            )
-                    ), // otherwise just stay facing middle
-                    new WaitCommand(0.1),
-                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
-                            new Translation2d(0, 0.3),
-                            Rotation2d.zero(),
-                            false,
-                            true
-                    ),
                     new WaitCommand(0.2),
                     m_driveSubsystem.stop(),
                     new WaitCommand(0.1),
-                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
+                    m_intakeSubsystem.intake_boot_kicker(),
                     new WaitCommand(0.5),
-                    //m_intakeSubsystem.stop_cmd(),
+                    m_intakeSubsystem.stop_cmd(),
                     m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
                             new Translation2d(0, -0.3),
                             Rotation2d.zero(),
@@ -425,21 +526,6 @@ public class Autonomous extends OpMode {
                         new WaitCommand(0.1),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        new IfOrSkipCommand(() -> { // if left tape is detected, turn towards
-                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
-                            },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(90), m_driveSubsystem
-                            )
-                        ),
-                        new IfOrSkipCommand(() -> {
-                                return m_huskyLensDetection == HuskyLensDetection.RIGHT;
-                            },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-                            )
-                        ),
-                        new WaitCommand(0.1),
                         m_driveSubsystem.driveCommand(
                                 new Translation2d(0, 0.3),
                                 Rotation2d.zero(),
@@ -449,9 +535,9 @@ public class Autonomous extends OpMode {
                         new WaitCommand(0.2),
                         m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        //m_intakeSubsystem.intake_cmd(0.2),
+                        m_intakeSubsystem.outtake_boot_kicker(),
                         new WaitCommand(0.5),
-                        //m_intakeSubsystem.stop_cmd(),
+                        m_intakeSubsystem.stop_cmd(),
                         m_driveSubsystem.driveCommand(
                                 new Translation2d(0, -0.3),
                                 Rotation2d.zero(),
@@ -462,61 +548,7 @@ public class Autonomous extends OpMode {
                         m_driveSubsystem.stop(),
                         new StallStop(), //DON'T CONTINUE
                         new WaitCommand(0.1),
-                        new IfOrSkipCommand(
-                            () -> {
-                                return m_huskyLensDetection != HuskyLensDetection.RIGHT;
-                            },
-                            new TurnToCommand(
-                                Rotation2d.fromDegrees(-90), m_driveSubsystem
-                            )
-                        ),
-                        new IfOrSkipCommand(
-                            () -> {
-                                return m_huskyLensDetection != HuskyLensDetection.LEFT;
-                            },
-                            new Trajectory(
-                                    m_driveSubsystem,
-                                    BezierSegment.loadFromResources(R.raw.to_backboard_from_place_straight)
-                            )
-                        ),
-                        new IfOrSkipCommand(
-                            () -> {
-                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
-                            },
-                            new Trajectory(
-                                    m_driveSubsystem,
-                                    BezierSegment.loadFromResources(R.raw.to_backboard_from_place_curved)
-                            )
-                        ),
-                        m_driveSubsystem.stop(),
                         new WaitCommand(0.1),
-                        new IfOrSkipCommand(
-                                () -> {
-                                    return m_huskyLensDetection == HuskyLensDetection.LEFT;
-                                },
-                                new Trajectory(
-                                        m_driveSubsystem,
-                                        BezierSegment.loadFromResources(R.raw.left_backboard_place)
-                                )
-                        ),
-                        new IfOrSkipCommand(
-                                () -> {
-                                    return m_huskyLensDetection == HuskyLensDetection.RIGHT;
-                                },
-                                new Trajectory(
-                                        m_driveSubsystem,
-                                        BezierSegment.loadFromResources(R.raw.right_backboard_place)
-                                )
-                        ),
-                        new IfOrSkipCommand(
-                                () -> {
-                                    return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
-                                },
-                                new Trajectory(
-                                        m_driveSubsystem,
-                                        BezierSegment.loadFromResources(R.raw.middle_backboard_place)
-                                )
-                        ),
                         m_driveSubsystem.stop(),
                         new StallStop(),
                         //m_linearSlideSubsystem.power(0.2),

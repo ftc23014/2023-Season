@@ -66,9 +66,9 @@ public class SensorPixelHuskyLens extends LinearOpMode {
     }
 
     private static int locateBlockPlacement(int blockX) {
-        if (blockX < 100) {
+        if (blockX < 30) {
             return -1;
-        } else if (blockX > 100 && blockX < 250) {
+        } else if (blockX > 100 && blockX < 300) {
             return 0;
         } else {
             return 1;
