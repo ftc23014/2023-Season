@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.lib.systems.commands;
 
 import org.firstinspires.ftc.lib.BooleanLambda;
-import org.firstinspires.ftc.lib.pathing.Trajectory;
+import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 
 public class IfOrSkipCommand extends Command {
     private Command m_command;
