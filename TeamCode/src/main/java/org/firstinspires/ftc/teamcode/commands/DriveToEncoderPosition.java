@@ -21,10 +21,8 @@ public class DriveToEncoderPosition extends Command {
 
     private double minSpeed = 0.2;
 
-    public DriveToEncoderPosition(Translation2d position, PIDController xcontroller, PIDController ycontroller, Unit distanceThreshold) {
+    public DriveToEncoderPosition(Translation2d position, Unit distanceThreshold) {
         this.position = position;
-        this.xController = xcontroller;
-        this.yController = ycontroller;
         this.constants = Constants.Autonomous.autonomousConstants;
         this.driveSubsystem = MecanumDriveSubsystem.instance();
         this.distanceThreshold = distanceThreshold;

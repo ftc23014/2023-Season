@@ -112,18 +112,8 @@ public class AprilTagAutoMove extends Command {
 
         trajectory = new DriveToEncoderPosition(
             tagPos,
-            new PIDController(
-                    0.4,
-                    0,
-                    0
-            ),
-            new PIDController(
-                    0.4,
-                    0,
-                    0
-            ),
             new Unit(3, Unit.Type.Centimeters)
-        ).setmin(3);
+        ).setmin(0.3);
     }
 
     boolean startedTrajectoryYet = true;

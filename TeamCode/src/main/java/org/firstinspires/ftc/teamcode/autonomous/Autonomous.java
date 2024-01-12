@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.AutoPixelPlacer;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
@@ -123,6 +124,7 @@ public class Autonomous extends OpMode {
     private DualLinearSlide m_linearSlideSubsystem;
     private VisionSubsystem m_visionSubsystem;
     private AutoPixelPlacer m_autoPixelPlacerSubsystem;
+    private Bucket m_bucketSubsystem;
 
     private boolean m_autonomousEnabled;
 
@@ -153,6 +155,7 @@ public class Autonomous extends OpMode {
         m_linearSlideSubsystem = new DualLinearSlide();
         m_visionSubsystem = new VisionSubsystem();
         m_autoPixelPlacerSubsystem = new AutoPixelPlacer();
+        m_bucketSubsystem = new Bucket();
 
         Robot.init();
         Subsystems.onInit();
@@ -176,6 +179,7 @@ public class Autonomous extends OpMode {
 //                new InstantCommand
 //        )
         if (m_autonomousMode == AutonomousMode.BASIC_AUTO) {
+
             auto = new PlannedAuto(
                     constants,
                     new InstantCommand(() -> {
@@ -199,6 +203,7 @@ public class Autonomous extends OpMode {
                     new WaitCommand(2),
                     m_driveSubsystem.stop()
             );
+
         } else if (m_autonomousMode == AutonomousMode.TESTING) {
             auto = new PlannedAuto(
                     constants,
@@ -213,16 +218,6 @@ public class Autonomous extends OpMode {
                             new Translation2d(
                                     Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
                                     Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
-                            ),
-                            new WPIPIDController(
-                                    0.9,
-                                    0.01,
-                                    0
-                            ),
-                            new WPIPIDController(
-                                    0.9,
-                                    0.01,
-                                    0
                             ),
                             new Unit(3, Unit.Type.Centimeters)
                     ),
@@ -274,6 +269,8 @@ public class Autonomous extends OpMode {
                                     telemetry().addLine("ERROR WITH HUSKY?");
                                 }
 
+                                detected = 0;
+
                                 //Manual Detection - TODO: Disable
                                 m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
                                 telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
@@ -296,16 +293,6 @@ public class Autonomous extends OpMode {
                                             Unit.convert(45.5, Unit.Type.Inches, Unit.Type.Meters),
                                             Unit.convert(52.25, Unit.Type.Inches, Unit.Type.Meters)
                                     ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
                             m_autoPixelPlacerSubsystem.setDeploy(),
@@ -325,16 +312,6 @@ public class Autonomous extends OpMode {
                                             Unit.convert(10, Unit.Type.Inches, Unit.Type.Meters),
                                             Unit.convert(57.25, Unit.Type.Inches, Unit.Type.Meters)
                                     ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
                             m_driveSubsystem.stop(),
@@ -344,41 +321,11 @@ public class Autonomous extends OpMode {
                                             Unit.convert(10, Unit.Type.Inches, Unit.Type.Meters),
                                             Unit.convert(25.75, Unit.Type.Inches, Unit.Type.Meters)
                                     ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
                             new WaitCommand(0.1),
-                            new DriveToEncoderPosition(
-                                    new Translation2d(
-                                            Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
-                                            Unit.convert(25.75, Unit.Type.Inches, Unit.Type.Meters)
-                                    ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
-                                    new WPIPIDController(
-                                            0.9,
-                                            0.01,
-                                            0
-                                    ),
-                                    new Unit(3, Unit.Type.Centimeters)
-                            ),
-                            new WaitCommand(0.1),
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-                            )
-                            )),
+                            m_driveSubsystem.stop()
+                    )),
                     new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.RIGHT;
                     },
@@ -421,19 +368,108 @@ public class Autonomous extends OpMode {
                                     m_driveSubsystem.stop(),
                                     new WaitCommand(0.1),
                                     m_driveSubsystem.driveCommand(
-                                            new Translation2d(0, 0.4),
+                                            new Translation2d(0, 0.2),
                                             Rotation2d.zero(),
                                             false,
                                             true),
-                                    new WaitCommand(0.3),
+                                    new WaitCommand(0.2),
                                     m_autoPixelPlacerSubsystem.setDeploy(),
                                     new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setRetract(),
                                     new WaitCommand(0.25),
                                     m_driveSubsystem.stop(),
-                                    new WaitCommand(0.1)
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    -0.3,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            true,
+                                            true
+                                    )
                             )
-                            ));
+                    ),
+                    //drive to APRIL TAG position from here!
+//                    new DriveToEncoderPosition(
+//                            new Translation2d(
+//                                    Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                    Unit.convert(34.75, Unit.Type.Inches, Unit.Type.Meters)
+//                            ),
+//                            new Unit(3, Unit.Type.Centimeters)
+//                    ),
+                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                    },
+                            new AprilTagAutoMove(
+                                    m_visionSubsystem,
+                                    AprilTagAutoMove.Side.Blue,
+                                    AprilTagAutoMove.Position.Right
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
+                    },
+                            new AprilTagAutoMove(
+                                    m_visionSubsystem,
+                                    AprilTagAutoMove.Side.Blue,
+                                    AprilTagAutoMove.Position.Center
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                    },
+                            new AprilTagAutoMove(
+                                    m_visionSubsystem,
+                                    AprilTagAutoMove.Side.Blue,
+                                    AprilTagAutoMove.Position.Left
+                            )
+                    ),
+                    m_driveSubsystem.stop(),
+                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
+                    m_bucketSubsystem.setDeploy(),
+                    new WaitCommand(2),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, 0.2),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new IfOrSkipCommand(
+                            () -> {
+                                //If position is middle or right
+                                return m_huskyLensDetection == HuskyLensDetection.MIDDLE || m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                            },
+                            new WaitCommand(1.2)
+                    ),
+                    new IfOrSkipCommand(
+                            () -> {
+                                //If position is left
+                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                            },
+                            new WaitCommand(1.5)
+                    ),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, -0.2),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(1),
+                    m_driveSubsystem.stop(),
+                    m_bucketSubsystem.setRetract(),
+                    new WaitCommand(1.5),
+                    m_bucketSubsystem.setRetractPusher(),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
+                    new TurnToCommand(Rotation2d.fromDegrees(0), m_driveSubsystem)
+            );
         } else if (m_autonomousMode == AutonomousMode.BLUE_RIGHT_AUTO) {
             auto = new PlannedAuto(
                     constants,
