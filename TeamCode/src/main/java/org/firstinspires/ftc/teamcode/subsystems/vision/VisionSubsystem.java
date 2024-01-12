@@ -143,8 +143,12 @@ public class VisionSubsystem extends Subsystem {
 
     @Override
     public void onDisable() {
-        //release the camera for other uses
-        myVisionPortal.getActiveCamera().close();
+        try {
+            //release the camera for other uses
+            myVisionPortal.getActiveCamera().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

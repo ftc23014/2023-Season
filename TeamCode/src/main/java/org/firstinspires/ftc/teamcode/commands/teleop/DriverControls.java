@@ -69,7 +69,13 @@ public class DriverControls extends Command {
             } else {
                 m_mecanumDriveSubsystem.stop_motors();
             }
+
+            m_turnToCommand = null;
         } else if (gamepad1.b) {
+            if (m_turnToCommand == null) {
+                m_turnToCommand = new TurnToCommand(Rotation2d.fromDegrees(-90), m_mecanumDriveSubsystem);
+                m_turnToCommand.init();
+            }
             if (!m_turnToCommand.hasFinished()) {
                 m_turnToCommand.execute();
             }

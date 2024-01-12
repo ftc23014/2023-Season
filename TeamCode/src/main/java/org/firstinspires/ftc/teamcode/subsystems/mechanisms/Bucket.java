@@ -52,7 +52,11 @@ public class Bucket extends Subsystem {
 
 
     public Command setDeploy() {
-        return new InstantCommand(this::deploy);
+        return new InstantCommand(this::deployBoth);
+    }
+
+    public Command setRetractPusher() {
+        return new InstantCommand(this::retractPusher);
     }
 
     public void deploy() {
@@ -66,11 +70,21 @@ public class Bucket extends Subsystem {
 //            disableCMD = null;
 //        }
 
-        bucketFlipperServo.setPosition(0.92 /* flipped servo position*/);
+        bucketFlipperServo.setPosition(0.62 /* flipped servo position*/);
+    }
+
+    public void deployBoth() {
+        deploy();
+        deployPusher();
+    }
+
+    public void retractBoth() {
+        retract();
+        retractPusher();
     }
 
     public void deployPusher() {
-        bucketPusherServo.setPosition(0.75 /* pushed bucket position */);
+        bucketPusherServo.setPosition(0.60 /* pushed bucket position */);
     }
 
     public void retractPusher() {
@@ -82,7 +96,7 @@ public class Bucket extends Subsystem {
     }
 
     public void retract() {
-        bucketFlipperServo.setPosition(0.36);
+        bucketFlipperServo.setPosition(0.105);
     }
 
     public Command stopCommand() {

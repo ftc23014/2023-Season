@@ -41,7 +41,8 @@ public class DualLinearSlide extends Subsystem {
     public enum SlidePosition {
         LOW(new Unit(10, Unit.Type.Centimeters)),
         MIDDLE(new Unit(20, Unit.Type.Centimeters)),
-        HIGH(new Unit(30, Unit.Type.Centimeters));
+        HIGH(new Unit(30, Unit.Type.Centimeters)),
+        RETRACTED(new Unit(0, Unit.Type.Centimeters));
 
         private Unit height;
 
@@ -180,9 +181,22 @@ public class DualLinearSlide extends Subsystem {
     }
 
     public Command position(SlidePosition height) {
-        return new InstantCommand(() -> {
-            setPosition(height.getHeight());
-        });
+        return new Command() {
+            @Override
+            public void init() {
+                setPosition(height.getHeight());
+            }
+
+            @Override
+            public void execute() {
+
+            }
+
+            @Override
+            public boolean hasFinished() {
+                return Math.abs(getLeftPosition() - height.getHeight().get(Unit.Type.Centimeters)) < threshold.get(Unit.Type.Centimeters);
+            }
+        };
     }
 
     public Command power(double p) {

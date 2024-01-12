@@ -19,6 +19,8 @@ public class DriveToEncoderPosition extends Command {
 
     private Unit distanceThreshold;
 
+    private double minSpeed = 0.2;
+
     public DriveToEncoderPosition(Translation2d position, PIDController xcontroller, PIDController ycontroller, Unit distanceThreshold) {
         this.position = position;
         this.xController = xcontroller;
@@ -26,6 +28,11 @@ public class DriveToEncoderPosition extends Command {
         this.constants = Constants.Autonomous.autonomousConstants;
         this.driveSubsystem = MecanumDriveSubsystem.instance();
         this.distanceThreshold = distanceThreshold;
+    }
+
+    public DriveToEncoderPosition setmin(double min) {
+        minSpeed = min;
+        return this;
     }
 
     @Override
@@ -72,7 +79,7 @@ public class DriveToEncoderPosition extends Command {
             );
         }
 
-        double minSpeed = 0.3;
+        double minSpeed = this.minSpeed;
 
         if (Math.abs(velocities.getX()) < minSpeed) {
             velocities = new Translation2d(

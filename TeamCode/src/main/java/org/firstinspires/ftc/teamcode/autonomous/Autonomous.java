@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
+import android.transition.Slide;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
@@ -122,6 +124,8 @@ public class Autonomous extends OpMode {
     private DualLinearSlide m_linearSlideSubsystem;
     private VisionSubsystem m_visionSubsystem;
 
+    private Bucket m_bucketSubsystem;
+
     private boolean m_autonomousEnabled;
 
     public Autonomous(AutonomousMode autoMode, StartingSide side) {
@@ -150,6 +154,7 @@ public class Autonomous extends OpMode {
        // m_spatulaSubsystem = new Spatula();
         m_linearSlideSubsystem = new DualLinearSlide();
         m_visionSubsystem = new VisionSubsystem();
+        m_bucketSubsystem = new Bucket();
 
         Robot.init();
         Subsystems.onInit();
@@ -197,57 +202,119 @@ public class Autonomous extends OpMode {
                     m_driveSubsystem.stop()
             );
         } else if (m_autonomousMode == AutonomousMode.TESTING) {
-            auto = new PlannedAuto(
-                    constants,
-                    new InstantCommand(() -> {
-                        m_driveSubsystem.resetPosition(new Pose2d(
-                                Unit.convert(11.5, Unit.Type.Inches, Unit.Type.Meters),
-                                Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
-                                Rotation2d.zero()
-                        ));
-                    }),
-                    new DriveToEncoderPosition(
-                            new Translation2d(
-                                    Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
-                                    Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
-                            ),
-                            new WPIPIDController(
-                                    0.9,
-                                    0.01,
-                                    0
-                            ),
-                            new WPIPIDController(
-                                    0.9,
-                                    0.01,
-                                    0
-                            ),
-                            new Unit(3, Unit.Type.Centimeters)
-                    ),
-                    m_driveSubsystem.stop(),
-                    new InstantCommand(() -> {
-                        telemetry().addLine("Autonomous Loaded!");
-                    })
-            );
 //            auto = new PlannedAuto(
 //                    constants,
 //                    new InstantCommand(() -> {
 //                        m_driveSubsystem.resetPosition(new Pose2d(
-//                                Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
-//                                Unit.convert(34.75, Unit.Type.Inches, Unit.Type.Meters),
+//                                Unit.convert(11.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
 //                                Rotation2d.zero()
 //                        ));
 //                    }),
-//                    new WaitCommand(0.1),
-//                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
-//                    m_driveSubsystem.stop(),
-//                    new WaitCommand(1),
-//                    new AprilTagAutoMove(
-//                            m_visionSubsystem,
-//                            AprilTagAutoMove.Side.Blue,
-//                            AprilTagAutoMove.Position.Right
+//                    new DriveToEncoderPosition(
+//                            new Translation2d(
+//                                    Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                    Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
+//                            ),
+//                            new WPIPIDController(
+//                                    0.9,
+//                                    0.01,
+//                                    0
+//                            ),
+//                            new WPIPIDController(
+//                                    0.9,
+//                                    0.01,
+//                                    0
+//                            ),
+//                            new Unit(3, Unit.Type.Centimeters)
 //                    ),
-//                    m_driveSubsystem.stop()
+//                    m_driveSubsystem.stop(),
+//                    new InstantCommand(() -> {
+//                        telemetry().addLine("Autonomous Loaded!");
+//                    })
 //            );
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        m_driveSubsystem.resetPosition(new Pose2d(
+                                Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
+                                Unit.convert(34.75, Unit.Type.Inches, Unit.Type.Meters),
+                                Rotation2d.zero()
+                        ));
+                    }),
+                    new WaitCommand(0.1),
+                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    new IfOrSkipCommand(() -> {
+                        return false;
+                    },
+                        new AprilTagAutoMove(
+                            m_visionSubsystem,
+                            AprilTagAutoMove.Side.Blue,
+                            AprilTagAutoMove.Position.Right
+                        )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return false;
+                    },
+                        new AprilTagAutoMove(
+                            m_visionSubsystem,
+                            AprilTagAutoMove.Side.Blue,
+                            AprilTagAutoMove.Position.Center
+                        )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return true;
+                    },
+                        new AprilTagAutoMove(
+                            m_visionSubsystem,
+                            AprilTagAutoMove.Side.Blue,
+                            AprilTagAutoMove.Position.Left
+                        )
+                    ),
+                    m_driveSubsystem.stop(),
+                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
+                    m_bucketSubsystem.setDeploy(),
+                    new WaitCommand(2),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, 0.2),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new IfOrSkipCommand(
+                        () -> {
+                            //If position is middle or right
+                            return false;
+                        },
+                        new WaitCommand(1.2)
+                    ),
+                    new IfOrSkipCommand(
+                            () -> {
+                                //If position is left
+                                return true;
+                            },
+                            new WaitCommand(1.5)
+                    ),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, -0.2),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(1),
+                    m_driveSubsystem.stop(),
+                    m_bucketSubsystem.setRetract(),
+                    new WaitCommand(2),
+                    m_bucketSubsystem.setRetractPusher(),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
+                    new TurnToCommand(Rotation2d.fromDegrees(0), m_driveSubsystem)
+            );
         } else if (m_autonomousMode == AutonomousMode.BLUE_LEFT_AUTO) {
             auto = new PlannedAuto(
                     constants,

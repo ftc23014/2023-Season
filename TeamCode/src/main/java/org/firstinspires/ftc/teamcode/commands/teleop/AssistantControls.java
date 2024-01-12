@@ -116,7 +116,8 @@ public class AssistantControls extends Command {
             m_bucketDeployed = !m_bucketDeployed;
 
             if (m_bucketDeployed) {
-                m_bucketSubsystem.deploy();
+                m_bucketSubsystem.deployBoth();
+                m_buckedPusherDeployed = true;
             } else {
                 m_bucketSubsystem.retract();
             }

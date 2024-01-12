@@ -94,12 +94,14 @@ public class AprilTagAutoMove extends Command {
 
         Translation2d tagPos = VisionSubsystem.convertTagFieldPosition(tagLibrary.lookupTag(tag).fieldPosition);
 
-        tagPos = tagPos.convertTo(Unit.Type.Inches, Unit.Type.Meters).translateBy(
-                0,
-                .25d
+        tagPos = tagPos.convertTo(Unit.Type.Inches, Unit.Type.Meters);
+
+        tagPos = new Translation2d(
+                tagPos.getX() + 0.05,
+                tagPos.getY() + 0.4
         );
 
-        //System.out.println("generating path going from " + tagPos + " to " + path.getPathObject().getWaypoints()[3]);
+        System.out.println("generating path going to " + tagPos);
 
         turnToCommand = new TurnToCommand(
             Rotation2d.fromDegrees(-90),
@@ -121,7 +123,7 @@ public class AprilTagAutoMove extends Command {
                     0
             ),
             new Unit(3, Unit.Type.Centimeters)
-        );
+        ).setmin(3);
     }
 
     boolean startedTrajectoryYet = true;
