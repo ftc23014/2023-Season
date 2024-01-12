@@ -72,7 +72,7 @@ public class DriveToEncoderPosition extends Command {
             );
         }
 
-        double minSpeed = 0.3;
+        double minSpeed = 0.2;
 
         if (Math.abs(velocities.getX()) < minSpeed) {
             velocities = new Translation2d(
