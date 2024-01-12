@@ -6,6 +6,7 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
+import static org.firstinspires.ftc.teamcode.Constants.Side.LEFT_BLUE;
 import static org.firstinspires.ftc.teamcode.Constants.currentSide;
 
 public class DriveToEncoderPosition extends Command {
@@ -55,12 +56,20 @@ public class DriveToEncoderPosition extends Command {
                 position.getY()
         );
 
+        if (Math.abs(position.getX() - currentPose.getPosition().getX()) > distanceThreshold.get(Unit.Type.Meters)) {
+            xSpeed = constants.getMinSpeed().get(Unit.Type.Meters) * Math.signum(xSpeed);
+        }
+
+        if (Math.abs(position.getY() - currentPose.getPosition().getY()) > distanceThreshold.get(Unit.Type.Meters)) {
+            ySpeed = constants.getMinSpeed().get(Unit.Type.Meters) * Math.signum(ySpeed);
+        }
+
         //figure out the velocities
 
         Translation2d velocity = new Translation2d(
                 Math.abs(xSpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(xSpeed) : xSpeed,
                 Math.abs(ySpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(ySpeed) : ySpeed
-        );
+        ).rotateBy(Rotation2d.fromDegrees(currentSide == LEFT_BLUE ? -90 : 90));
 
         driveSubsystem.drive(
                 velocity,

@@ -9,6 +9,8 @@ import org.firstinspires.ftc.lib.auto.PlannedAuto;
 import org.firstinspires.ftc.lib.math.*;
 import org.firstinspires.ftc.lib.systems.commands.*;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.commands.AprilTagAutoMove;
+import org.firstinspires.ftc.teamcode.commands.DriveToEncoderPosition;
 import org.firstinspires.ftc.teamcode.commands.HuskyDetectCommand;
 import org.firstinspires.ftc.teamcode.commands.TurnToCommand;
 import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
@@ -18,7 +20,9 @@ import org.firstinspires.ftc.lib.systems.Subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.DualLinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,6 +48,11 @@ public class Autonomous extends OpMode {
 
     public static Pose2d getStartingPosition() {
         return startingPosition == null ? Pose2d.zero() : startingPosition;
+    }
+
+    public Autonomous setStartingPosition(Pose2d startingPosition) {
+        this.startingPosition = startingPosition;
+        return this;
     }
 
     public static Autonomous setAutonomous(AutonomousMode autoMode, StartingSide side, OpMode referral) {
@@ -110,7 +119,8 @@ public class Autonomous extends OpMode {
     private HuskyLensDetection m_huskyLensDetection;
    // private Intake m_intakeSubsystem;
     //private Spatula m_spatulaSubsystem;
-    //private DualLinearSlide m_linearSlideSubsystem;
+    private DualLinearSlide m_linearSlideSubsystem;
+    private VisionSubsystem m_visionSubsystem;
 
     private boolean m_autonomousEnabled;
 
@@ -138,7 +148,8 @@ public class Autonomous extends OpMode {
         m_sensorConeHuskyLensSubsystem = new SensorConeHuskyLensSubsystem();
        // m_intakeSubsystem = new Intake();
        // m_spatulaSubsystem = new Spatula();
-        //m_linearSlideSubsystem = new DualLinearSlide();
+        m_linearSlideSubsystem = new DualLinearSlide();
+        m_visionSubsystem = new VisionSubsystem();
 
         Robot.init();
         Subsystems.onInit();
@@ -189,21 +200,54 @@ public class Autonomous extends OpMode {
             auto = new PlannedAuto(
                     constants,
                     new InstantCommand(() -> {
-                        telemetry().addLine("Autonomous Loaded!");
+                        m_driveSubsystem.resetPosition(new Pose2d(
+                                Unit.convert(11.5, Unit.Type.Inches, Unit.Type.Meters),
+                                Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
+                                Rotation2d.zero()
+                        ));
                     }),
-                    new InstantCommand(() -> {
-                        telemetry().update();
-                    }),
-                    new WaitCommand(1),
-                    new Trajectory(
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.all_the_way_thru)
+                    new DriveToEncoderPosition(
+                            new Translation2d(
+                                    Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
+                                    Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
+                            ),
+                            new WPIPIDController(
+                                    0.6,
+                                    0.01,
+                                    0
+                            ),
+                            new WPIPIDController(
+                                    0.6,
+                                    0.01,
+                                    0
+                            ),
+                            new Unit(3, Unit.Type.Centimeters)
                     ),
+                    m_driveSubsystem.stop(),
                     new InstantCommand(() -> {
-                        telemetry().addLine("Finished!");
-                    }),
-                    m_driveSubsystem.stop()
+                        telemetry().addLine("Autonomous Loaded!");
+                    })
             );
+//            auto = new PlannedAuto(
+//                    constants,
+//                    new InstantCommand(() -> {
+//                        m_driveSubsystem.resetPosition(new Pose2d(
+//                                Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                Unit.convert(34.75, Unit.Type.Inches, Unit.Type.Meters),
+//                                Rotation2d.zero()
+//                        ));
+//                    }),
+//                    new WaitCommand(0.1),
+//                    new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
+//                    m_driveSubsystem.stop(),
+//                    new WaitCommand(1),
+//                    new AprilTagAutoMove(
+//                            m_visionSubsystem,
+//                            AprilTagAutoMove.Side.Blue,
+//                            AprilTagAutoMove.Position.Right
+//                    ),
+//                    m_driveSubsystem.stop()
+//            );
         } else if (m_autonomousMode == AutonomousMode.BLUE_LEFT_AUTO) {
             auto = new PlannedAuto(
                     constants,

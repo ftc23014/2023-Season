@@ -28,10 +28,10 @@ public class Constants {
     }
 
     public enum Side {
-        LEFT_RED,
-        RIGHT_BLUE
+        RIGHT_RED,
+        LEFT_BLUE
     }
 
-    public static Side currentSide = Side.RIGHT_BLUE;
+    public static Side currentSide = Side.LEFT_BLUE;
 
 }
