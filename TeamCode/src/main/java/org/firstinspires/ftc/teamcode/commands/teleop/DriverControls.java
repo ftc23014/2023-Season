@@ -29,7 +29,7 @@ public class DriverControls extends Command {
         m_mecanumDriveSubsystem = driveSubsystem;
         m_intakeSubsystem = intake;
 
-        m_turnToCommand = new TurnToCommand(Rotation2d.fromDegrees(90), m_mecanumDriveSubsystem);
+        m_turnToCommand = new TurnToCommand(Rotation2d.fromDegrees(-90), m_mecanumDriveSubsystem);
     }
 
     @Override
@@ -55,15 +55,14 @@ public class DriverControls extends Command {
             m_intakeSubsystem.stop();
         }
 
-        if (!gamepad1.b) {
-
+        if (!gamepad1.b && !gamepad1.a) {
             if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || Math.abs(gamepad1.right_stick_x) > 0.05) {
                 m_mecanumDriveSubsystem.drive(
                         new Translation2d(
                                 gamepad1.left_stick_x,
                                 gamepad1.left_stick_y
                         ).scalar(m_mecanumDriveSubsystem.getVelocityLimit().get(Unit.Type.Meters)),
-                        Rotation2d.fromDegrees(-Math.pow(gamepad1.right_stick_x, 9) * 20),
+                        Rotation2d.fromDegrees(-Math.pow(gamepad1.right_stick_x, 9)),
                         true,
                         true
                 );
@@ -76,7 +75,7 @@ public class DriverControls extends Command {
             }
         } else if (gamepad1.a) {
             if (m_aprilTagAutoMove == null) {
-                m_aprilTagAutoMove = new AprilTagAutoMove(VisionSubsystem.getInstance(), AprilTagAutoMove.Side.Red, AprilTagAutoMove.Position.Right);
+                m_aprilTagAutoMove = new AprilTagAutoMove(VisionSubsystem.getInstance(), AprilTagAutoMove.Side.Blue, AprilTagAutoMove.Position.Center);
                 m_aprilTagAutoMove.init();
             } else if (!m_aprilTagAutoMove.hasFinished()) {
                 m_aprilTagAutoMove.execute();

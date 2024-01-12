@@ -60,12 +60,13 @@ public class DualLinearSlide extends Subsystem {
     private final Unit maxLinearSlideHeight = new Unit(30, Unit.Type.Centimeters);
     private final Unit threshold = new Unit(0.5, Unit.Type.Centimeters);
 
+    private Unit lastHeight = new Unit(0, Unit.Type.Centimeters);
+
     private DcMotor leftSlideMotor;
     private DcMotor rightSlideMotor;
 
     private Direction direction = Direction.NONE;
     private ControlType controlType = ControlType.MANUAL;
-
 
     private Unit currentGoalHeight = new Unit(0, Unit.Type.Meters);
 
@@ -143,6 +144,8 @@ public class DualLinearSlide extends Subsystem {
                 setPower(0);
             }
         }
+
+        lastHeight = new Unit(getLeftPosition(), Unit.Type.Centimeters);
     }
 
     public void setMoveUp() {
@@ -174,6 +177,12 @@ public class DualLinearSlide extends Subsystem {
         controlType = ControlType.PID;
         //constrict the height to be between 0 and the max height
         currentGoalHeight = height.clamp(Unit.zero(), maxLinearSlideHeight);
+    }
+
+    public Command position(SlidePosition height) {
+        return new InstantCommand(() -> {
+            setPosition(height.getHeight());
+        });
     }
 
     public Command power(double p) {
@@ -217,8 +226,8 @@ public class DualLinearSlide extends Subsystem {
             direction = Direction.NONE;
         }
 
-        leftSlideMotor.setPower(p);
-        rightSlideMotor.setPower(-p);
+        leftSlideMotor.setPower(-p);
+        rightSlideMotor.setPower(p);
     }
 
     /**
@@ -228,8 +237,8 @@ public class DualLinearSlide extends Subsystem {
      * @param right the power to set the right motor to, [-1, 1]. This should be the same as left, this will be inverted.
      */
     private void internalSetDualPower(double left, double right) {
-        leftSlideMotor.setPower(left);
-        rightSlideMotor.setPower(-right);
+        leftSlideMotor.setPower(-left);
+        rightSlideMotor.setPower(right);
     }
 
     @Override
@@ -240,12 +249,12 @@ public class DualLinearSlide extends Subsystem {
 
     public double getLeftPosition() {
         //convert the encoder ticks to centimeters
-        return leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return -leftSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public double getRightPosition() {
         //convert the encoder ticks to centimeters
-        return -rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
+        return rightSlideMotor.getCurrentPosition() / encoderResolution * stringWrapRadius.get(Unit.Type.Centimeters) * 2 * Math.PI;
     }
 
     public boolean isZeroed() {

@@ -6,6 +6,8 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsystem;
 
+import static org.firstinspires.ftc.teamcode.Constants.currentSide;
+
 public class DriveToEncoderPosition extends Command {
     private Translation2d position;
     private PIDController xController;
@@ -27,25 +29,50 @@ public class DriveToEncoderPosition extends Command {
 
     @Override
     public void init() {
-        xController.reset();
-        yController.reset();
+//        xController.reset();
+//        yController.reset();
     }
 
     @Override
     public void execute() {
+        double dist = driveSubsystem.getPosition().getPosition().distance(position);
+
+        if (dist < distanceThreshold.get(Unit.Type.Meters)) {
+            //telemetry().addLine("at point!");
+            return;
+        }
+
         Pose2d currentPose = driveSubsystem.getPosition();
         Unit maxSpeed = constants.getMaxSpeed();
 
-        double xSpeed = xController.calculate(currentPose.getX(), position.getX());
-        double ySpeed = yController.calculate(currentPose.getY(), position.getY());
+        double xSpeed = xController.calculate(
+                currentPose.getPosition().getX(),
+                position.getX()
+        );
 
-        xSpeed = Math.abs(xSpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(maxSpeed.get(Unit.Type.Meters)) : xSpeed;
-        ySpeed = Math.abs(ySpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(maxSpeed.get(Unit.Type.Meters)) : ySpeed;
+        double ySpeed = yController.calculate(
+                currentPose.getPosition().getY(),
+                position.getY()
+        );
 
-        driveSubsystem.drive(new Translation2d(
-            xSpeed,
-            ySpeed
-        ), Rotation2d.zero(), true, constants.getOpenLoop());
+        //figure out the velocities
+
+        Translation2d velocity = new Translation2d(
+                Math.abs(xSpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(xSpeed) : xSpeed,
+                Math.abs(ySpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(ySpeed) : ySpeed
+        );
+
+        driveSubsystem.drive(
+                velocity,
+                Rotation2d.zero(),
+                true,
+                true
+        );
+
+//        telemetry().addLine("<" + xSpeed + ", " + ySpeed + ">: dist away: " + dist);
+//
+//        System.out.println("<" + xSpeed + ", " + ySpeed + ">, dist " + dist);
+        //System.out.println("To: ( " + position.getX() + " , " + position.getY() + " ) from ( " + currentPose.getPosition().getX() + " , " + currentPose.getPosition().getY() + " )");
     }
 
     @Override

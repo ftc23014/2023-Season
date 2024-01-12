@@ -251,8 +251,8 @@ public class VisionSubsystem extends Subsystem {
                 Translation2d tagRelPos = convertTagFieldPosition(tag.fieldPosition);
 
                 detections[i] = new Translation2d(
-                        Unit.convert(tagRelPos.getX() - pose.x, Unit.Type.Inches, Unit.Type.Meters),
-                        Unit.convert(tagRelPos.getY() + pose.y, Unit.Type.Inches, Unit.Type.Meters) + (0.2d)
+                        Unit.convert(tagRelPos.getX() - pose.x, Unit.Type.Inches, Unit.Type.Meters) + (0.065d),
+                        Unit.convert(tagRelPos.getY() + pose.y, Unit.Type.Inches, Unit.Type.Meters) + (0.22d)
                 );
 
                 //fix later?

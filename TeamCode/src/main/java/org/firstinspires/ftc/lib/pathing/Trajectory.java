@@ -108,6 +108,8 @@ public class Trajectory extends Command {
             m_startTime = System.currentTimeMillis();
             lastExecute = System.currentTimeMillis();
 
+            m_constants.getPID().reset();
+
             timer = new Timer();
             incremental = new TimerTask() {
                 @Override

@@ -30,6 +30,10 @@ public class AssistantControls extends Command {
     private boolean m_bucketDeployed = false;
     private boolean m_lastBucketState = false;
 
+    private boolean m_lastBucketPusherState = false;
+
+    private boolean m_buckedPusherDeployed = false;
+
     private boolean m_linearSlideZeroed = true;
     private boolean m_lastLinearSlideButtonState = false;
 
@@ -63,8 +67,10 @@ public class AssistantControls extends Command {
      * A: Toggle linear slide. If linear slide is in manual, will be retracting.
      *    If linear slide is in automatic, will flip between zeroed and PID set.
      * B: Flip & Push Bucket
-     * Y:
-     * X: Hang
+     * X: Set in place for hang
+     * Y: Push Bucket
+     *
+     * Right Stick: Hang motor
      *
      *
      * DPAD: Select linear slide position selection
@@ -89,10 +95,12 @@ public class AssistantControls extends Command {
 
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
-            m_linearSlideSubsystem.setPower(gamepad2.left_stick_y * 0.9);
+            m_linearSlideSubsystem.setPower(-gamepad2.left_stick_y * 0.9);
         } else if (m_linearSlideSubsystem.getMode() == DualLinearSlide.ControlType.MANUAL) {
             m_linearSlideSubsystem.setPower(0);
         }
+
+        //System.out.println("slide pos: " + m_linearSlideSubsystem.getLeftPosition() + " - " + m_linearSlideSubsystem.getRightPosition());
 
         if (m_lastDroneLauncherButtonState != gamepad2.left_bumper && gamepad2.left_bumper && gamepad2.right_bumper) {
             m_droneLauncherDeployed = !m_droneLauncherDeployed;
@@ -114,6 +122,16 @@ public class AssistantControls extends Command {
             }
         }
 
+        if (m_lastBucketPusherState != gamepad2.y && gamepad2.y) {
+            if (m_buckedPusherDeployed) {
+                m_bucketSubsystem.retractPusher();
+            } else {
+                m_bucketSubsystem.deployPusher();
+            }
+
+            m_buckedPusherDeployed = !m_buckedPusherDeployed;
+        }
+
         if (m_lastLinearSlideButtonState != gamepad2.a && gamepad2.a && k_linearSlidePIDEnabled) {
             m_lastLinearSlideButtonState = gamepad2.a;
 
@@ -129,19 +147,28 @@ public class AssistantControls extends Command {
         }
 
         if (m_lastHangState != gamepad2.x && gamepad2.x) {
-            m_lastHangState = !m_hangDeployed;
+            if (Math.abs(gamepad2.right_stick_y) < 0.05) {
+                if (m_hangDeployed) {
+                    m_hangSubsystem.hangUp();
+                } else {
+                    m_hangSubsystem.hangDown();
+                }
 
-            if (m_hangDeployed) {
-                m_hangSubsystem.hangUp();
-            } else {
-                m_hangSubsystem.hangDown();
+                m_hangDeployed = !m_hangDeployed;
             }
+        }
+
+        if (Math.abs(gamepad2.right_stick_y) > 0.05 && gamepad2.x) {
+            m_hangSubsystem.setMotorSpeed(gamepad2.right_stick_y);
+        } else {
+            m_hangSubsystem.setMotorSpeed(0);
         }
 
         m_lastDroneLauncherButtonState = gamepad2.left_bumper;
         m_lastBucketState = gamepad2.b;
         m_lastLinearSlideButtonState = gamepad2.a;
         m_lastHangState = gamepad2.x;
+        m_lastBucketPusherState = gamepad2.y;
 
         //selection controls
         if (m_lastDpadDownState != gamepad2.dpad_down && gamepad2.dpad_down) {

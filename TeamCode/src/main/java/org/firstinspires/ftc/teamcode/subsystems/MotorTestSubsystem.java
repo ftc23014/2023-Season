@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -36,24 +34,43 @@ public class MotorTestSubsystem extends Subsystem {
 
     }
 
+    private double currentPosition1 = 0.5;
+    private double currentPosition2 = 0.0;
+    private boolean firstRun = true;
+
+    private boolean lastAState = false;
+    private boolean lastYState = false;
+
     @Override
     public void periodic() {
+        if (firstRun) {
+            try {
+                currentPosition1 = servo1.getPosition();
+            } catch (Exception ignored) {}
+            try {
+                currentPosition2 = servo2.getPosition();
+            } catch (Exception ignored) {}
 
-
-        if (gamepad.left_stick_y > 0.02) {
-            servo1.setPosition(gamepad.left_stick_y);
+            firstRun = false;
         }
 
-        if (gamepad.right_stick_y > 0.02) {
-            servo2.setPosition(gamepad.right_stick_y);
+        if (gamepad.y && !lastYState) {
+            currentPosition1 += gamepad.left_bumper ? 0.01 : (gamepad.right_bumper ? 0.001 : 0.05);
+            servo1.setPosition(currentPosition1);
         }
 
+        if (gamepad.a && !lastAState) {
+            currentPosition1 -= gamepad.left_bumper ? 0.01 : (gamepad.right_bumper ? 0.001 : 0.05);
+            servo1.setPosition(currentPosition1);
+        }
 
         telemetry().addData("Servo1 pos:", servo1.getPosition());
+        telemetry().addData("Servo1 set to: ", currentPosition1);
         telemetry().addData("Servo2 pos:", servo2.getPosition());
+        telemetry().addData("Servo2 set to: ", currentPosition2);
 
-
-
+        lastAState = gamepad.a;
+        lastYState = gamepad.y;
     }
 
     @Override

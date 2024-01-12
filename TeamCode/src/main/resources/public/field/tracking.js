@@ -27,8 +27,8 @@ async function updatePosition() {
 
     const response = await request.json();
 
-    robot_position.x = new Unit(-response.x + initialPos.x.get(Unit.Type.METERS), Unit.Type.METERS);
-    robot_position.y = new Unit(-response.y + initialPos.y.get(Unit.Type.METERS), Unit.Type.METERS);
+    robot_position.x = new Unit(response.x, Unit.Type.METERS);
+    robot_position.y = new Unit(response.y, Unit.Type.METERS);
     robot_position.angle = (-((360 - response.rotation)) / 180) * Math.PI;
 
 

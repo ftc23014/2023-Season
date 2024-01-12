@@ -5,6 +5,7 @@ import org.firstinspires.ftc.lib.math.Pose2d;
 import org.firstinspires.ftc.lib.math.Rotation2d;
 import org.firstinspires.ftc.lib.math.Translation2d;
 import org.firstinspires.ftc.lib.math.Unit;
+import org.firstinspires.ftc.teamcode.Constants;
 
 import java.util.ArrayList;
 
@@ -47,8 +48,8 @@ public class MecanumOdometry {
     private int encoderResolution = 2000;
     private Unit m_wheelDiameter = new Unit(4.8d, Unit.Type.Centimeters);
 
-    private Unit m_trackwidth = new Unit(34.5d, Unit.Type.Centimeters);
-    private Unit m_forwardOffset = new Unit(10d, Unit.Type.Centimeters);
+    private Unit m_trackwidth = Constants.Odometry.horizontalDistance;
+    private Unit m_forwardOffset = Constants.Odometry.halfDistance;
 
     private ArrayList<Pair<Pose2d, Long>> m_lastPositions = new ArrayList<>();
 

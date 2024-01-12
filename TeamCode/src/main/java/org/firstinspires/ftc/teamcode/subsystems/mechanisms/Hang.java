@@ -26,8 +26,19 @@ public class Hang extends Subsystem {
     }
 
     public void hangUp() {
-        hangMotor.setPower(1);
         hangServo.setPosition(0.4);
+    }
+
+    public void pushMotorUp() {
+        hangMotor.setPower(1);
+    }
+
+    public void retractMotor() {
+        hangMotor.setPower(-1);
+    }
+
+    public void setMotorSpeed(double n) {
+        hangMotor.setPower(n);
     }
 
     public Command setRetract() {
@@ -35,7 +46,6 @@ public class Hang extends Subsystem {
     }
 
     public void hangDown() {
-        hangMotor.setPower(-1);
         hangServo.setPosition(0.63);
     }
 

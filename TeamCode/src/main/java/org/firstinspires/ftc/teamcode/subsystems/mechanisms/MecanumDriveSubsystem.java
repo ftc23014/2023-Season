@@ -130,6 +130,10 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
         m_imu = getHardwareMap().get(AdafruitBNO055IMU.class, "gyro");
         m_imu.initialize(parameters);
+
+        System.out.println(
+                "Finished IMU setup!"
+        );
     }
 
     public void drive(Translation2d translation, Rotation2d rotationSpeed, boolean fieldRelative, boolean openLoop) {
@@ -269,7 +273,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 //        telemetry().addData("Joystick Y", joyStickY);
 //        telemetry().addData("Velocity X (m/s)", velocityX);
 //        telemetry().addData("Velocity Y (m/s)", velocityY);
-        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) -backRight.getCurrentPosition(), (double) frontRight.getCurrentPosition());
+        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) -backRight.getCurrentPosition(), (double) -frontRight.getCurrentPosition());
 
         if (Math.abs(getAngle().getDegrees() - 90) < 5 || Math.abs(getAngle().getDegrees() - 270) < 5 || Math.abs(getAngle().getDegrees() + 90) < 5) {
             if (VisionSubsystem.getInstance() != null) {

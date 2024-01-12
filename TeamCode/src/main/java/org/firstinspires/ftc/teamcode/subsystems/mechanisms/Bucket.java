@@ -10,6 +10,10 @@ public class Bucket extends Subsystem {
     private Servo bucketPusherServo;
     private Servo bucketFlipperServo;
 
+    private Command disableCMD;
+
+    private boolean pushServoDisabled = false;
+
     public Bucket() {
         super();
     }
@@ -20,13 +24,57 @@ public class Bucket extends Subsystem {
         bucketPusherServo = getHardwareMap().get(Servo.class, "bucket_pusher");
     }
 
+    private Command disablePusher() {
+        return new Command() {
+            private long startTime;
+
+            @Override
+            public void init() {
+                startTime = System.currentTimeMillis();
+            }
+
+            @Override
+            public void execute() {
+                if (isCancelled()) return;
+                if (System.currentTimeMillis() - startTime < 1000) {
+                    return;
+                }
+
+                bucketPusherServo.getController().pwmDisable();
+
+                cancel();
+
+                disableCMD = null;
+                pushServoDisabled = true;
+            }
+        };
+    }
+
+
     public Command setDeploy() {
         return new InstantCommand(this::deploy);
     }
 
     public void deploy() {
-        bucketFlipperServo.setPosition(0.7246 /* flipped servo position*/);
-        bucketPusherServo.setPosition(0.9082 /* pushed bucket position */);
+//        if (pushServoDisabled) {
+//            bucketPusherServo.getController().pwmEnable();
+//            pushServoDisabled = false;
+//        }
+//
+//        if (disableCMD != null) {
+//            disableCMD.cancel();
+//            disableCMD = null;
+//        }
+
+        bucketFlipperServo.setPosition(0.92 /* flipped servo position*/);
+    }
+
+    public void deployPusher() {
+        bucketPusherServo.setPosition(0.275 /* pushed bucket position */);
+    }
+
+    public void retractPusher() {
+        bucketPusherServo.setPosition(0.12);
     }
 
     public Command setRetract() {
@@ -34,8 +82,7 @@ public class Bucket extends Subsystem {
     }
 
     public void retract() {
-        bucketFlipperServo.setPosition(0.0233);
-        bucketPusherServo.setPosition(0.4);
+        bucketFlipperServo.setPosition(0.36);
     }
 
     public Command stopCommand() {
@@ -49,5 +96,8 @@ public class Bucket extends Subsystem {
 
     @Override
     public void periodic() {
+        if (disableCMD != null) {
+            disableCMD.execute();
+        }
     }
 }
