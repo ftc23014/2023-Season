@@ -420,7 +420,7 @@ public class Autonomous extends OpMode {
                                     new WaitCommand(0.625),
                                     m_driveSubsystem.stop(),
                                     new WaitCommand(0.1),
-                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                    m_driveSubsystem.driveCommand(
                                             new Translation2d(0, 0.4),
                                             Rotation2d.zero(),
                                             false,
