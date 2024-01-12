@@ -70,11 +70,11 @@ public class Bucket extends Subsystem {
     }
 
     public void deployPusher() {
-        bucketPusherServo.setPosition(0.275 /* pushed bucket position */);
+        bucketPusherServo.setPosition(0.75 /* pushed bucket position */);
     }
 
     public void retractPusher() {
-        bucketPusherServo.setPosition(0.12);
+        bucketPusherServo.setPosition(0.42 /* retracted bucket position */);
     }
 
     public Command setRetract() {

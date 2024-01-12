@@ -217,7 +217,8 @@ public class Autonomous extends OpMode {
                         m_visionSubsystem,
                         AprilTagAutoMove.Side.Blue,
                         AprilTagAutoMove.Position.Right
-                    )
+                    ),
+                    m_driveSubsystem.stop()
             );
 
 //            auto = new PlannedAuto(
