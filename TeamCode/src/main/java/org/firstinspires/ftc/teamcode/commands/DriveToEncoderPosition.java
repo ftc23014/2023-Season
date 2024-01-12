@@ -46,37 +46,90 @@ public class DriveToEncoderPosition extends Command {
         Pose2d currentPose = driveSubsystem.getPosition();
         Unit maxSpeed = constants.getMaxSpeed();
 
-        double xSpeed = xController.calculate(
-                currentPose.getPosition().getX(),
-                position.getX()
+        Rotation2d angleTo = Rotation2d.fromRadians(
+                Math.atan2(
+                        position.getY() - currentPose.getPosition().getY(),
+                        position.getX() - currentPose.getPosition().getX()
+                )
         );
 
-        double ySpeed = yController.calculate(
-                currentPose.getPosition().getY(),
-                position.getY()
+        Translation2d velocities = new Translation2d(
+                dist * angleTo.getCos(),
+                dist * angleTo.getSin()
         );
 
-        if (Math.abs(position.getX() - currentPose.getPosition().getX()) > distanceThreshold.get(Unit.Type.Meters)) {
-            xSpeed = constants.getMinSpeed().get(Unit.Type.Meters) * Math.signum(xSpeed);
+        if (Math.abs(velocities.getX()) > maxSpeed.get(Unit.Type.Meters)) {
+            velocities = new Translation2d(
+                    maxSpeed.get(Unit.Type.Meters) * Math.signum(velocities.getX()),
+                    velocities.getY()
+            );
         }
 
-        if (Math.abs(position.getY() - currentPose.getPosition().getY()) > distanceThreshold.get(Unit.Type.Meters)) {
-            ySpeed = constants.getMinSpeed().get(Unit.Type.Meters) * Math.signum(ySpeed);
+        if (Math.abs(velocities.getY()) > maxSpeed.get(Unit.Type.Meters)) {
+            velocities = new Translation2d(
+                    velocities.getX(),
+                    maxSpeed.get(Unit.Type.Meters) * Math.signum(velocities.getY())
+            );
         }
 
-        //figure out the velocities
+        double minSpeed = 0.3;
 
-        Translation2d velocity = new Translation2d(
-                Math.abs(xSpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(xSpeed) : xSpeed,
-                Math.abs(ySpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(ySpeed) : ySpeed
-        ).rotateBy(Rotation2d.fromDegrees(currentSide == LEFT_BLUE ? -90 : 90));
+        if (Math.abs(velocities.getX()) < minSpeed) {
+            velocities = new Translation2d(
+                    minSpeed * Math.signum(velocities.getX()),
+                    velocities.getY()
+            );
+        }
+
+        if (Math.abs(velocities.getY()) < minSpeed) {
+            velocities = new Translation2d(
+                    velocities.getX(),
+                    minSpeed * Math.signum(velocities.getY())
+            );
+        }
 
         driveSubsystem.drive(
-                velocity,
+                velocities.rotateBy(Rotation2d.fromDegrees(currentSide == LEFT_BLUE ? -90 : 90)),
                 Rotation2d.zero(),
                 true,
                 true
         );
+
+//        double xSpeed = xController.calculate(
+//                currentPose.getPosition().getX(),
+//                position.getX()
+//        );
+//
+//        double ySpeed = yController.calculate(
+//                currentPose.getPosition().getY(),
+//                position.getY()
+//        );
+//
+//        if (Math.abs(position.getX() - currentPose.getPosition().getX()) > distanceThreshold.get(Unit.Type.Meters)) {
+//            if (Math.abs(xSpeed) < constants.getMinSpeed().get(Unit.Type.Meters)) {
+//                xSpeed = 0.3 * Math.signum(xSpeed);
+//            }
+//        }
+//
+//        if (Math.abs(position.getY() - currentPose.getPosition().getY()) > distanceThreshold.get(Unit.Type.Meters)) {
+//            if (Math.abs(ySpeed) < constants.getMinSpeed().get(Unit.Type.Meters)) {
+//                ySpeed = 0.3 * Math.signum(ySpeed);
+//            }
+//        }
+//
+//        //figure out the velocities
+//
+//        Translation2d velocity = new Translation2d(
+//                Math.abs(xSpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(xSpeed) : xSpeed,
+//                Math.abs(ySpeed) > maxSpeed.get(Unit.Type.Meters) ? maxSpeed.get(Unit.Type.Meters) * Math.signum(ySpeed) : ySpeed
+//        ).rotateBy(Rotation2d.fromDegrees(currentSide == LEFT_BLUE ? -90 : 90));
+//
+//        driveSubsystem.drive(
+//                velocity,
+//                Rotation2d.zero(),
+//                true,
+//                true
+//        );
 
 //        telemetry().addLine("<" + xSpeed + ", " + ySpeed + ">: dist away: " + dist);
 //

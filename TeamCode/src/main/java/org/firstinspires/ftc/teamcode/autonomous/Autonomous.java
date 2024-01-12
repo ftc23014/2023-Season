@@ -212,12 +212,12 @@ public class Autonomous extends OpMode {
                                     Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
                             ),
                             new WPIPIDController(
-                                    0.6,
+                                    0.9,
                                     0.01,
                                     0
                             ),
                             new WPIPIDController(
-                                    0.6,
+                                    0.9,
                                     0.01,
                                     0
                             ),
