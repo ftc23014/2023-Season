@@ -23,7 +23,7 @@ public class AutoPixelPlacer extends Subsystem {
     }
 
     public void deploy() {
-        autopixelplacer.setPosition(0.35 /*  to let go of pixel*/);
+        autopixelplacer.setPosition(0.3 /*  to let go of pixel*/);
     }
 
     public Command setRetract() {
@@ -31,7 +31,7 @@ public class AutoPixelPlacer extends Subsystem {
     }
 
     public void retract() {
-        autopixelplacer.setPosition(0.3); /* goes back to base position*/
+        autopixelplacer.setPosition(0.6); /* goes back to base position*/
     }
 
     public Command stopCommand() {
