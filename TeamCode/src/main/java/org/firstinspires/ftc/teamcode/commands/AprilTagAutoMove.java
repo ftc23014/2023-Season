@@ -132,7 +132,7 @@ public class AprilTagAutoMove extends Command {
             trajectory.init();
         }
 
-        telemetry().addLine("moving towards " + side + " " + position);
+        //telemetry().addLine("moving towards " + side + " " + position);
 
         trajectory.execute();
     }

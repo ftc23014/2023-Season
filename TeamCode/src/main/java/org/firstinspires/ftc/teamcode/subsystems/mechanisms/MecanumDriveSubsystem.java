@@ -117,7 +117,7 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
         StartupManager.fulfillCheck(getClass(), "IMU Init");
     }
 
-    private void setupIMU() {
+    public void setupIMU() {
         AdafruitBNO055IMU.Parameters parameters = new AdafruitBNO055IMU.Parameters();
         //parameters.i2cAddr = I2CADDR_ALTERNATE;
         parameters.angleUnit           = AdafruitBNO055IMU.AngleUnit.DEGREES;

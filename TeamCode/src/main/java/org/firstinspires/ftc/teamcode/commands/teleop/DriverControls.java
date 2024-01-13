@@ -21,6 +21,8 @@ public class DriverControls extends Command {
     private TurnToCommand m_turnToCommand;
     private AprilTagAutoMove m_aprilTagAutoMove;
 
+    private boolean lastX = false;
+
     public DriverControls(Gamepad gamepad1, MecanumDriveSubsystem driveSubsystem, Intake intake) {
         super();
 
@@ -87,6 +89,13 @@ public class DriverControls extends Command {
                 m_aprilTagAutoMove.execute();
             }
         }
+
+        if (gamepad1.x && !lastX) {
+            m_mecanumDriveSubsystem.setupIMU();
+            telemetry().addLine("Finished odometry setup!");
+        }
+
+        lastX = gamepad1.x;
 
         MecanumOdometry odometry = m_mecanumDriveSubsystem.getOdometry();
 
