@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*;
 public class AssistantControls extends Command {
 
 
-   // private Drone m_droneSubsystem;
+    private Drone m_droneSubsystem;
 
     private DualLinearSlide m_linearSlideSubsystem;
 
@@ -49,12 +49,12 @@ public class AssistantControls extends Command {
 
     private long m_lastTelemetryUpdate = 0;
 
-    public AssistantControls(Gamepad gamepad2, DualLinearSlide linearSlide /*Drone drone*/, Hang hang, Bucket bucket) {
+    public AssistantControls(Gamepad gamepad2, DualLinearSlide linearSlide, Drone drone, Hang hang, Bucket bucket) {
         super();
 
         this.gamepad2 = gamepad2;
         m_linearSlideSubsystem = linearSlide;
-//        m_droneSubsystem = drone;
+        m_droneSubsystem = drone;
         m_hangSubsystem = hang;
         m_bucketSubsystem = bucket;
     }
@@ -106,17 +106,17 @@ public class AssistantControls extends Command {
             m_droneLauncherDeployed = !m_droneLauncherDeployed;
 
             if (m_droneLauncherDeployed) {
-                //m_droneSubsystem.setDeploy();
+                m_droneSubsystem.setDeploy();
             } else {
-                //m_droneSubsystem.setRetract();
+                m_droneSubsystem.setRetract();
             }
-        }
-
         if (m_lastBucketState != gamepad2.b && gamepad2.b) {
             m_bucketDeployed = !m_bucketDeployed;
 
             if (m_bucketDeployed) {
-                m_bucketSubsystem.deployBoth();
+            }
+
+            m_bucketSubsystem.deployBoth();
                 m_buckedPusherDeployed = true;
             } else {
                 m_bucketSubsystem.retract();

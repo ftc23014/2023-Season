@@ -612,77 +612,149 @@ public class Autonomous extends OpMode {
                     new WaitCommand(0.1),
                     m_driveSubsystem.stop(),
                     new WaitCommand(0.1),
+                    new WaitCommand(0.15),
                     new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.LEFT;
-                    },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(90), m_driveSubsystem
-                            )
-                    ),
+                    }, new SequentialCommand(
+                            new DriveToEncoderPosition(
+                                    new Translation2d(
+                                            Unit.convert(45.5, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(52.25, Unit.Type.Inches, Unit.Type.Meters)
+                                    ),
+                                    new Unit(3, Unit.Type.Centimeters)
+                            ),
+                            m_driveSubsystem.stop(),
+                            new WaitCommand(0.1),
+                            m_autoPixelPlacerSubsystem.setDeploy(),
+                            new WaitCommand(0.1),
+                            m_autoPixelPlacerSubsystem.setRetract(),
+                            new WaitCommand(0.1),
+                            m_driveSubsystem.stop()
+                    )),
                     new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.RIGHT;
                     },
-                            new TurnToCommand(
-                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
+                            new SequentialCommand(
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(180), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(0, -0.4),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.4),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(-0.35, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.35),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setDeploy(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setRetract(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop()
+//                                    new WaitCommand(0.1),
+//                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+//                                            new Translation2d(1.4, 0),
+//                                            Rotation2d.zero(),
+//                                            false,
+//                                            true
+//                                    ),
+//                                    new WaitCommand(1),
+//                                    m_driveSubsystem.stop()
+
                             )
-                    ), // otherwise just stay facing middle
-                    new WaitCommand(0.1),
-                    m_driveSubsystem.driveCommand( // drive a tiny bit towards the tape
-                            new Translation2d(0, 0.3),
-                            Rotation2d.zero(),
-                            false,
-                            true
                     ),
-                    new WaitCommand(0.2),
-                    m_driveSubsystem.stop(),
-                    new WaitCommand(0.1),
-                    //m_intakeSubsystem.intake_cmd(0.2), // outtake
-                    new WaitCommand(0.5),
-                    //m_intakeSubsystem.stop_cmd(),
-                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-                            new Translation2d(0, -0.3),
-                            Rotation2d.zero(),
-                            false,
-                            true
-                    ),
-                    new WaitCommand(0.2),
-                    m_driveSubsystem.stop(),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
+                    },
+                            new SequentialCommand(
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(180), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(0.625, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.625),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(0, 0.1),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setDeploy(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setRetract(),
+                                    new WaitCommand(0.25),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1)
+//                                    m_driveSubsystem.driveCommand(
+//                                            new Translation2d(
+//                                                    0.75,
+//                                                    0
+//                                            ),
+//                                            Rotation2d.zero(),
+//                                            false,
+//                                            true
+//                                    ),
+//                                    new WaitCommand(0.75),
+//                                    m_driveSubsystem.stop(),
+//                                    new WaitCommand(0.1),
+//                                    m_driveSubsystem.driveCommand(
+//                                            new Translation2d(
+//                                                    0,
+//                                                    -0.75
+//                                            ),
+//                                            Rotation2d.zero(),
+//                                            false,
+//                                            true
+//                                    ),
+//                                    new WaitCommand(0.75),
+//                                    m_driveSubsystem.stop(),
+//                                    new WaitCommand(0.1),
+//                                    m_driveSubsystem.driveCommand(
+//                                            new Translation2d(
+//                                                    0.4,
+//                                                    0
+//                                            ),
+//                                            Rotation2d.zero(),
+//                                            false,
+//                                            true
+//                                    ),
+//                                    new WaitCommand(0.4),
+//                                    m_driveSubsystem.stop(),
+//                                    new WaitCommand(0.1),
+//                                    m_driveSubsystem.driveCommand(
+//                                            new Translation2d(
+//                                                    0,
+//                                                    0.3
+//                                            ),
+//                                            Rotation2d.zero(),
+//                                            false,
+//                                            true
+//                                    ),
+//                                    new WaitCommand(0.3),
+//                                    m_driveSubsystem.stop()
 
-                    // end huskylens detection procedure
-                    new Trajectory( // go towards white pixel stack
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.blue_right_step_one)
-                    ),
-                    new WaitCommand(0.1),
-//                    new TurnToCommand(
-//                                    Rotation2d.fromDegrees(-90), m_driveSubsystem
-//                            ),
 
-                    // intake
+                            )
+                    )
 
-                    new WaitCommand(0.5),
-//                    new TurnToCommand(
-//                            Rotation2d.fromDegrees(0), m_driveSubsystem
-//                    ),
-                    new Trajectory( // go towards backboard
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.blue_right_step_two)
-                    ),
-                    // TODO: add linear slide placing code
-                    new WaitCommand(0.1),
-//                    new TurnToCommand(
-//                            Rotation2d.fromDegrees(90), m_driveSubsystem
-//                    ),
-                    new WaitCommand(0.5),
-//                    new TurnToCommand(
-//                            Rotation2d.fromDegrees(0), m_driveSubsystem
-//                    ),
-                    new Trajectory( // go to white pixel stack
-                            m_driveSubsystem,
-                            BezierSegment.loadFromResources(R.raw.blue_right_step_three)
-                    ),
-                    new WaitCommand(0.1)
-                    // TODO: figure out how many cycles we can do during auto
             );
 
     }

@@ -6,8 +6,8 @@ import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 
 public class Drone extends Subsystem {
-    private final double Drone_Shoot = 1;
-    private final double Drone_Load = 0.4;
+    private final double Drone_Shoot = 0.75;
+    private final double Drone_Load = 0.95;
 
     private Servo drone;
 
