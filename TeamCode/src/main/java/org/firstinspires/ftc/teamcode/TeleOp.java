@@ -72,7 +72,7 @@ public class TeleOp extends OpMode {
 
         m_mecanumDriveSubsystem = new MecanumDriveSubsystem();
 
-        m_visionSubsystem =  new VisionSubsystem();
+        //m_visionSubsystem =  new VisionSubsystem();
 
         m_intakeSubsystem = new Intake();
 

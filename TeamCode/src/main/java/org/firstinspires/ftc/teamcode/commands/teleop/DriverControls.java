@@ -82,12 +82,12 @@ public class DriverControls extends Command {
                 m_turnToCommand.execute();
             }
         } else if (gamepad1.a) {
-            if (m_aprilTagAutoMove == null) {
-                m_aprilTagAutoMove = new AprilTagAutoMove(VisionSubsystem.getInstance(), AprilTagAutoMove.Side.Blue, AprilTagAutoMove.Position.Center);
-                m_aprilTagAutoMove.init();
-            } else if (!m_aprilTagAutoMove.hasFinished()) {
-                m_aprilTagAutoMove.execute();
-            }
+//            if (m_aprilTagAutoMove == null) {
+//                m_aprilTagAutoMove = new AprilTagAutoMove(VisionSubsystem.getInstance(), AprilTagAutoMove.Side.Blue, AprilTagAutoMove.Position.Center);
+//                m_aprilTagAutoMove.init();
+//            } else if (!m_aprilTagAutoMove.hasFinished()) {
+//                m_aprilTagAutoMove.execute();
+//            }
         }
 
         if (gamepad1.x && !lastX) {
