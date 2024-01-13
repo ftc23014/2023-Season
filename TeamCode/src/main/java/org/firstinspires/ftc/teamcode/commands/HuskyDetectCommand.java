@@ -5,6 +5,7 @@ import org.firstinspires.ftc.lib.LambdaFromInt;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.teamcode.subsystems.SensorConeHuskyLensSubsystem;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,6 +49,8 @@ public class HuskyDetectCommand extends Command {
                     detectedTheMost = 1;
                 }
 
+                Random random1 = new Random();
+                detectedTheMost = random1.nextInt(3) - 1;
                 if (mostDetections == 0) {
                     detectedTheMost = -2;
                 }

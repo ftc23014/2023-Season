@@ -39,6 +39,7 @@ public class DualLinearSlide extends Subsystem {
     }
 
     public enum SlidePosition {
+        VERYLOW(new Unit(7.5, Unit.Type.Centimeters)),
         LOW(new Unit(10, Unit.Type.Centimeters)),
         MIDDLE(new Unit(20, Unit.Type.Centimeters)),
         HIGH(new Unit(30, Unit.Type.Centimeters)),

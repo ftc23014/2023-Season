@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.MecanumDriveSubsyste
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="main_autonomous")
 @Disabled
@@ -269,7 +270,6 @@ public class Autonomous extends OpMode {
                                     telemetry().addLine("ERROR WITH HUSKY?");
                                 }
 
-                                detected = 0;
 
                                 //Manual Detection - TODO: Disable
                                 m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
@@ -284,7 +284,7 @@ public class Autonomous extends OpMode {
                     ).runFlippedX(m_side == StartingSide.RED),
                     new WaitCommand(0.1),
                     m_driveSubsystem.stop(),
-                    new WaitCommand(0.1),
+                    new WaitCommand(0.15),
                     new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.LEFT;
                     }, new SequentialCommand(
@@ -295,9 +295,12 @@ public class Autonomous extends OpMode {
                                     ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
+                            m_driveSubsystem.stop(),
+                            new WaitCommand(0.1),
                             m_autoPixelPlacerSubsystem.setDeploy(),
                             new WaitCommand(0.1),
                             m_autoPixelPlacerSubsystem.setRetract(),
+                            new WaitCommand(0.5),
                             m_driveSubsystem.driveCommand(
                                     new Translation2d(0.5, 0),
                                     Rotation2d.zero(),
@@ -306,20 +309,41 @@ public class Autonomous extends OpMode {
                             ),
                             new WaitCommand(0.5),
                             m_driveSubsystem.stop(),
-                            new WaitCommand(0.1),
                             new DriveToEncoderPosition(
                                     new Translation2d(
-                                            Unit.convert(10, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(13.5, Unit.Type.Inches, Unit.Type.Meters),
                                             Unit.convert(57.25, Unit.Type.Inches, Unit.Type.Meters)
                                     ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
                             m_driveSubsystem.stop(),
+
+                            new WaitCommand(0.1),
+                            m_driveSubsystem.driveCommand(
+                                    new Translation2d(-0.75, 0),
+                                    Rotation2d.zero(),
+                                    false,
+                                    true
+                            ),
+                            new WaitCommand(1.3),
+                            m_driveSubsystem.stop(),
+//
+//                            new WaitCommand(0.1),
+//                            new DriveToEncoderPosition(
+//                                    new Translation2d(
+//                                            Unit.convert(13.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                            Unit.convert(25.75, Unit.Type.Inches, Unit.Type.Meters)
+//                                    ),
+//                                    new Unit(3, Unit.Type.Centimeters)
+//                            ),
+//                            new WaitCommand(0.1),
+//                            m_driveSubsystem.stop(),
+
                             new WaitCommand(0.1),
                             new DriveToEncoderPosition(
                                     new Translation2d(
-                                            Unit.convert(10, Unit.Type.Inches, Unit.Type.Meters),
-                                            Unit.convert(25.75, Unit.Type.Inches, Unit.Type.Meters)
+                                            Unit.convert(32.25, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(31.75, Unit.Type.Inches, Unit.Type.Meters)
                                     ),
                                     new Unit(3, Unit.Type.Centimeters)
                             ),
@@ -335,7 +359,7 @@ public class Autonomous extends OpMode {
                                     ),
                                     new WaitCommand(0.1),
                                     m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-                                            new Translation2d(-0.4, 0),
+                                            new Translation2d(0, -0.4),
                                             Rotation2d.zero(),
                                             false,
                                             true
@@ -343,11 +367,30 @@ public class Autonomous extends OpMode {
                                     new WaitCommand(0.4),
                                     m_driveSubsystem.stop(),
                                     new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(-0.35, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.35),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setDeploy(),
                                     new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setRetract(),
                                     new WaitCommand(0.1),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(1.4, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(1),
                                     m_driveSubsystem.stop()
+
                             )
                     ),
                     new IfOrSkipCommand(() -> {
@@ -368,11 +411,11 @@ public class Autonomous extends OpMode {
                                     m_driveSubsystem.stop(),
                                     new WaitCommand(0.1),
                                     m_driveSubsystem.driveCommand(
-                                            new Translation2d(0, 0.2),
+                                            new Translation2d(0, 0.1),
                                             Rotation2d.zero(),
                                             false,
                                             true),
-                                    new WaitCommand(0.2),
+                                    new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setDeploy(),
                                     new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setRetract(),
@@ -381,13 +424,53 @@ public class Autonomous extends OpMode {
                                     new WaitCommand(0.1),
                                     m_driveSubsystem.driveCommand(
                                             new Translation2d(
-                                                    -0.3,
+                                                    0.75,
                                                     0
                                             ),
                                             Rotation2d.zero(),
-                                            true,
+                                            false,
                                             true
-                                    )
+                                    ),
+                                    new WaitCommand(0.75),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0,
+                                                    -0.75
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.75),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0.4,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.4),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0,
+                                                    0.3
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop()
+
+
                             )
                     ),
                     //drive to APRIL TAG position from here!
@@ -404,11 +487,29 @@ public class Autonomous extends OpMode {
                     new IfOrSkipCommand(() -> {
                         return m_huskyLensDetection == HuskyLensDetection.RIGHT;
                     },
-                            new AprilTagAutoMove(
-                                    m_visionSubsystem,
-                                    AprilTagAutoMove.Side.Blue,
-                                    AprilTagAutoMove.Position.Right
+                            new SequentialCommand(
+                                    new AprilTagAutoMove(
+                                            m_visionSubsystem,
+                                            AprilTagAutoMove.Side.Blue,
+                                            AprilTagAutoMove.Position.Right
+                                    ),
+                                    new WaitCommand(2),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0.65,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.17),
+                                    m_driveSubsystem.stop()
+
                             )
+
+
+
                     ),
                     new IfOrSkipCommand(() -> {
                         return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
@@ -432,14 +533,21 @@ public class Autonomous extends OpMode {
                     new TurnToCommand(Rotation2d.fromDegrees(-90), m_driveSubsystem),
                     m_driveSubsystem.stop(),
                     m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
+                    m_bucketSubsystem.extendForAuto(),
                     m_bucketSubsystem.setDeploy(),
                     new WaitCommand(2),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
+                    new WaitCommand(1),
                     m_driveSubsystem.driveCommand(
-                            new Translation2d(0, 0.2),
+                            new Translation2d(0, 0.4),
                             Rotation2d.zero(),
                             false,
                             true
                     ),
+                    new WaitCommand(0.3),
+                    m_bucketSubsystem.setDeployPusher(),
+                    new WaitCommand(0.15),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.VERYLOW),
                     new IfOrSkipCommand(
                             () -> {
                                 //If position is middle or right
@@ -464,9 +572,11 @@ public class Autonomous extends OpMode {
                     ),
                     new WaitCommand(1),
                     m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
                     m_bucketSubsystem.setRetract(),
-                    new WaitCommand(1.5),
                     m_bucketSubsystem.setRetractPusher(),
+                    new WaitCommand(0.9),
                     m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
                     new TurnToCommand(Rotation2d.fromDegrees(0), m_driveSubsystem)
             );
@@ -485,6 +595,9 @@ public class Autonomous extends OpMode {
                                 if (detected == -2) {
                                     telemetry().addLine("ERROR WITH HUSKY?");
                                 }
+
+                                Random random = new Random();
+                                detected = random.nextInt(3) - 1;
 
                                 m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
                                 telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
