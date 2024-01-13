@@ -74,7 +74,7 @@ public class Bucket extends Subsystem {
 //            disableCMD = null;
 //        }
 
-        bucketFlipperServo.setPosition(0.62 /* flipped servo position*/);
+        bucketFlipperServo.setPosition(0.68 /* flipped servo position*/);
     }
 
     public Command extendForAuto() {
@@ -112,7 +112,7 @@ public class Bucket extends Subsystem {
     }
 
     public void retract() {
-        bucketFlipperServo.setPosition(0.105);
+        bucketFlipperServo.setPosition(0.14);
     }
 
     public Command stopCommand() {
