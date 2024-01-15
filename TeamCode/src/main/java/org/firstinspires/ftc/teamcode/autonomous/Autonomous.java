@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.lib.auto.AutonomousConstants;
 import org.firstinspires.ftc.lib.auto.PlannedAuto;
+import org.firstinspires.ftc.lib.field.Field;
 import org.firstinspires.ftc.lib.math.*;
 import org.firstinspires.ftc.lib.systems.commands.*;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -83,7 +84,7 @@ public class Autonomous extends OpMode {
         BASIC_AUTO,
         FULL_AUTO,
         BLUE_LEFT_AUTO,
-
+        RED_RIGHT_AUTO,
         BLUE_RIGHT_AUTO;
     }
 
@@ -208,21 +209,36 @@ public class Autonomous extends OpMode {
         } else if (m_autonomousMode == AutonomousMode.TESTING) {
             auto = new PlannedAuto(
                     constants,
-                    new InstantCommand(() -> {
-                        m_driveSubsystem.resetPosition(new Pose2d(
-                                Unit.convert(11.5, Unit.Type.Inches, Unit.Type.Meters),
-                                Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
-                                Rotation2d.zero()
-                        ));
-                    }),
-                    new DriveToEncoderPosition(
-                            new Translation2d(
-                                    Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
-                                    Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
-                            ),
-                            new Unit(3, Unit.Type.Centimeters)
+                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
+                            m_sensorConeHuskyLensSubsystem,
+                            1,
+                            (int detected) -> {
+                                if (detected == -2) {
+                                    telemetry().addLine("ERROR WITH HUSKY?");
+                                }
+
+
+                                //Manual Detection - TODO: Disable
+                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+                                telemetry.update();
+                            }
                     ),
-                    m_driveSubsystem.stop(),
+//                    new InstantCommand(() -> {
+//                        m_driveSubsystem.resetPosition(new Pose2d(
+//                                Unit.convert(11.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
+//                                Rotation2d.zero()
+//                        ));
+//                    }),
+//                    new DriveToEncoderPosition(
+//                            new Translation2d(
+//                                    Unit.convert(46.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                    Unit.convert(46.25, Unit.Type.Inches, Unit.Type.Meters)
+//                            ),
+//                            new Unit(3, Unit.Type.Centimeters)
+//                    ),
+//                    m_driveSubsystem.stop(),
                     new InstantCommand(() -> {
                         telemetry().addLine("Autonomous Loaded!");
                     })
@@ -580,11 +596,350 @@ public class Autonomous extends OpMode {
                     m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
                     new TurnToCommand(Rotation2d.fromDegrees(0), m_driveSubsystem)
             );
+        } else if (m_autonomousMode == AutonomousMode.RED_RIGHT_AUTO) {
+            Constants.currentSide = Constants.Side.RIGHT_RED;
+
+            auto = new PlannedAuto(
+                    constants,
+                    new InstantCommand(() -> {
+                        telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                        m_driveSubsystem.resetPosition(
+                                new Pose2d(
+                                        Unit.convert(129.25, Unit.Type.Inches, Unit.Type.Meters),
+                                        Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
+                                        Rotation2d.zero()
+                                )
+                        );
+                    }),
+                    new WaitCommand(0.1),
+                    // start huskylens detection procedure
+//                    new HuskyDetectCommand( // returns detected tape into HuskyLensDetection
+//                            m_sensorConeHuskyLensSubsystem,
+//                            1,
+//                            (int detected) -> {
+//                                if (detected == -2) {
+//                                    telemetry().addLine("ERROR WITH HUSKY?");
+//                                }
+//
+//
+//                                //Manual Detection - TODO: Disable
+//                                m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
+//                                telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
+//                                telemetry.update();
+//                            }
+//                    ),
+                    new InstantCommand(() -> {
+                        m_huskyLensDetection = HuskyLensDetection.LEFT;
+                    }),
+                    new WaitCommand(0.2),
+//                    new Trajectory( // go towards middle of all three tapes
+//                            m_driveSubsystem,
+//                            BezierSegment.loadFromResources(R.raw.one_middle)
+//                    ).runFlippedX(true),
+//                    new DriveToEncoderPosition(
+//                            new Translation2d(
+//                                    104.25,
+//                                    58
+//                            ),
+//                            new Unit(3, Unit.Type.Centimeters)
+//                    ),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(
+                                    0,
+                                    -0.5
+                            ),
+                            Rotation2d.zero(),
+                            true,
+                            true
+                    ),
+                    new WaitCommand(0.1),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.15),
+                    new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.LEFT && false;
+                    }, new SequentialCommand(
+                            new DriveToEncoderPosition(
+                                    new Translation2d(
+                                            Field.field.getWidth().get(Unit.Type.Meters) - Unit.convert(45.5, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(52.25, Unit.Type.Inches, Unit.Type.Meters)
+                                    ),
+                                    new Unit(3, Unit.Type.Centimeters)
+                            ),
+                            m_driveSubsystem.stop(),
+                            new WaitCommand(0.1),
+                            m_autoPixelPlacerSubsystem.setDeploy(),
+                            new WaitCommand(0.1),
+                            m_autoPixelPlacerSubsystem.setRetract(),
+                            new WaitCommand(0.5),
+                            m_driveSubsystem.driveCommand(
+                                    new Translation2d(-0.5, 0),
+                                    Rotation2d.zero(),
+                                    false,
+                                    true
+                            ),
+                            new WaitCommand(0.5),
+                            m_driveSubsystem.stop(),
+                            new DriveToEncoderPosition(
+                                    new Translation2d(
+                                            Field.field.getWidth().get(Unit.Type.Meters) - Unit.convert(13.5, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(57.25, Unit.Type.Inches, Unit.Type.Meters)
+                                    ),
+                                    new Unit(3, Unit.Type.Centimeters)
+                            ),
+                            m_driveSubsystem.stop(),
+
+                            new WaitCommand(0.1),
+                            m_driveSubsystem.driveCommand(
+                                    new Translation2d(0.75, 0),
+                                    Rotation2d.zero(),
+                                    false,
+                                    true
+                            ),
+                            new WaitCommand(1.3),
+                            m_driveSubsystem.stop(),
+                            new WaitCommand(0.1),
+                            new DriveToEncoderPosition(
+                                    new Translation2d(
+                                            Field.field.getWidth().get(Unit.Type.Meters) - Unit.convert(32.25, Unit.Type.Inches, Unit.Type.Meters),
+                                            Unit.convert(31.75, Unit.Type.Inches, Unit.Type.Meters)
+                                    ),
+                                    new Unit(3, Unit.Type.Centimeters)
+                            ),
+                            new WaitCommand(0.1),
+                            m_driveSubsystem.stop()
+                    )),
+                    new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
+                        return m_huskyLensDetection == HuskyLensDetection.RIGHT && false;
+                    },
+                            new SequentialCommand(
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(180), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(0, -0.4),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.4),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(-0.35, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.35),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setDeploy(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setRetract(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(-1.4, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(1),
+                                    m_driveSubsystem.stop()
+
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.MIDDLE && false;
+                    },
+                            new SequentialCommand(
+                                    new TurnToCommand(
+                                            Rotation2d.fromDegrees(180), m_driveSubsystem
+                                    ),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
+                                            new Translation2d(-0.625, 0),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.625),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(0, 0.1),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setDeploy(),
+                                    new WaitCommand(0.1),
+                                    m_autoPixelPlacerSubsystem.setRetract(),
+                                    new WaitCommand(0.25),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    -0.75,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.75),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0,
+                                                    -0.75
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.75),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    -0.4,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.4),
+                                    m_driveSubsystem.stop(),
+                                    new WaitCommand(0.1),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    0,
+                                                    0.3
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.3),
+                                    m_driveSubsystem.stop()
+
+
+                            )
+                    ),
+                    //drive to APRIL TAG position from here!
+                    new TurnToCommand(Rotation2d.fromDegrees(90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                    },
+                            new SequentialCommand(
+                                    new AprilTagAutoMove(
+                                            m_visionSubsystem,
+                                            AprilTagAutoMove.Side.Red,
+                                            AprilTagAutoMove.Position.Right
+                                    ),
+                                    new WaitCommand(2),
+                                    m_driveSubsystem.driveCommand(
+                                            new Translation2d(
+                                                    -0.65,
+                                                    0
+                                            ),
+                                            Rotation2d.zero(),
+                                            false,
+                                            true
+                                    ),
+                                    new WaitCommand(0.17),
+                                    m_driveSubsystem.stop()
+
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.MIDDLE;
+                    },
+                            new AprilTagAutoMove(
+                                    m_visionSubsystem,
+                                    AprilTagAutoMove.Side.Red,
+                                    AprilTagAutoMove.Position.Center
+                            )
+                    ),
+                    new IfOrSkipCommand(() -> {
+                        return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                    },
+                            new AprilTagAutoMove(
+                                    m_visionSubsystem,
+                                    AprilTagAutoMove.Side.Red,
+                                    AprilTagAutoMove.Position.Left
+                            )
+                    ),
+                    m_driveSubsystem.stop(),
+                    new TurnToCommand(Rotation2d.fromDegrees(90), m_driveSubsystem),
+                    m_driveSubsystem.stop(),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
+                    //m_bucketSubsystem.extendForAuto(),
+                    m_bucketSubsystem.setDeploy(),
+                    new WaitCommand(2),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.VERYLOW),
+                    new WaitCommand(1),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, 0.4),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(0.3),
+                    m_bucketSubsystem.setDeployPusher(),
+                    new WaitCommand(0.15),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.VERYLOW),
+                    new IfOrSkipCommand(
+                            () -> {
+                                //If position is middle or right
+                                return m_huskyLensDetection == HuskyLensDetection.MIDDLE || m_huskyLensDetection == HuskyLensDetection.RIGHT;
+                            },
+                            new WaitCommand(1.2)
+                    ),
+                    new IfOrSkipCommand(
+                            () -> {
+                                //If position is left
+                                return m_huskyLensDetection == HuskyLensDetection.LEFT;
+                            },
+                            new WaitCommand(1.5)
+                    ),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(1),
+                    m_driveSubsystem.driveCommand(
+                            new Translation2d(0, -0.2),
+                            Rotation2d.zero(),
+                            false,
+                            true
+                    ),
+                    new WaitCommand(1),
+                    m_driveSubsystem.stop(),
+                    new WaitCommand(0.1),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.MIDDLE),
+                    m_bucketSubsystem.setRetract(),
+                    m_bucketSubsystem.setRetractPusher(),
+                    new WaitCommand(0.9),
+                    m_linearSlideSubsystem.position(DualLinearSlide.SlidePosition.RETRACTED),
+                    new TurnToCommand(Rotation2d.fromDegrees(0), m_driveSubsystem)
+            );
         } else if (m_autonomousMode == AutonomousMode.BLUE_RIGHT_AUTO) {
             auto = new PlannedAuto(
                     constants,
                     new InstantCommand(() -> {
                         telemetry().addLine("Autonomous Loaded - Running " + m_pathSelectionFlag.name() + "!");
+                        m_driveSubsystem.resetPosition(
+                                new Pose2d(
+                                        Unit.convert(9.75, Unit.Type.Inches, Unit.Type.Meters),
+                                        Unit.convert(57.75, Unit.Type.Inches, Unit.Type.Meters),
+                                        Rotation2d.zero()
+                                )
+                        );
                     }),
                     new WaitCommand(0.1),
                     // start huskylens detection procedure
@@ -596,9 +951,8 @@ public class Autonomous extends OpMode {
                                     telemetry().addLine("ERROR WITH HUSKY?");
                                 }
 
-                                Random random = new Random();
-                                detected = random.nextInt(3) - 1;
 
+                                //Manual Detection - TODO: Disable
                                 m_huskyLensDetection = detected == -1 ? HuskyLensDetection.LEFT : detected == 0 ? HuskyLensDetection.MIDDLE : HuskyLensDetection.RIGHT;
                                 telemetry().addLine("Detected tape: " + m_huskyLensDetection.name());
                                 telemetry.update();
@@ -611,7 +965,6 @@ public class Autonomous extends OpMode {
                     ).runFlippedX(m_side == StartingSide.RED),
                     new WaitCommand(0.1),
                     m_driveSubsystem.stop(),
-                    new WaitCommand(0.1),
                     new WaitCommand(0.15),
                     new IfOrSkipCommand(() -> { // if left tape is detected, turn towards it
                         return m_huskyLensDetection == HuskyLensDetection.LEFT;
@@ -628,7 +981,7 @@ public class Autonomous extends OpMode {
                             m_autoPixelPlacerSubsystem.setDeploy(),
                             new WaitCommand(0.1),
                             m_autoPixelPlacerSubsystem.setRetract(),
-                            new WaitCommand(0.1),
+                            new WaitCommand(0.5),
                             m_driveSubsystem.stop()
                     )),
                     new IfOrSkipCommand(() -> { // if right tape is detected, turn towards it
@@ -662,15 +1015,6 @@ public class Autonomous extends OpMode {
                                     m_autoPixelPlacerSubsystem.setRetract(),
                                     new WaitCommand(0.1),
                                     m_driveSubsystem.stop()
-//                                    new WaitCommand(0.1),
-//                                    m_driveSubsystem.driveCommand( // drive the bit back from the tape (to original ops)
-//                                            new Translation2d(1.4, 0),
-//                                            Rotation2d.zero(),
-//                                            false,
-//                                            true
-//                                    ),
-//                                    new WaitCommand(1),
-//                                    m_driveSubsystem.stop()
 
                             )
                     ),
@@ -701,60 +1045,18 @@ public class Autonomous extends OpMode {
                                     new WaitCommand(0.1),
                                     m_autoPixelPlacerSubsystem.setRetract(),
                                     new WaitCommand(0.25),
-                                    m_driveSubsystem.stop(),
-                                    new WaitCommand(0.1)
-//                                    m_driveSubsystem.driveCommand(
-//                                            new Translation2d(
-//                                                    0.75,
-//                                                    0
-//                                            ),
-//                                            Rotation2d.zero(),
-//                                            false,
-//                                            true
-//                                    ),
-//                                    new WaitCommand(0.75),
-//                                    m_driveSubsystem.stop(),
-//                                    new WaitCommand(0.1),
-//                                    m_driveSubsystem.driveCommand(
-//                                            new Translation2d(
-//                                                    0,
-//                                                    -0.75
-//                                            ),
-//                                            Rotation2d.zero(),
-//                                            false,
-//                                            true
-//                                    ),
-//                                    new WaitCommand(0.75),
-//                                    m_driveSubsystem.stop(),
-//                                    new WaitCommand(0.1),
-//                                    m_driveSubsystem.driveCommand(
-//                                            new Translation2d(
-//                                                    0.4,
-//                                                    0
-//                                            ),
-//                                            Rotation2d.zero(),
-//                                            false,
-//                                            true
-//                                    ),
-//                                    new WaitCommand(0.4),
-//                                    m_driveSubsystem.stop(),
-//                                    new WaitCommand(0.1),
-//                                    m_driveSubsystem.driveCommand(
-//                                            new Translation2d(
-//                                                    0,
-//                                                    0.3
-//                                            ),
-//                                            Rotation2d.zero(),
-//                                            false,
-//                                            true
-//                                    ),
-//                                    new WaitCommand(0.3),
-//                                    m_driveSubsystem.stop()
-
+                                    m_driveSubsystem.stop()
 
                             )
                     )
-
+                    //drive to APRIL TAG position from here!
+//                    new DriveToEncoderPosition(
+//                            new Translation2d(
+//                                    Unit.convert(34.5, Unit.Type.Inches, Unit.Type.Meters),
+//                                    Unit.convert(34.75, Unit.Type.Inches, Unit.Type.Meters)
+//                            ),
+//                            new Unit(3, Unit.Type.Centimeters)
+//                    ),
             );
 
     }

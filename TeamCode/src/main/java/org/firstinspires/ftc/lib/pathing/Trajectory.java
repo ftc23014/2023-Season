@@ -172,14 +172,14 @@ public class Trajectory extends Command {
                 velocity.isZero() ? nextVelocity : velocity
         );
 
+        velocities = velocities.rotateBy(Rotation2d.fromDegrees(runFlippedX ? 90 : -90)).scalar(1 / m_constants.getDeltaTime());
+
         if (runFlippedX) {
             velocities = new Translation2d(
                     -velocities.getX(),
                     velocities.getY()
             );
         }
-
-        velocities = velocities.rotateBy(Rotation2d.fromDegrees(-90)).scalar(1 / m_constants.getDeltaTime());
 
         //Autonomous.getTelemetry().addLine("v: " + velocities.toString());
 

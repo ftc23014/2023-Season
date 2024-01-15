@@ -49,10 +49,10 @@ public class HuskyDetectCommand extends Command {
                     detectedTheMost = 1;
                 }
 
-                Random random1 = new Random();
-                detectedTheMost = random1.nextInt(3) - 1;
+                //Random random1 = new Random();
+                //detectedTheMost = random1.nextInt(3) - 1;
                 if (mostDetections == 0) {
-                    detectedTheMost = -2;
+                    detectedTheMost = 0;
                 }
 
                 m_huskyLensDetect.setDetecting(false);

@@ -39,7 +39,7 @@ public class AprilTagAutoMove extends Command {
         this.position = position;
     }
 
-    private final Unit maxDistance = new Unit(1.5, Unit.Type.Meters);
+    private final Unit maxDistance = new Unit(2, Unit.Type.Meters);
 
     @Override
     public void init() {
@@ -104,7 +104,7 @@ public class AprilTagAutoMove extends Command {
         System.out.println("generating path going to " + tagPos);
 
         turnToCommand = new TurnToCommand(
-            Rotation2d.fromDegrees(-90),
+            Rotation2d.fromDegrees(Constants.currentSide == Constants.Side.RIGHT_RED ? 90 : -90),
             MecanumDriveSubsystem.instance()
         );
 

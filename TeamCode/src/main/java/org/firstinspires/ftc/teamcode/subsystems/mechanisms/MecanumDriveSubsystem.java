@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.lib.systems.commands.Command;
 import org.firstinspires.ftc.lib.systems.commands.InstantCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.StartupManager;
 import org.firstinspires.ftc.teamcode.autonomous.Autonomous;
 import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
@@ -92,6 +93,11 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 
     @Log(link="expected_motion_replay")
     private ExpectedRelativeMotion motionProfile;
+
+    @Log
+    public String logPower() {
+        return getHardwareMap().voltageSensor.iterator().next().getVoltage() + "V";
+    }
 
     @Override
     public void init() {
@@ -273,7 +279,11 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
 //        telemetry().addData("Joystick Y", joyStickY);
 //        telemetry().addData("Velocity X (m/s)", velocityX);
 //        telemetry().addData("Velocity Y (m/s)", velocityY);
-        odometry.updateOdometry((double) frontLeft.getCurrentPosition(), (double) -backRight.getCurrentPosition(), (double) -frontRight.getCurrentPosition());
+        odometry.updateOdometry(
+                (double) frontLeft.getCurrentPosition(),
+                (double) -backRight.getCurrentPosition(),
+                (double) -frontRight.getCurrentPosition()
+        );
 
         if (Math.abs(getAngle().getDegrees() - 90) < 5 || Math.abs(getAngle().getDegrees() - 270) < 5 || Math.abs(getAngle().getDegrees() + 90) < 5) {
             if (VisionSubsystem.getInstance() != null) {

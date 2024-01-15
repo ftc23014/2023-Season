@@ -110,13 +110,13 @@ public class AssistantControls extends Command {
             } else {
                 m_droneSubsystem.setRetract();
             }
+        }
+
         if (m_lastBucketState != gamepad2.b && gamepad2.b) {
             m_bucketDeployed = !m_bucketDeployed;
 
             if (m_bucketDeployed) {
-            }
-
-            m_bucketSubsystem.deployBoth();
+                m_bucketSubsystem.deployBoth();
                 m_buckedPusherDeployed = true;
             } else {
                 m_bucketSubsystem.retract();

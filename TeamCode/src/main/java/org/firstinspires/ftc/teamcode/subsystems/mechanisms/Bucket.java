@@ -91,7 +91,7 @@ public class Bucket extends Subsystem {
     }
 
     public void deployFlipper() {
-        bucketFlipperServo.setPosition(0.62);
+        bucketFlipperServo.setPosition(0.57);
     }
 
     public void retractBoth() {

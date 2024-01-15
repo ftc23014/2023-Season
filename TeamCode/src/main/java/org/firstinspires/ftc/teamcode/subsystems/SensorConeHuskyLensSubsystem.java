@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.lib.systems.Subsystem;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import org.firstinspires.ftc.teamcode.Constants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,8 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
     private boolean hasDetected = false;
 
     private boolean detecting = false;
+
+    private int blueMidCount = 0;
 
     @Override
     public void init() {
@@ -63,13 +66,30 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
 //            //telemetry().addData("Block", blocks[i].toString());
 //        }
 
+        HuskyLens.Block block = null;
+
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].y > 120 || (Constants.currentSide == Constants.Side.LEFT_BLUE && blocks[i].y > 130)) {
+                block = blocks[i];
+                break;
+            }
+        }
+
+        if (block == null) {
+            if (blocks.length > 0) {
+                block = blocks[0];
+            } else {
+                return;
+            }
+        }
+
         // -1 for left tape, 0 for middle tape, 1 for right tape
         if (blocks.length > 0) { // check that it detects one cone
             //telemetry().addData("Tape:", locateBlockPlacement(blocks[blocks.length - 1].x));
-            lastDetection = locateBlockPlacement(blocks[blocks.length - 1].x);
+            lastDetection = locateBlockPlacement(block.x);
 
             if (lastDetection == -1) {
-                double ratio = ((double) blocks[blocks.length - 1].width / (double) blocks[blocks.length - 1].height);
+                double ratio = ((double) block.width / (double) block.height);
 
                 if (ratio > 1.5) {
                     lastDetection = 1;
@@ -82,6 +102,9 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
         hasDetected = true;
 
         telemetry().addLine("HuskyLens: " + lastDetection);
+        if (lastDetection == 0 && Constants.currentSide == Constants.Side.LEFT_BLUE) {
+            blueMidCount += 1;
+        }
         telemetry().update();
     }
 
@@ -106,4 +129,8 @@ public class SensorConeHuskyLensSubsystem extends Subsystem {
             return 1;
     }
 }
+
+    public int getBlueMidCount() {
+        return blueMidCount;
+    }
 }
